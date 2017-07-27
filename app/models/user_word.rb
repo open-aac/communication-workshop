@@ -2,7 +2,7 @@ class UserWord < ApplicationRecord
   include SecureSerialize
   include GlobalId
 
-  secure_seralize :data
+  secure_serialize :data
   before_save :generate_defaults
   belongs_to :user
   
