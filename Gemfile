@@ -32,7 +32,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 
 gem 'typhoeus'
-gem 'stripe'
+gem 'stripe', '3.0.1'
 gem 'go_secure'
 gem 'sanitize'
 gem 'obf'
