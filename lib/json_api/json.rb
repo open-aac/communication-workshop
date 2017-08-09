@@ -70,11 +70,11 @@ module JsonApi::Json
   
   def self.set_host(host)
     @@running_hosts ||= {}
-    @@running_hosts[Worker.thread_id] = host
+    @@running_hosts["#{Process.pid}_#{Thread.current.object_id}"] = host
   end
   
   def self.current_host
     @@running_hosts ||= {}
-    @@running_hosts[Worker.thread_id] || ENV['DEFAULT_HOST']
+    @@running_hosts["#{Process.pid}_#{Thread.current.object_id}"] || ENV['DEFAULT_HOST']
   end
 end

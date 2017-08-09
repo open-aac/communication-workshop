@@ -1,7 +1,7 @@
 require 'typhoeus'
 class Api::SearchController < ApplicationController
   def books
-    url = params['url']
+    url = params['url'] || ''
     if url.match(/https?:\/\/tarheelreader.org\/.+\/.+\/.+\/.+\//)
       id = url.match(/https?:\/\/tarheelreader.org\/.+\/.+\/.+\/(.+)\//)[1]
       url = "https://tarheelreader.org/book-as-json/?slug=#{CGI.escape(id)}"
@@ -15,6 +15,27 @@ class Api::SearchController < ApplicationController
         id: "tarheel:#{id}",
         image_url: "https://tarheelreader.org#{data['pages'][1]['url']}",
         attribution: "https://tarheelreader.org/photo-credits/?id=#{data['ID']}",
+        book_type: 'tarheel'
+      }
+      render json: json
+    elsif url.match(/amazon\.com/) && url.match(/\/([A-Z0-9]{10})($|\/)/)
+      asin = url.match(/\/([A-Z0-9]{10})($|\/)/)[1]
+      # https://smile.amazon.com/Friend-Sad-Elephant-Piggie-Book/dp/1423102975/ref=sr_1_1?ie=UTF8&qid=1501260366&sr=8-1&keywords=my+friend+is+sad
+    else
+      if url.match(/dropbox\.com/) && url.match(/\?dl=0$/)
+        url = url.sub(/\?dl=0$/, '?dl=1')
+      end
+      res = Typhoeus.get(url)
+      data = JSON.parse(res.body) rescue nil
+      api_error(400, {error: 'invalid book'}) unless data && data['title'] && data['pages']
+      json = {
+        title: data['title'],
+        author: data['author'],
+        url: data['book_url'],
+        id: 'book:#{url}',
+        image_url: data['pages'][0]['image_url'],
+        attribution: data['attribution_url'],
+        book_type: 'custom'
       }
       render json: json
     end

@@ -81,6 +81,8 @@
     ga('create', '<%= ENV['ANALYTICS_ID'] %>', '<%= ENV['ANALYTICS_DOMAIN'] %>');
     ga('send', 'pageview');
   <% end %>
+  window.flickr_key = <%= ENV['FLICKR_KEY'].to_json.html_safe %>;
+  window.pixabay_key = <%= ENV['PIXABAY_KEY'].to_json.html_safe %>;
 </script>
 </body>
 </html>

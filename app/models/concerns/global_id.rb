@@ -54,8 +54,13 @@ module GlobalId
       if self == WordData && path.to_s.match(/:/)
         word, locale = path.to_s.split(/:/)
         find_by(:word => word.downcase, :locale => locale.downcase)
+      elsif self == WordCategory && path.to_s.match(/:/)
+        category, locale = path.to_s.split(/:/)
+        find_by(:category => category.downcase, :locale => locale.downcase)
+      elsif self == Book && path.to_s.match(/^\d+-/)
+        find_by(:ref_id => path.downcase)
       elsif self == User && !path.to_s.match(/^\d/)
-        find_by(:user_name => path.downcase)
+        find_by(:hashed_identifier => User.user_name_hash(path))
       else
         find_by_global_id(path)
       end
