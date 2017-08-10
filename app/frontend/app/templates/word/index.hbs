@@ -12,17 +12,10 @@
   </div>
 {{/if}}
 
-<div style='white-space: pre-line;'>
-  [ Generate a Printed Packet for the Word ]
-  (checkboxes to include, everything by default)
-  (not randomized by default, needs to feel consistent)
-  [ usage prompt ]
-  [ learning project ]
-  [ activity ]
-  [ story ]
-  [ topic starter ]
-  [ quiz ]
-</div>
+<button class='btn btn-default'><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
+<button class='btn btn-default'><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
+<button class='btn btn-default'><span class='glyphicon glyphicon-question-sign'></span> {{t "Start a Quiz" key='start_a_quiz'}}</button>
+<button class='btn btn-default'><span class='glyphicon glyphicon-zoom-in'></span> {{t "Focus on This Word" key='focus_on_this_word'}}</button>
 
 <h2>{{t "Examples of When to Use" key='usage_examples'}}</h2>
 {{#if model.usage_examples}}
