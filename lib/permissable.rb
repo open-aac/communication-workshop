@@ -100,22 +100,25 @@ module Permissable
       set_cached("permissions-for/#{cache_key}", granted_permissions) if self.class.allow_cached_permissions
       granted_permissions
     end
+    
+    def self.included(base)
+      base.define_singleton_method(:included) do |klass|
+        klass.cattr_accessor :permissions_lookup
+        klass.cattr_accessor :allow_cached_permissions
+        klass.cattr_accessor :default_permission_scopes
+        klass.default_permission_scopes = ['full']
+        klass.permissions_lookup = []
+      end
+    end
   end
   
   module ClassMethods
-    def self.included(base)
-      cattr_accessor :permissions_lookup
-      cattr_accessor :allow_cached_permissions
-      cattr_accessor :default_permission_scopes
-      self.permissions_lookup = []
-      self.default_permission_scopes = ['full']
-    end
-
     def cache_permissions
       self.allow_cached_permissions = true
     end
     
     def add_permissions(*actions, &block)
+      puts self.to_s
       scopes = ['full']
       if actions[-1].is_a?(Array)
         scopes += actions.pop
