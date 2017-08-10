@@ -19,6 +19,10 @@
   margin-top: 40px;
 }
 
+.pad_color_box {
+  padding-left: 40px;
+}
+
 .modal-footer {
   text-align: left;
 }
@@ -56,5 +60,16 @@
   }
   .comma {
     display: none;
+  }
+}
+.revision {
+  background: #f7e667;
+  border-radius: 5px;
+  min-height: 45px;
+  margin-bottom: 3px;
+  .accept_revision {
+    position: absolute;
+    top: 5px;
+    right: 5px;
   }
 }

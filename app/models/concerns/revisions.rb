@@ -6,6 +6,13 @@ module Revisions
   def process_revisions(user_params, &block)
     if user_params['editable']
       block.call(self.data)
+      if user_params['revision_credit']
+        add_user_identifier(user_params['revision_credit'])
+      end
+      if user_params['clear_revision_id']
+        self.data['revisions'] ||= []
+        self.data['revisions'] = self.data['revisions'].select{|r| r['id'] != user_params['clear_revision_id'] }
+      end
     elsif user_params['user_identifier']
       rev = JSON.parse(self.data.to_json)
       block.call(rev)
@@ -13,9 +20,24 @@ module Revisions
       rev.each do |key, val|
         if val.is_a?(Array)
           objs = self.data[key].map(&:to_json)
+          obj_ids = self.data[key].map{|o| o['id'] }.compact
+          rev_ids = val.map{|o| o['id'] }.compact
           val.each do |v|
-            if !objs.include?(v.to_json)
+            if !v['id'] || !obj_ids.include?(v['id'])
               changes[key] ||= []
+              v['action'] = 'add'
+              changes[key] << v
+            elsif !objs.include?(v.to_json)
+              changes[key] ||= []
+              v['action'] = 'update'
+              changes[key] << v
+            end
+          end
+          self.data[key].each do |orig|
+            if orig['id'] && !rev_ids.include?(orig['id'])
+              changes[key] ||= []
+              v = orig.dup
+              v['action'] = 'delete'
               changes[key] << v
             end
           end
@@ -25,7 +47,11 @@ module Revisions
       end
       if changes.keys.length > 0
         self.data['revisions'] ||= []
-        self.data['revisions'] << {'user_identifier' => user_params['user_identifier'], 'changes' => changes}
+        self.data['revisions'] << {
+          'user_identifier' => user_params['user_identifier'], 
+          'changes' => changes,
+          'id' => "#{Time.now.iso8601}_#{rand(9999)}"
+        }
         self.pending_since ||= Time.now
       end
     else

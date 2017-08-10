@@ -9,13 +9,36 @@ class WordData < ApplicationRecord
   before_save :generate_defaults
 
   add_permissions('view', ['*']) { true }
-  add_permissions('edit', ['*']) {|user| !!user }
-  add_permissions('delete') {|user| user.admin? }
+  add_permissions('revise', ['*']) {|user| !!user }
+  add_permissions('edit', 'delete') {|user| user.admin? }
   
   def generate_defaults
     self.data ||= {}
     self.random_id ||= (rand(9999999999) + Time.now.to_i)
+    self.enforce_ids
     true
+  end
+  
+  def enforce_ids
+    self.data ||= {}
+    OBJ_PARAMS.each do |param|
+      if self.data[param] && self.data[param].is_a?(Array)
+        self.data[param].each_with_index do |obj, idx|
+          if obj.is_a?(Hash)
+            obj['id'] ||= "#{idx}_#{rand(99)}_#{Time.now.to_i}"
+          end
+        end
+      end
+      (self.data['revisions'] || []).each do |rev|
+        if rev['changes'][param] && rev['changes'][param].is_a?(Array)
+          rev['changes'][param].each_with_index do |obj, idx|
+            if obj.is_a?(Hash)
+              obj['id'] ||= "r#{idx}_#{rand(99)}#{Time.now.to_i}"
+            end
+          end
+        end
+      end
+    end
   end
   
   def self.find_or_initialize_by_path(str)
@@ -39,7 +62,10 @@ class WordData < ApplicationRecord
   
   def process_params(params, user_params)
     self.generate_defaults
-    rev_params = {}
+    rev_params = {
+      'revision_credit' => params['revision_credit'],
+      'clear_revision_id' => params['clear_revision_id']
+    }
     if user_params['user']
       rev_params['user_identifier'] = user_params['user'].settings['user_name']
       rev_params['editable'] = self.allows?(user_params['user'], 'delete')

@@ -22,6 +22,7 @@ module JsonApi::Word
         json[param] = word.data[param] if word.data[param]
       end
       json['related_identifiers'] = word.data['all_user_identifiers']
+      json['approved_user_identifiers'] = word.data['approved_user_identifiers']
       json['revisions'] = word.data['revisions'] || []
     end
     json

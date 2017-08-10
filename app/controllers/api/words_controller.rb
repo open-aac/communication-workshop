@@ -16,7 +16,7 @@ class Api::WordsController < ApplicationController
   def update
     word = WordData.find_or_initialize_by_path(params['id'])
     return unless exists?(word, params['id'])
-    return unless allowed?(word, 'edit')
+    return unless allowed?(word, 'revise')
     if word.process(params['word'], {'user' => @api_user})
       render json: JsonApi::Word.as_json(word, wrapper: true, permissions: @api_user)
     else
