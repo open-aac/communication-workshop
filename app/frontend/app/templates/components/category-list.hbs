@@ -1,0 +1,6 @@
+<span class='categories'>
+{{#each all_categories as |cat|}}
+  {{#link-to 'category.index' cat.key cat.locale class='label label-primary'}}
+    {{cat.text}}{{/link-to}}{{#unless cat.last}}<span class='comma sr-only'>,</span>{{/unless}}
+{{/each}}
+</span>

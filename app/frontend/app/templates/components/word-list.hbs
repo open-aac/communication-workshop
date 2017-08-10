@@ -1,0 +1,4 @@
+{{#each all_words as |word|}}
+  {{#link-to 'word.index' word.key word.locale}}
+    {{word.text}}{{/link-to}}{{#unless word.last}},{{/unless}}
+{{/each}}

@@ -1,0 +1,53 @@
+<div style='margin-bottom: 40px;'>
+  <div style='float: left; width: 60px;'>
+    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'>Prev</button>
+    {{#if entries.length}}
+      <div style='text-align: right;'>
+        {{readable_index}} of {{entries.length}}
+      </div>
+    {{/if}}
+    {{#if current_entry}}
+      <button class='btn btn-default' {{action 'delete_current'}} style='width: 100%;'>Delete</button>
+    {{/if}}
+  </div>
+  <div style='float: left; width: calc(100% - 130px); margin: 0 5px;'>
+    {{#if current_entry}}
+      {{image-with-attribution stretch=true image=current_entry.image update_image='update_current_image'}}
+      {{#if prompt_type}}
+        {{bound-select select_class="form-control" content=promptOptions selection=current_entry.prompt_type action=(action (mut current_entry.prompt_type)) }}
+      {{/if}}
+      {{#if include_sentence}}
+        <div style='width: 100%;'>
+          {{input type='text' value=current_entry.sentence class='form-control' placeholder="Sentence"}}
+        </div>
+      {{/if}}
+      <div style='width: 100%;'>
+        {{input type='text' value=current_entry.text class='form-control' placeholder=text_placeholder}}
+      </div>
+      {{#if description}}
+        <div style='width: 100%;'>
+          {{textarea value=current_entry.description rows=3 class='form-control' placeholder='Longer description'}}
+        </div>
+      {{/if}}
+      {{#if include_url}}
+        <div style='width: 100%;'>
+          {{input type='text' value=current_entry.url class='form-control' placeholder=url_placeholder}}
+        </div>
+      {{/if}}
+      {{#if related_words}}
+        <div style='width: 100%;'>
+          {{input type='text' value=current_entry.related_words class='form-control' placeholder="related words"}}
+        </div>
+      {{/if}}
+    {{else}}
+      <div style='width: 100%; height: 80px; border: 1px solid #ccc; text-align: center; padding-top: 2px;'>
+        {{t "No Entries Added" key='no_entries_yet'}}
+      </div>
+    {{/if}}
+  </div>
+  <div style='float: left; width: 60px;'>
+    <button class='btn btn-default' {{action 'next'}} style='width: 100%;'>Next</button>
+    <button class='btn btn-default' {{action 'add'}} style='width: 100%;'>Add</button>
+  </div>
+  <div style='clear: left;'></div>
+</div>

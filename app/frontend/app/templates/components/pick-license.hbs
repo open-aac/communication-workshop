@@ -1,0 +1,57 @@
+{{#if record.uneditable}}
+  <div class="form-group">
+    <label for="license" class="col-sm-2 control-label">{{t "License" key='license'}}</label>
+    <div class="col-sm-10">
+      <p class='form-control-static'>
+        {{#if record.license}}
+          {{#if record.license_url}}
+            {{#if private_license}}
+              <a href={{record.copyright_notice_url}} target="_blank">{{t "All rights reserved" key='all_rights_reserved'}}</a>
+            {{else}}
+              <a href={{record.copyright_notice_url}} target="_blank">{{record.license}}</a>
+            {{/if}}
+          {{else}}
+            {{#if protected_license}}
+              {{t "Protected content" key='protected_content'}}
+            {{else if private_license}}
+              {{t "All rights reserved" key='all_rights_reserved'}}
+            {{else}}
+              {{record.license}}
+            {{/if}}
+          {{/if}}
+          {{#if record.author}}
+            {{t " by " key='by'}}
+            {{#if record.author_url}}
+              <a href={{record.author_url}} target="_blank">{{record.author}}</a>
+            {{else}}
+              {{record.author}}
+            {{/if}}
+          {{/if}}
+          {{#if record.source_url}}
+            (<a href={{record.source_url}} target="_blank">{{t "source" key='source'}}</a>)
+          {{/if}}
+        {{else}}
+          {{t "Unspecified, assume all rights reserved." key='unspecified_all_rights'}}
+        {{/if}}
+      </p>
+    </div>
+  </div>
+{{else}}
+  <div class="form-group">
+    <label for="license" class="col-sm-2 control-label">{{t "License" key='license'}}</label>
+    <div class="col-sm-10">
+      {{bound-select select_class="form-control" select_id="license" content=licenseOptions selection=record.license action=(action (mut record.license)) }}
+    </div>
+  </div>
+  {{#unless private_license}}
+    <div class="form-group">
+      <label for="author" class="col-sm-2 control-label">{{t "Author" key='author'}}</label>
+      <div class="col-sm-4">
+        {{input value=record.author class="form-control" id="author" placeholder="Name"}}
+      </div>
+      <div class="col-sm-6">
+        {{input value=record.author_url class="form-control" title="Author URL" placeholder="Author URL"}}
+      </div>
+    </div>
+  {{/unless}}
+{{/if}}

@@ -1,0 +1,61 @@
+{{#modal-dialog action="close" opening='opening' closing='closing'}}
+  <div class="modal-header">
+    <button type="button" class="close" {{action 'close'}}>&times;</button>
+    <h3>{{t "Find Image" key='find_image'}}</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" {{action 'search' on='submit'}}>
+      {{#if model.image}}
+        <div class="form-group">
+          <div class='col-sm-12'>
+            <img src={{model.image.image_url}} style='max-height: 300px;'/>
+          </div>
+        </div>
+        {{pick-license record=model.image}}
+      {{else}}
+        <div class="form-group">
+          <div class='col-sm-6'>
+            {{input type='text' class='form-control' value=term}}
+          </div>
+          <div class='col-sm-4'>
+            {{bound-select select_class="form-control skip_select" select_id="image_library" content=find_options selection=image_library action=(action (mut image_library)) }}
+          </div>
+          <div class='col-sm-2'>
+            <button class='btn btn-default' {{action 'search'}}>{{t "Search" key='search'}}</button>
+          </div>
+        </div>
+        <div class='form-group' style='margin-top: -20px;'>
+          <div class='col-sm-12'>
+            <em class='text-muted'>{{t "Enter a search term or paste a URL" key='enter_term_or_url'}}</em>
+          </div>
+        </div>
+
+        {{#if images.loading}}
+          {{t "Loading results..." key='loading_results'}}
+        {{else if images.error}}
+          {{t "Error loading result" key='error_loading_results'}}
+        {{else if images}}
+          {{#each images as |image|}}
+            <a href="#" {{action 'preview' image}} class='image_result'>
+              <img src={{image.thumbnail_url}} />
+            </a>
+          {{/each}}
+        {{else}}
+          {{t "No results found" key='no_results_found'}}
+        {{/if}}
+      {{/if}}
+    </form>
+  </div>
+  <div class="modal-footer">
+    {{#if model.image}}
+      <button class='btn btn-primary' {{action 'select'}}>{{t "Use This" key='use_this'}}</button>
+      <button class='btn btn-default' {{action 'clear'}}>{{t "Clear Image" key='clear_image'}}</button>
+      {{#if images}}
+        <button class='btn btn-default' {{action 'list'}}>{{t "Back to List" key='back_to_list'}}</button>
+      {{/if}}
+    {{else if images}}
+      <button class='btn btn-default' {{action 'clear'}}>{{t "Clear Results" key='clear_results'}}</button>
+    {{/if}}
+    <a href="#" class="btn btn-default" {{action 'close'}}>{{t "Close" key='close'}}</a>
+  </div>
+{{/modal-dialog}}

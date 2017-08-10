@@ -1,0 +1,60 @@
+<div style={{if tall 'margin-bottom: 40px;'}}>
+  <div style='float: left; width: 60px;'>
+    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'>Prev</button>
+    {{#if entries.length}}
+      <div style='text-align: right;'>
+        {{readable_index}} of {{entries.length}}
+      </div>
+    {{/if}}
+  </div>
+  <div style='float: left; width: calc(100% - 130px); margin: 0 5px;'>
+    {{#if current_entry}}
+      <div style='border: 1px solid #ccc; padding: 5px;'>
+        {{image-with-attribution stretch=true image=current_entry.image tall=tall border=false url=current_entry.url}}
+        <div style='text-align: center;'>
+          {{#if prompt_type}}
+            {{current_entry.prompt_type}}<br/>
+          {{/if}}
+          {{#if include_sentence}}
+            <strong>"{{current_entry.sentence}}"</strong><br/>
+          {{/if}}
+          {{#if include_url}}
+            <a href={{current_entry.url}} target="_blank">{{current_entry.text}}</a>
+          {{else}}
+            {{current_entry.text}}
+          {{/if}}
+          <div style='font-size: 12px; color: #888;'>
+            {{#if description}}
+              {{current_entry.description}}<br/>
+            {{/if}}
+            {{#if related_words}}
+              {{current_entry.related_words}}<br/>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    {{else}}
+      <div style='width: 100%; height: 80px; border: 1px solid #ccc; text-align: center; padding-top: 2px;'>
+        {{t "No Entries Added" key='no_entries_yet'}}
+      </div>
+    {{/if}}
+  </div>
+  <div style='float: left; width: 60px;'>
+    <button class='btn btn-default' {{action 'next'}} style='width: 100%;'>Next</button>
+    {{#if update_revision_object}}
+      <button class='btn btn-default' {{action 'confirm_revision'}} style='width: 100%;'>
+        {{#if update_action}}
+          <span class='glyphicon glyphicon-ok'></span>
+          <span class='glyphicon glyphicon-pencil'></span>
+        {{else if delete_action}}
+          <span class='glyphicon glyphicon-ok'></span>
+          <span class='glyphicon glyphicon-trash'></span>
+        {{else}}
+          <span class='glyphicon glyphicon-ok'></span>
+          <span class='glyphicon glyphicon-plus'></span>
+        {{/if}}
+      </button>
+    {{/if}}
+  </div>
+  <div style='clear: left;'></div>
+</div>

@@ -1,0 +1,25 @@
+<header id='header'>
+  <span style='padding-right: 20px; font-weight: bold;' id='title'>
+    {{#link-to 'index'}}
+      AAC Core Magic Learning Coolness
+    {{/link-to}}
+  </span>
+  <form style='display: inline;' {{action 'search' on='submit'}}>
+    <span style='display: inline-block; width: 150px;'>
+      {{input type='text' class='form-control input-sm' value=search placeholder='find cool stuff'}}
+    </span>
+    <button type='submit' class='btn btn-default btn-sm' style='margin-top: -1px;'>{{t "Go" key='go'}}</button>
+  </form>
+  <div style='float: right; padding: 5px;'>
+    {{#if session.isAuthenticated}}
+      {{session.user_name}}&nbsp;&nbsp;
+      <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
+    {{else}}
+      {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}
+    {{/if}}
+  </div>
+</header>
+<div class='container'>
+{{outlet}}
+</div>
+{{outlet 'modal'}}

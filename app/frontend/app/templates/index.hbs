@@ -1,0 +1,42 @@
+<h1>{{t "Words and Stuff" key='words_and_stuff'}}</h1>
+
+<div style='white-space: pre-line;'>
+when you're logged in, put an activity report front and center to track current focus
+
+Here are some words that you might think are cool:
+
+{{#if words.loading}}
+  {{t "Loading words..." key='loading_words'}}
+{{else if words.error}}
+  {{t "Error loading words" key='error_loading_words'}}
+{{else if words}}
+  {{#each words as |word|}}
+- {{#link-to 'word.index' word.word word.locale}}{{word.word}}{{/link-to}}
+  {{/each}}
+{{else}}
+  {{t "No data to show" key='no_data'}}
+{{/if}}
+
+
+Here are some words you've been working on lately:
+
+- a
+- b
+
+[ Surprise me! ]
+
+Activities based around a topic/context instead of a word:
+
+- meal time
+- getting ready for bed
+- traveling
+- doctor appointment
+- eating at a restaurant
+
+
+[ Learn something about AAC and intervention strategies ]
+
+[ Quick one-off activity ]
+
+
+</div>

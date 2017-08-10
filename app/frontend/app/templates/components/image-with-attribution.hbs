@@ -1,0 +1,11 @@
+<div style={{container_style}}>
+  {{#if image.image_url}}
+    <img src={{image.image_url}} style={{image_style}} />
+  {{else}}
+    {{t "No Picture Set" key='no_picture_set'}}
+  {{/if}}
+  {{#if update_image}}
+    <button class='btn btn-default btn-sm' type='button' style='position: absolute; bottom: 2px; right: 2px; opacity: 0.9;' {{action 'change_image' 'image'}}>{{t "Set Image" key='set_image'}}</button>
+  {{/if}}
+</div>
+<div style='clear: left;'></div>

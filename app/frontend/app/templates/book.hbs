@@ -1,0 +1,108 @@
+<h1>{{#if model.title}}{{model.title}}{{else}}{{t "New Book" key='new_book'}}{{/if}}</h1>
+{{#unless editing}}
+  Author: {{#if model.author}}{{model.author}}{{else}}{{t "Unknown" key='unknown'}}{{/if}}<br/>
+  Pages: {{model.pages.length}}<br/><br/>
+  <a href="#" target='_blank' class='btn btn-default btn-lg'>{{t "Launch Reader" key='launch_reader'}}</a>
+  <a href="#" class='btn btn-default btn-lg' {{action 'copy_link'}}>{{t "Copy Book Code" key='copy_book_code'}}</a>
+{{/unless}}
+<div style='margin-top: 30px;'>
+  <h2>{{t "Book Contents" key='book_contents'}}</h2>
+  <div style='float: left; width: 60px;'>
+    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;' disabled={{no_prev}}>Prev</button>
+    {{#if model.pages.length}}
+      <div style='text-align: right;'>
+        {{#if current_page.title_page}}
+        {{else}}
+          {{current_index}} {{t "of" key='of'}} {{model.pages.length}}
+        {{/if}}
+      </div>
+    {{/if}}
+    {{#if editing}}
+      <button class='btn btn-default' {{action 'delete_current'}} style='width: 100%;'>Delete</button>
+    {{/if}}
+  </div>
+  <div style='float: left; width: calc(100% - 130px); margin: 0 5px;'>
+    {{#if current_page}}
+      {{#if current_page.title_page}}
+        {{#if editing}}
+          <div style='width: 100%;'>
+            {{input type='text' value=current_page.title class='form-control' placeholder="Book Title"}}
+          </div>
+          <div style='width: 100%;'>
+            {{input type='text' value=current_page.author class='form-control' placeholder="Book Author"}}
+          </div>
+        {{else}}
+          <div style='text-align: center; font-size: 30px;'>
+            {{#if current_page.title}}
+              {{current_page.title}}
+            {{else}}
+              {{t "Untitled Book" key='untitled_book'}}
+            {{/if}}
+          </div>
+          <div style='text-align: Center; font-size: 20px;'>
+            {{#if current_page.author}}
+              {{t "by" key='by'}} {{current_page.author}}
+            {{else}}
+              {{t "author unknown" key='author_unknown'}}
+            {{/if}}
+          </div>
+        {{/if}}
+      {{/if}}
+      {{#if single_image}}
+        {{image-with-attribution stretch=true image=current_page.image update_image=update_1 tall=true}}
+      {{else}}
+        <div style='float: left; width: calc(50% - 3px); margin-right: 6px;'>
+          {{image-with-attribution stretch=true image=current_page.image update_image=update_1 tall=true}}
+        </div>
+        <div style='float: left; width: calc(50% - 3px);'>
+        {{image-with-attribution stretch=true image=current_page.image2 update_image=update_2 tall=true}}
+        </div>
+      {{/if}}
+      {{#unless current_page.title_page}}
+        {{#if editing}}
+          <label>
+            {{input type='checkbox' checked=current_page.extra_image}}
+            {{t "show two images for this page" key='show_two_images'}}
+          </label>
+          <div style='width: 100%;'>
+            {{textarea value=current_page.text rows=3 class='form-control' placeholder='Page text'}}
+          </div>
+          <div style='width: 100%;'>
+            {{input type='text' value=current_page.related_words class='form-control' placeholder="related, core, words"}}
+          </div>
+        {{else}}
+          <div style='text-align: center; font-size: 30px;'>{{current_page.text}}</div>
+        {{/if}}
+      {{/unless}}
+    {{else}}
+      <div style='width: 100%; height: 120px; border: 1px solid #ccc; text-align: center; padding-top: 2px;'>
+        {{t "No Pages Added" key='no_pages_yet'}}
+      </div>
+    {{/if}}
+  </div>
+  <div style='float: left; width: 60px;'>
+    <button class='btn btn-default' {{action 'next'}} style='width: 100%;' disabled={{no_next}}>Next</button>
+    {{#if editing}}
+      <button class='btn btn-default' {{action 'add'}} style='width: 100%;'>Add</button>
+    {{/if}}
+  </div>
+  <div style='clear: left;'></div>
+  <div style='margin-top: 20px;'>
+    {{#if editing}}
+      <button class='btn btn-primary btn-lg' {{action 'save'}}>
+        {{#if status.saving}}
+          {{t "Saving Book..." key='saving_book'}}
+        {{else if status.error}}
+          {{t "Error Saving Book" key='error_saving_book'}}
+        {{else}}
+          {{t "Save Book" key='save_book'}}
+        {{/if}}
+      </button>
+      <button class='btn btn-default btn-lg' {{action 'cancel'}}>
+        {{t "Cancel" key='cancel'}}
+      </button>
+    {{else if editable}}
+      <button class='btn btn-default btn-lg' {{action 'edit'}}>{{t "Edit Book" key='edit_book'}}</button>
+    {{/if}}
+  </div>
+</div>

@@ -1,0 +1,285 @@
+<div>
+{{#if model.image}}
+  <div>
+    <img src={{model.image.image_url}} style={{image_style}} />
+    {{model.description}}
+  </div>
+{{/if}}
+
+<div style='white-space: pre-line;'>
+  [ Generate a Printed Packet for the Word ]
+  (checkboxes to include, everything by default)
+  (not randomized by default, needs to feel consistent)
+  [ usage prompt ]
+  [ learning project ]
+  [ activity ]
+  [ story ]
+  [ topic starter ]
+  [ quiz ]
+</div>
+
+<h2>{{t "Modeling Examples" key='modeling_examples'}}</h2>
+<ul class="nav nav-pills all_border" style='white-space: initial;'>
+  <li role="presentation" class={{if current_level.level_1 'active'}}><a href="#" {{action 'set_level' 1}}>{{t "Level 1" key='level_1'}}</a></li>
+  <li role="presentation" class={{if current_level.level_2 'active'}}><a href="#" {{action 'set_level' 2}}>{{t "Level 2" key='level_2'}}</a></li>
+  <li role="presentation" class={{if current_level.level_3 'active'}}><a href="#" {{action 'set_level' 3}}>{{t "Level 3" key='level_3'}}</a></li>
+</ul>
+{{#if current_level.modeling_examples}}
+  <em class='text-muted'>{{current_level.description}}</em>
+  <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
+    {{example-carousel entries=current_level.modeling_examples type='modeling'}}
+  </div>
+{{else}}
+  - {{partial 'none-specified'}}
+{{/if}}
+
+<h2>{{t "Related Core Words" key='related_core_words'}}</h2>
+<table class='table table-striped table-hover'>
+  <thead>
+  </thead>
+  <tbody>
+    <tr>
+      <td style='width: 200px;'>{{t "verbs" key='verbs'}}</td>
+      <td>{{#if model.verbs}}{{word-list list=model.verbs locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "adjectives" key='adjectives'}}</td>
+      <td>{{#if model.adjectives}}{{word-list list=model.adjectives locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "pronouns" key='pronouns'}}</td>
+      <td>{{#if model.pronouns}}{{word-list list=model.pronouns locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "determiners" key='determiners'}}</td>
+      <td>{{#if model.determiners}}{{word-list list=model.determiners locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "time-based words" key='time_based_words'}}</td>
+      <td>{{#if model.time_based_words}}{{word-list list=model.time_based_words locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "location-based words" key='location_based_words'}}</td>
+      <td>{{#if model.location_based_words}}{{word-list list=model.location_based_words locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "other words" key='other_words'}}</td>
+      <td>{{#if model.other_words}}{{word-list list=model.other_words locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>{{t "Additional Resources" key='additional_resources'}}</h2>
+<ul class="nav nav-pills all_border" style='white-space: initial;'>
+  <li role="presentation" class={{if current_activity.activities 'active'}}><a href="#" {{action 'set_activity' 'activities'}}>{{t "Activity Ideas" key='activities'}}</a></li>
+  <li role="presentation" class={{if current_activity.books 'active'}}><a href="#" {{action 'set_activity' 'books'}}>{{t "Books" key='books'}}</a></li>
+  <li role="presentation" class={{if current_activity.videos 'active'}}><a href="#" {{action 'set_activity' 'videos'}}>{{t "Videos" key='videos'}}</a></li>
+</ul>
+{{#if current_activity.list}}
+  <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
+    {{example-carousel entries=current_activity.list type=current_activity.type}}
+  </div>
+{{else}}
+  - {{partial 'none-specified'}}
+{{/if}}
+
+<h2>{{t "Phrase Categories" key='phrase_categories'}}</h2>
+{{phrase-categories entries=model.phrase_categories filter=modeling_level}}
+
+<h2>{{t "Attribution and References" key='attribution_and_references'}}</h2>
+attribution by list of authors<br/>
+<div style='white-space: pre-line;'>{{model.references}}</div>
+
+</div>
+{{#unless editing}}
+  <div style='margin-top: 50px;'>
+    <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Word Settings" key='edit_word_settings'}}</button>
+  </div>
+{{else}}
+  <h2 style='margin-top: 100px;'>{{t "Edit Word Settings" key='edit_word_settings'}}</h2>
+  <form style='margin-top: 50px;' class='form-horizontal'>
+    <div class="form-group">
+      <label for="image_url" class="col-sm-3 control-label">{{t "Image" key='image_url'}}</label>
+      <div class="col-sm-5">
+        {{image-with-attribution image=model.image label=model.word update_image='update_image'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="border_color" class="col-sm-3 control-label">{{t "Border" key='border_color'}}</label>
+      <div class="col-sm-5">
+        {{input type='text' id='border_color' value=model.border_color class='form-control'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="background_color" class="col-sm-3 control-label">{{t "Background" key='background_color'}}</label>
+      <div class="col-sm-5">
+        {{input type='text' id='background_color' value=model.background_color class='form-control'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="description" class="col-sm-3 control-label">{{t "Description" key='description'}}</label>
+      <div class="col-sm-5">
+        {{input type='text' id='description' value=model.description class='form-control'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="parts_of_speech" class="col-sm-3 control-label">{{t "Parts of Speech" key='parts_of_speech'}}</label>
+      <div class="col-sm-5">
+        {{input type='text' id='parts_of_speech' value=model.parts_of_speech class='form-control'}}
+        comma-separated, most common first
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="usage_examples" class="col-sm-3 control-label">
+        {{t "Usage Examples" key='usage_examples'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Ideas for different ways this word can be used, or specific situations where it could be useful" key='usage_examples_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        {{prompt-carousel entries=model.usage_examples type='usage_example'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="modeling_examples" class="col-sm-3 control-label">
+        {{t "Modeling Examples" key='modeling_examples'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Example phrases that modelers can use to teach or reinforce this word to communicators (remember, always try to model a level higher than the communicator)" key='modeling_examples_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        <p class='form-control-static'>{{t "Level 1 (1-button communicators)" key='level_1'}}</p>
+        {{prompt-carousel entries=model.level_1_modeling_examples type='modeling'}}
+      </div>
+      <div class="col-sm-5 col-sm-offset-3">
+        <p class='form-control-static'>{{t "Level 2 (2-3 button communicators)" key='level_2'}}</p>
+      </div>
+      <div class='col-sm-5 col-sm-offset-3'>
+        {{prompt-carousel entries=model.level_2_modeling_examples type='modeling'}}
+      </div>
+      <div class="col-sm-5 col-sm-offset-3">
+        <p class='form-control-static'>{{t "Level 3 (>3 button communicators)" key='level_3'}}</p>
+      </div>
+      <div class='col-sm-5 col-sm-offset-3'>
+        {{prompt-carousel entries=model.level_3_modeling_examples type='modeling'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="related_core_words" class="col-sm-3 control-label">{{t "Related Core Words" key='related_core_words examples'}}</label>
+      <div class="col-sm-2 control-label">
+        <label for='verbs'>{{t "Verbs" key='verbs'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='verbs' value=model.verbs class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='adjectives'>{{t "Adjectives" key='adjectives'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='adjectives' value=model.adjectives class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='pronouns'>{{t "Pronouns" key='pronouns'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='pronouns' value=model.pronouns class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='determiners'>{{t "Determiners" key='determiners'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='determiners' value=model.determiners class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='time_based_words'>{{t "Time-Based Words" key='time_based_words'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='time_based_words' value=model.time_based_words class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='location_based_words'>{{t "Location-Based Words" key='location_based_words'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='location_based_words' value=model.location_based_words class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='other_words'>{{t "Other Words" key='other_words'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='other_words' value=model.other_words class='form-control' placeholder='list, of, core, words'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="related_categories" class="col-sm-3 control-label">{{t "Related Categories and Fringe Topics" key='related_categories'}}</label>
+      <div class="col-sm-5">
+        {{input type='text' id='related_categories' value=model.related_categories class='form-control' placeholder="list, of, categories"}}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="activity_ideas" class="col-sm-3 control-label">
+        {{t "Activity Ideas" key='activity_ideas'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Quick or fun activities that may introduce speech opportunities" key='activity_ideas_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        {{prompt-carousel entries=model.activity_ideas type='description_with_link'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="books" class="col-sm-3 control-label">
+        {{t "Books" key='books'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Books that use the word or can be used to help prompt for the word" key='books_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        {{prompt-carousel entries=model.books type='book'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="videos" class="col-sm-3 control-label">
+        {{t "Videos" key='videos'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Any related YouTube videos" key='videos_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        {{prompt-carousel entries=model.videos type='video'}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="phrase_categories" class="col-sm-3 control-label">
+        {{t "Phrase Categories" key='phrase_categories'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Different types of phrases, from questions to choice-making to observations, can use leverage core words and phrases" key='phrase_categories_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        {{phrase-categories entries=model.phrase_categories edit=true}}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="references" class="col-sm-3 control-label">{{t "References" key='references'}}</label>
+      <div class='col-sm-5'>
+        Links or justifications for content:<br/>
+        {{textarea id='references' class='form-control' value=model.references rows=4 cols=30}}
+      </div>
+    </div>
+    <div class='form-group'>
+      <div class='col-sm-5 col-sm-offset-3'>
+        <button class='btn btn-primary' type='submit' {{action 'save'}} disabled={{status.saving}}>
+          {{#if status.saving}}
+            {{t "Saving Settings..." key='saving_settings'}}
+          {{else if status.error}}
+            {{t "Error Saving Settings" key='error_saving_settings'}}
+          {{else}}
+            {{t "Save Settings" key='save_settings'}}
+          {{/if}}
+        </button>
+        <button class='btn btn-default' type='button' {{action 'cancel'}}>{{t "Cancel" key='cancel'}}</button>
+      </div>
+    </div>
+  </form>
+{{/unless}}
