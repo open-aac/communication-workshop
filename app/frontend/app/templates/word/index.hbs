@@ -30,7 +30,9 @@
     {{example-carousel entries=model.usage_examples type='usage_example'}}
   </div>
 {{else}}
-  - {{partial 'none-specified'}}
+  <div style='padding: 30px 20px;'>
+    {{partial 'none-specified'}}
+  </div>
 {{/if}}
 
 <h2>{{t "Modeling Examples" key='modeling_examples'}}</h2>
@@ -45,7 +47,10 @@
     {{example-carousel entries=current_level.modeling_examples type='modeling'}}
   </div>
 {{else}}
-  - {{partial 'none-specified'}}
+  <em class='text-muted'>{{current_level.description}}</em>
+  <div style='padding: 30px 20px;'>
+    {{partial 'none-specified'}}
+  </div>
 {{/if}}
 
 <h2>{{t "Related Core Words" key='related_core_words'}}</h2>
@@ -107,19 +112,30 @@
     {{example-carousel entries=current_activity.list type=current_activity.type}}
   </div>
 {{else}}
-  - {{partial 'none-specified'}}
+  <div style='padding: 30px 20px;'>
+    {{partial 'none-specified'}}
+  </div>
 {{/if}}
 
 <h2>{{t "Attribution and References" key='attribution_and_references'}}</h2>
+<div style='max-width: 600px;'>
+  {{t "This material is released by CoughDrop, Inc. and the authors listed under a" key='license_1'}}
+  <a href='https://creativecommons.org/licenses/by/4.0/' target='_blank'>{{t "CC Attribution" key='cc_by'}}</a> {{t "license. You are free to use it in your own materials with proper attribution." key='license_2'}}<br/><br/>
+</div>
 {{#if model.approved_user_identifiers}}
-  Attributes authors:
+  <strong>{{t "Attributed authors:" key='attributed_authors'}}</strong>
   <ul class='list-unstyled' style='margin-left: 20px;'>
   {{#each model.approved_user_identifiers as |id|}}
     <li>{{id}}</li>
   {{/each}}
   </ul>
 {{/if}}
-<div style='white-space: pre-line;'>{{model.references}}</div>
+{{#if model.references}}
+<div style='white-space: pre-line;'>
+<strong>{{t "References:" key='references'}}</strong>
+{{model.references}}
+</div>
+{{/if}}
 
 </div>
 {{#unless editing}}
@@ -506,7 +522,8 @@
         <label for="attribution" class="col-sm-3 control-label">{{t "Attribution" key='attribution'}}</label>
         <div class="col-sm-5">
           <p class='form-control-static'>
-            {{t "If your revision is accepted, you will be included as one of the authors for this content. Please note that submitted material will be released under a Creative Commons (<a href='https://creativecommons.org/licenses/by/4.0/'>CC-By</a>) license, which allows for commercial or non-commercial use with attribution." key='license_reminder'}}
+            {{t "If your revision is accepted, you will be included as one of the authors for this content. Please note that submitted material will be released under a Creative Commons (CC-By) license, which allows for commercial or non-commercial use with attribution." key='license_reminder'}}
+            <a href='https://creativecommons.org/licenses/by/4.0/' target='_blank'>{{t "review CC-By license details here" key='review_cc_by_license'}}</a>
           </p>
         </div>
       </div>
