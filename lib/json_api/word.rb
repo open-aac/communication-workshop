@@ -12,18 +12,20 @@ module JsonApi::Word
     json['locale'] = word.locale
     json['pending'] = !word.id
     
-    if args[:permissions] && word.data
+    if args[:permissions]
       json['permissions'] = word.permissions_for(args[:permissions])
-      # other data to include
-      WordData::STRING_PARAMS.each do |param|
-        json[param] = word.data[param].to_s if word.data[param]
+      if word.data
+        # other data to include
+        WordData::STRING_PARAMS.each do |param|
+          json[param] = word.data[param].to_s if word.data[param]
+        end
+        WordData::OBJ_PARAMS.each do |param|
+          json[param] = word.data[param] if word.data[param]
+        end
+        json['related_identifiers'] = word.data['all_user_identifiers']
+        json['approved_user_identifiers'] = word.data['approved_user_identifiers']
+        json['revisions'] = word.data['revisions'] || []
       end
-      WordData::OBJ_PARAMS.each do |param|
-        json[param] = word.data[param] if word.data[param]
-      end
-      json['related_identifiers'] = word.data['all_user_identifiers']
-      json['approved_user_identifiers'] = word.data['approved_user_identifiers']
-      json['revisions'] = word.data['revisions'] || []
     end
     json
   end
