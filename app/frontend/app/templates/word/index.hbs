@@ -84,9 +84,7 @@
 
 <h2>{{t "Related Topics" key='related_topics'}}</h2>
 {{#if model.related_categories}}
-  <div class='well'>
-    {{category-list list=model.related_categories}}
-  </div>
+  {{category-list list=model.related_categories}}
 {{else}}
   - {{partial 'none-specified'}}
 {{/if}}
