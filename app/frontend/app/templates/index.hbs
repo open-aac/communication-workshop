@@ -1,30 +1,66 @@
-<h1>{{t "Words and Stuff" key='words_and_stuff'}}</h1>
+<h1>{{t "Super Awesome Words!" key='words_and_stuff'}}</h1>
+
+<div class='row'>
+  <div class='banner col-sm-12'>
+    {{#if session.isAuthenticated}}
+      Show words you're currently focusing on, with some kind of history function/progress indicator.<br/><br/>
+    {{/if}}
+    {{#unless no_more_lessons}}
+      Next Lesson:
+      <a href='#' style='font-size: 20px;'>{{t "Something cool and important for you to learn." key='lesson_name'}}</a>
+    {{/unless}}
+    <br/>(localStorage to remember if they've done any before registering, even)
+    <div style='text-align: center; margin: 50px;'>
+      <button class='btn btn-primary btn-lg'>{{t "What Should I Do Next? Surprise Me!" key='surprise_me'}}</button>
+    </div>
+  </div>
+
+  <div class='col-sm-6' style='text-align: center;'>
+    <h4>{{t "Words" key='words'}}</h4>
+    {{#if words.loading}}
+      {{t "Loading words..." key='loading_words'}}
+    {{else if words.error}}
+      {{t "Error loading words" key='error_loading_words'}}
+    {{else if words}}
+      <div style='max-width: 300px; margin: 0 auto;'>
+      <div class='list-group pills'>
+        {{#each words as |word|}}
+          {{#link-to 'word.index' word.word word.locale class='list-group-item'}}{{word.word}}{{/link-to}}
+        {{/each}}
+      </div>
+      </div>
+    {{else}}
+      {{t "No data to show" key='no_data'}}
+    {{/if}}
+  </div>
+  <div class='col-sm-6' style='text-align: center;'>
+    <h4>{{t "Categories" key='categories'}}</h4>
+    {{#if categories.loading}}
+      {{t "Loading categories..." key='loading_categories'}}
+    {{else if categories.error}}
+      {{t "Error loading categories" key='error_loading_categories'}}
+    {{else if categories}}
+      <div style='max-width: 300px; margin: 0 auto;'>
+      <div class='list-group pills'>
+        {{#each categories as |cat|}}
+          {{#link-to 'category.index' cat.category cat.locale class='list-group-item'}}{{cat.category}}{{/link-to}}
+        {{/each}}
+      </div>
+      </div>
+    {{else}}
+      {{t "No data to show" key='no_data'}}
+    {{/if}}
+  </div>
+  {{#if session.isAuthenticated}}
+    <div class='col-sm-6 col-sm-offset-3' style='text-align: center;'>
+      <h4>Activity Report!</h4>
+      You did lots of cool stuff, yo?
+    </div>
+  {{/if}}
+</div>
+
 
 <div style='white-space: pre-line;'>
-when you're logged in, put an activity report front and center to track current focus
-
-Here are some words that you might think are cool:
-
-{{#if words.loading}}
-  {{t "Loading words..." key='loading_words'}}
-{{else if words.error}}
-  {{t "Error loading words" key='error_loading_words'}}
-{{else if words}}
-  {{#each words as |word|}}
-- {{#link-to 'word.index' word.word word.locale}}{{word.word}}{{/link-to}}
-  {{/each}}
-{{else}}
-  {{t "No data to show" key='no_data'}}
-{{/if}}
-
-
-Here are some words you've been working on lately:
-
-- a
-- b
-
-[ Surprise me! ]
-
 Activities based around a topic/context instead of a word:
 
 - meal time
@@ -32,11 +68,6 @@ Activities based around a topic/context instead of a word:
 - traveling
 - doctor appointment
 - eating at a restaurant
-
-
-[ Learn something about AAC and intervention strategies ]
-
-[ Quick one-off activity ]
 
 
 </div>
