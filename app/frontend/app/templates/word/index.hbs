@@ -137,17 +137,23 @@
         <div style='margin-top: 20px;'>
           {{t "Pending revisions submitted by:" key='pending_revisions_submitted_by'}}
           <div class='list-group' style='max-width: 250px;'>
-          {{#each model.revisions as |rev|}}
-            <a href="#" {{action 'set_revision' rev}} class='list-group-item'>{{rev.user_identifier}}</a>
-          {{/each}}
+            {{#each model.revisions as |rev|}}
+              <a href="#" {{action 'set_revision' rev}} class='list-group-item'>{{rev.user_identifier}}</a>
+            {{/each}}
           </div>
         </div>
       {{/if}}
     {{else if session.isAuthenticated}}
       <button class='btn btn-default' {{action 'edit'}}>{{t "Suggest Word Revisions" key='suggest_word_changes'}}</button>
       {{#if model.revisions}}
-        {{t "Pending revisions submitted by " key='pending_revisions_submitted_by'}}
-        {{#each model.revisions as |rev|}}{{rev.user_identifier}}{{/each}}
+        <div style='margin-top: 20px;'>
+          {{t "Pending revisions submitted by:" key='pending_revisions_submitted_by'}}
+          <div class='list-group' style='max-width: 250px;'>
+            {{#each model.revisions as |rev|}}
+              {{rev.user_identifier}}
+            {{/each}}
+          </div>
+        </div>
       {{/if}}
     {{/if}}
   </div>

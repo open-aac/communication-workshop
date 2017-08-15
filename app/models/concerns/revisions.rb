@@ -23,6 +23,7 @@ module Revisions
           obj_ids = self.data[key].map{|o| o['id'] }.compact
           rev_ids = val.map{|o| o['id'] }.compact
           val.each do |v|
+            next if v.is_a?(String)
             if !v['id'] || !obj_ids.include?(v['id'])
               changes[key] ||= []
               v['action'] = 'add'

@@ -5,6 +5,7 @@ module JsonApi::Token
     json['access_token'] = token
     json['token_type'] = 'bearer'
     json['user_name'] = user.settings['user_name']
+    json['name'] = user.settings['name']
     
     json
   end

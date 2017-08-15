@@ -12,7 +12,7 @@
   </form>
   <div style='float: right; padding: 5px;'>
     {{#if session.isAuthenticated}}
-      {{session.user_name}}&nbsp;&nbsp;
+      {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}&nbsp;&nbsp;
       <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
     {{else}}
       {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}

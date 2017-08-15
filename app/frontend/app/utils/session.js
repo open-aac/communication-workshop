@@ -65,6 +65,7 @@ var session = Ember.Object.extend({
           session.store('auth', {
             access_token: response.access_token,
             user_name: response.user_name,
+            name: response.name
           });
           session.store('just_logged_in', true);
           session.restore();
@@ -103,6 +104,9 @@ var session = Ember.Object.extend({
       if(data.user_name) {
         session.set('user_name', data.user_name);
       }
+      if(data.name) {
+        session.set('name', data.name);
+      }
       if(data.meta && data.meta.fakeXHR && data.meta.fakeXHR.browserToken) {
         session.set('browserToken', data.meta.fakeXHR.browserToken);
       }
@@ -129,6 +133,7 @@ var session = Ember.Object.extend({
       session.set('isAuthenticated', true);
       session.set('access_token', store_data.access_token);
       session.set('user_name', store_data.user_name);
+      session.set('name', store_data.name);
       session.set('as_user_id', store_data.as_user_id);
     } else if(!store_data.access_token) {
       session.invalidate();
@@ -147,6 +152,7 @@ var session = Ember.Object.extend({
     var data = session.restore();
     data.access_token = options.access_token;
     data.user_name = options.user_name;
+    data.name = options.name;
     session.clear();
     session.store('auth', data);
 
@@ -174,6 +180,7 @@ var session = Ember.Object.extend({
       session.set('isAuthenticated', false);
       session.set('access_token', null);
       session.set('user_name', null);
+      session.set('name', null);
       session.set('as_user_id', null);
     });
   }

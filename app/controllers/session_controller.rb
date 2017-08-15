@@ -22,7 +22,8 @@ class SessionController < ApplicationController
       valid = @api_auth.valid_token?(params['access_token'])
       render json: {
         authenticated: valid, 
-        user_name: @api_user.settings['user_name']
+        user_name: @api_user.settings['user_name'],
+        name: @api_user.settings['name']
       }.to_json
     else
       render json: {
