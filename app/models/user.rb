@@ -69,4 +69,29 @@ class User < ApplicationRecord
     ua = UserAuth.find_or_create_by(:user => self)
     ua.generate_token!
   end
+  
+  def self.assert_user!(opts)
+    ua = UserAlias.find_or_create_by(:identifier => opts[:remote_user_name], :source => opts[:source])
+    ua.settings[:access_token] = opts[:access_token]
+    ua.settings[:metadata] = opts[:metadata]
+    user = ua.user
+    if !ua.user
+      if opts[:current_user]
+        user = opts[:current_user]
+        user.settings['email'] ||= opts[:email]
+        user.settings['name'] ||= opts[:remote_name]
+      else
+        user = User.new
+        user.settings = {
+          user_name: "#{opts[:source]}::#{opts[:remote_user_name]}",
+          email: opts[:email],
+          name: opts[:remote_name]
+        }
+      end
+      user.save!
+    end
+    ua.user = user
+    ua.save
+    user
+  end
 end

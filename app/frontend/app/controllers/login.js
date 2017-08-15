@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import session from '../utils/session';
+import modal from '../utils/modal';
 
 export default Ember.Controller.extend({
   actions: {
@@ -12,6 +13,11 @@ export default Ember.Controller.extend({
       }).then(function(res) {
         _this.transitionToRoute('index');
       });
+    },
+    external_login: function(service) {
+      if(service == 'coughdrop') {
+        modal.open('coughdrop-login');
+      }
     }
   }
 });

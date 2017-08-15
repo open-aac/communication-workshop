@@ -30,4 +30,47 @@ class SessionController < ApplicationController
       }.to_json
     end
   end
+  
+  def coughdrop_auth
+    if params['id'] == 'check'
+      if ENV['COUGHDROP_HOST'] && ENV['COUGHDROP_CLIENT_ID']
+        redirect_to "#{ENV['COUGHDROP_HOST']}/oauth2/token?client_id=#{ENV['COUGHDROP_CLIENT_ID']}&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+      else
+        render text: "CoughDrop not configured"
+      end
+    elsif params['id'] == 'confirm'
+      if !ENV['COUGHDROP_CLIENT_ID'] || !ENV['COUGHDROP_CLIENT_SECRET']
+        api_error 400, {error: "CoughDrop not configured"}
+      elsif params['code']
+        res = Typhoeus.post("#{ENV['COUGHDROP_HOST']}/oauth2/token", body: {
+          client_id: ENV['COUGHDROP_CLIENT_ID'],
+          client_secret: ENV['COUGHDROP_CLIENT_SECRET'],
+          code: params['code']
+        })
+        json = JSON.parse(res.body) rescue nil
+        return api_error(400, {error: "Invalid response"}) unless json
+        token = json
+        res = Typhoeus.get("#{ENV['COUGHDROP_HOST']}/api/v1/users/self?access_token=#{token['access_token']}")
+        json = JSON.parse(res.body) rescue nil
+        return api_error(400, {error: "Error retrieving user details", src: res.body}) unless json && json['user']
+        user = json['user']
+        
+        local_user = User.assert_user!({
+          remote_user_name: token['user_name'],
+          remote_name: user['name'],
+          email: user['email'],
+          access_token: token['access_token'],
+          source: 'coughdrop',
+          current_user: @api_user,
+          metadata: {
+            scopes: token['scopes']
+          }
+        })
+        token = local_user.generate_token!
+        render json: JsonApi::Token.as_json(token, local_user).to_json
+      else
+        api_error 400, {error: "Code missing from response"}
+      end
+    end
+  end
 end

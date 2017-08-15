@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/login' => ember_handler
   post '/token' => 'session#token'
   get '/api/v1/token_check' => 'session#token_check'
+  get '/auth/coughdrop/:id' => 'session#coughdrop_auth'
 
   protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|
     u = User.find_by(:user_name => username)
