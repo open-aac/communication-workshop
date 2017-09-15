@@ -13,6 +13,7 @@ class Api::SearchController < ApplicationController
         author: data['author'],
         url: "https://tarheelreader.org#{data['link']}",
         id: "tarheel:#{id}",
+        contents: data['pages'].map{|p| p['text'] }.join(' '),
         image_url: "https://tarheelreader.org#{data['pages'][1]['url']}",
         attribution: "https://tarheelreader.org/photo-credits/?id=#{data['ID']}",
         book_type: 'tarheel'
