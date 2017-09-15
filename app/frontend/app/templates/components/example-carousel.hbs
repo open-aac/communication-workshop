@@ -1,5 +1,5 @@
-<div style={{if tall 'margin-bottom: 40px;'}}>
-  <div style='float: left; width: 60px;'>
+<div style={{if tall 'margin-bottom: 40px;'}} class={{if fullscreen 'box fullscreen' 'box'}}>
+  <div class='left'>
     <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'>Prev</button>
     {{#if entries.length}}
       <div style='text-align: right;'>
@@ -7,10 +7,10 @@
       </div>
     {{/if}}
   </div>
-  <div style='float: left; width: calc(100% - 130px); margin: 0 5px;'>
+  <div class='middle'>
     {{#if current_entry}}
-      <div style='border: 1px solid #ccc; padding: 5px;'>
-        {{image-with-attribution stretch=true image=current_entry.image tall=tall border=false url=current_entry.url}}
+      <div class='entry'>
+        {{image-with-attribution stretch=true image=current_entry.image tall=tall border=false url=current_entry.url fullscreen=fullscreen}}
         <div style='text-align: center;'>
           {{#if prompt_type}}
             {{current_entry.prompt_type}}<br/>
@@ -23,7 +23,7 @@
           {{else}}
             {{current_entry.text}}
           {{/if}}
-          <div style='font-size: 12px; color: #888;'>
+          <div class='entry_description'>
             {{#if description}}
               {{current_entry.description}}<br/>
             {{/if}}
@@ -34,12 +34,12 @@
         </div>
       </div>
     {{else}}
-      <div style='width: 100%; height: 80px; border: 1px solid #ccc; text-align: center; padding-top: 2px;'>
+      <div class='blank_entry'>
         {{t "No Entries Added" key='no_entries_yet'}}
       </div>
     {{/if}}
   </div>
-  <div style='float: left; width: 60px;'>
+  <div class='right'>
     <button class='btn btn-default' {{action 'next'}} style='width: 100%;'>Next</button>
     {{#if update_revision_object}}
       <button class='btn btn-default' {{action 'confirm_revision'}} style='width: 100%;'>
@@ -54,7 +54,22 @@
           <span class='glyphicon glyphicon-plus'></span>
         {{/if}}
       </button>
+    {{else if session.isAuthenticated}}
+      {{#unless fullscreen}}
+        {{#if pinned}}
+          <button class='btn btn-default' style='width: 100%;' {{action 'pin' current_entry}}><span class='glyphicon glyphicon-star'></span></button>
+        {{else}}
+          <button class='btn btn-default' style='width: 100%;' {{action 'unpin' current_entry}}><span class='glyphicon glyphicon-star-empty'></span></button>
+        {{/if}}
+      {{/unless}}
     {{/if}}
+    <button class='btn btn-default' style='width: 100%;' {{action 'full_screen'}}>
+      {{#if fullscreen}}
+        <span class='glyphicon glyphicon-resize-small'></span>
+      {{else}}
+        <span class='glyphicon glyphicon-resize-full'></span>
+      {{/if}}
+    </button>
   </div>
   <div style='clear: left;'></div>
 </div>

@@ -2,21 +2,14 @@
 {{#if model.image}}
   <div>
     <img src={{model.image.image_url}} style={{image_style}} />
-    {{model.description}}
+    <div style='margin-bottom: 20px;'>
+      {{model.description}}
+    </div>
   </div>
 {{/if}}
 
-<div style='white-space: pre-line;'>
-  [ Generate a Printed Packet for the Word ]
-  (checkboxes to include, everything by default)
-  (not randomized by default, needs to feel consistent)
-  [ usage prompt ]
-  [ learning project ]
-  [ activity ]
-  [ story ]
-  [ topic starter ]
-  [ quiz ]
-</div>
+<button class='btn btn-default'><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
+<button class='btn btn-default'><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
 
 <h2>{{t "Modeling Examples" key='modeling_examples'}}</h2>
 <ul class="nav nav-pills all_border" style='white-space: initial;'>
@@ -30,7 +23,9 @@
     {{example-carousel entries=current_level.modeling_examples type='modeling'}}
   </div>
 {{else}}
-  - {{partial 'none-specified'}}
+  <div style='padding: 30px 20px;'>
+    {{partial 'none-specified'}}
+  </div>
 {{/if}}
 
 <h2>{{t "Related Core Words" key='related_core_words'}}</h2>

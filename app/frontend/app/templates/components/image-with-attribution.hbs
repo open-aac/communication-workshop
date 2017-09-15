@@ -1,6 +1,7 @@
 <div style={{container_style}}>
-  {{#if image.image_url}}
-    <img src={{image.image_url}} style={{image_style}} />
+  {{#if image_url.loading}}
+  {{else if image_url}}
+    <img src={{image_url}} style={{image_style}} />
   {{else}}
     {{t "No Picture Set" key='no_picture_set'}}
   {{/if}}

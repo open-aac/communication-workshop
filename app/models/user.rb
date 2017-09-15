@@ -44,6 +44,148 @@ class User < ApplicationRecord
     res
   end
   
+  def add_word(word, params)
+    append = params['append']
+    users = params['users']
+    self.settings['current_words'] ||= []
+    self.settings['current_words'] = [] unless append
+    self.settings['current_words'] << {
+      id: word.display_id,
+      internal_id: word.global_id,
+      word: word.word,
+      locale: word.locale,
+      added: Time.now.iso8601,
+      concludes: words_expire.from_now.iso8601
+    }
+    self.save
+    [self.settings['user_name']]
+  end
+  
+  def words_expire
+    4.weeks
+  end
+
+  def remove_word(word, params)
+    users = params['users']
+    self.settings['current_words'] ||= []
+    self.settings['current_words'] = self.settings['current_words'].select{|w| w['internal_id'] != word.global_id }
+    self.save
+    [self.settings['user_name']]
+  end
+  
+  def current_words(include_linked_users=true)
+    words = {}
+    (self.settings['current_words'] || []).each do |word|
+      words[word['id']] ||= {
+        'id' => word['id'],
+        'internal_id' => word['internal_id'],
+        'word' => word['word'],
+        'locale' => word['locale'],
+        'concludes' => word['concludes'],
+        'users' => []
+      }
+      # TODO: figure out concludes with multiple users
+      words[word['id']]['users'] << self.settings['user_name']
+    end
+    res = []
+    words.each do |id, word|
+      res << word
+    end
+    res
+  end
+  
+  def related_words(include_linked_users=true)
+    current = self.current_words
+    current_hash = {}
+    current.each{|w| current_hash[w['word']] = true }
+    past = self.past_words
+    link_weights = {}
+    valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
+    valid.each do |word|
+      word.linked_words.each do |link, tally|
+        link_weights[word.locale] ||= {}
+        link_weights[word.locale][link] ||= 0
+        link_weights[word.locale][link] += tally
+        link_weights[word.locale][link] += tally if current_hash[link]
+      end
+    end
+    res = []
+    link_weights.each do |locale, weights|
+      matches = WordData.where(:locale => locale, :word => weights.to_a.map(&:first))
+      map = {}
+      matches.each{|w| map[w.word] = w }
+      weights.to_a.sort_by(&:last).reverse.map(&:first).each do |str|
+        res << map[str] if map[str] && !current_hash[str]
+      end
+    end
+    if res.length < 25
+      WordData.all.order('random_id').limit(50).each do |word|
+        if res.length < 25
+          res << word unless res.include?(word) || current_hash[word.word]
+        end
+      end
+    end
+    res
+  end
+
+  def related_categories(include_linked_users=true)
+    current = self.current_words
+    current_hash = {}
+    current.each{|w| current_hash[w['word']] = true }
+    past = self.past_words
+    link_weights = {}
+    valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
+    valid.each do |word|
+      cats = (word.data['related_categories'] || '').split(/,/)
+      link_weights[word.locale]
+      cats.each do |link, tally|
+        link_weights[word.locale] ||= {}
+        link_weights[word.locale][link] ||= 0
+        link_weights[word.locale][link] += 1
+        link_weights[word.locale][link] += 1 if current_hash[word.word]
+      end
+    end
+    res = []
+    link_weights.each do |locale, weights|
+      matches = WordCategory.where(:locale => locale, :category => weights.to_a.map(&:first))
+      map = {}
+      matches.each{|w| map[w.category] = w }
+      weights.to_a.sort_by(&:last).reverse.map(&:first).each do |str|
+        res << map[str] if map[str] && !current_hash[str]
+      end
+    end
+    if res.length < 25
+      WordCategory.all.order('random_id').limit(50).each do |cat|
+        if res.length < 25
+          res << cat unless res.include?(cat)
+        end
+      end
+    end
+    res
+  end
+  
+  def past_words(include_linked_users=true)
+    words = {}
+    (self.settings['past_words'] || []).each do |word|
+      words[word['id']] ||= {
+        'id' => word['id'],
+        'internal_id' => word['internal_id'],
+        'word' => word['word'],
+        'locale' => word['locale'],
+        'users' => [],
+        'added' => word['added']
+      }
+      words[word['id']]['users'] << self.settings['user_name']
+      words[word['id']]['added'] = [words[word['id']]['added'], word['added']].max
+    end
+    res = []
+    words.each do |id, word|
+      res << word
+    end
+    res
+  end
+
+  
   def self.user_name_hash(str)
     GoSecure.sha512(str, 'hashed_user_name')
   end
@@ -97,5 +239,8 @@ class User < ApplicationRecord
     ua.user = user
     ua.save
     user
+  end
+  
+  def usage_stats
   end
 end

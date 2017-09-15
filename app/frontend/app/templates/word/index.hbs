@@ -5,17 +5,35 @@
       {{button-preview button=button}}
       <img src={{model.image.image_url}} style='width: 200px; max-height: 200px; vertical-align: top;' />
     </div>
-    <br/>
-    <span style='color: #888;'>{{model.parts_of_speech}}</span>
-    {{model.description}}
 
+
+    {{#if word_status.pending}}
+      {{t "Updating word..." key='adding_word'}}
+    {{else if word_status.error}}
+      {{t "There was an error updating the word" key='error_adding_word'}}<br/>
+      {{#if word_status.added}}
+        <button class='btn btn-default' {{action 'remove_word'}}><span class='glyphicon glyphicon-zoom-out'></span> {{t "Stop Focusing on This Word" key='stop_focused_on_this_word'}}</button>
+      {{else}}
+        <button class='btn btn-default' {{action 'add_word'}}><span class='glyphicon glyphicon-zoom-in'></span> {{t "Focus on This Word" key='focus_on_this_word'}}</button>
+      {{/if}}
+    {{else if word_status.added}}
+      {{#if word_status.concludes}}
+        {{t "focusing on this word, done" key='concludes'}} {{from_now word_status.concludes}}<br/>
+      {{/if}}
+      <button class='btn btn-default' {{action 'remove_word'}}><span class='glyphicon glyphicon-zoom-out'></span> {{t "Stop Focusing on This Word" key='stop_focused_on_this_word'}}</button>
+    {{else}}
+      <button class='btn btn-default' {{action 'add_word'}}><span class='glyphicon glyphicon-zoom-in'></span> {{t "Focus on This Word" key='focus_on_this_word'}}</button>
+    {{/if}}
+    <div style='margin-bottom: 20px;'>
+      <span style='color: #888;'>{{model.parts_of_speech}}</span>
+      {{model.description}}
+    </div>
   </div>
 {{/if}}
 
 <button class='btn btn-default'><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
 <button class='btn btn-default'><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
 <button class='btn btn-default'><span class='glyphicon glyphicon-question-sign'></span> {{t "Start a Quiz" key='start_a_quiz'}}</button>
-<button class='btn btn-default'><span class='glyphicon glyphicon-zoom-in'></span> {{t "Focus on This Word" key='focus_on_this_word'}}</button>
 
 <h2>{{t "Examples of When to Use" key='usage_examples'}}</h2>
 {{#if model.usage_examples}}
@@ -41,6 +59,25 @@
   </div>
 {{else}}
   <em class='text-muted'>{{current_level.description}}</em>
+  <div style='padding: 30px 20px;'>
+    {{partial 'none-specified'}}
+  </div>
+{{/if}}
+
+<h2>{{t "Additional Resources" key='additional_resources'}}</h2>
+<ul class="nav nav-pills all_border" style='white-space: initial;'>
+  <li role="presentation" class={{if current_activity.learning_projects 'active'}}><a href="#" {{action 'set_activity' 'learning_projects'}}>{{t "Learning Projects" key='learning_projects'}}</a></li>
+  <li role="presentation" class={{if current_activity.activities 'active'}}><a href="#" {{action 'set_activity' 'activities'}}>{{t "Activity Ideas" key='activities'}}</a></li>
+  <li role="presentation" class={{if current_activity.books 'active'}}><a href="#" {{action 'set_activity' 'books'}}>{{t "Books" key='books'}}</a></li>
+  <li role="presentation" class={{if current_activity.topic_starters 'active'}}><a href="#" {{action 'set_activity' 'topic_starters'}}>{{t "Topic Starters" key='topic_starters'}}</a></li>
+  <li role="presentation" class={{if current_activity.prompts 'active'}}><a href="#" {{action 'set_activity' 'prompts'}}>{{t "Prompts" key='prompts'}}</a></li>
+  <li role="presentation" class={{if current_activity.videos 'active'}}><a href="#" {{action 'set_activity' 'videos'}}>{{t "Videos" key='videos'}}</a></li>
+</ul>
+{{#if current_activity.list}}
+  <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
+    {{example-carousel entries=current_activity.list type=current_activity.type}}
+  </div>
+{{else}}
   <div style='padding: 30px 20px;'>
     {{partial 'none-specified'}}
   </div>
@@ -87,25 +124,6 @@
   {{category-list list=model.related_categories}}
 {{else}}
   - {{partial 'none-specified'}}
-{{/if}}
-
-<h2>{{t "Additional Resources" key='additional_resources'}}</h2>
-<ul class="nav nav-pills all_border" style='white-space: initial;'>
-  <li role="presentation" class={{if current_activity.learning_projects 'active'}}><a href="#" {{action 'set_activity' 'learning_projects'}}>{{t "Learning Projects" key='learning_projects'}}</a></li>
-  <li role="presentation" class={{if current_activity.activities 'active'}}><a href="#" {{action 'set_activity' 'activities'}}>{{t "Activity Ideas" key='activities'}}</a></li>
-  <li role="presentation" class={{if current_activity.books 'active'}}><a href="#" {{action 'set_activity' 'books'}}>{{t "Books" key='books'}}</a></li>
-  <li role="presentation" class={{if current_activity.topic_starters 'active'}}><a href="#" {{action 'set_activity' 'topic_starters'}}>{{t "Topic Starters" key='topic_starters'}}</a></li>
-  <li role="presentation" class={{if current_activity.prompts 'active'}}><a href="#" {{action 'set_activity' 'prompts'}}>{{t "Prompts" key='prompts'}}</a></li>
-  <li role="presentation" class={{if current_activity.videos 'active'}}><a href="#" {{action 'set_activity' 'videos'}}>{{t "Videos" key='videos'}}</a></li>
-</ul>
-{{#if current_activity.list}}
-  <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
-    {{example-carousel entries=current_activity.list type=current_activity.type}}
-  </div>
-{{else}}
-  <div style='padding: 30px 20px;'>
-    {{partial 'none-specified'}}
-  </div>
 {{/if}}
 
 <h2>{{t "Attribution and References" key='attribution_and_references'}}</h2>
@@ -173,8 +191,13 @@
   <form style='margin-top: 50px;' class='form-horizontal' {{action 'save' on='submit'}}>
     <div class="form-group">
       <label for="image_url" class="col-sm-3 control-label">{{t "Image" key='image_url'}}</label>
-      <div class="col-sm-5">
+      <div class="col-sm-3">
         {{image-with-attribution image=model.image label=model.word update_image='update_image'}}
+      </div>
+      <div class='col-sm-3'>
+        {{#if model.image}}
+          {{button-preview button=button small=true}}
+        {{/if}}
       </div>
       {{#if revision.changes.image}}
         <div class='col-sm-4 revision'>

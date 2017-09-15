@@ -1,3 +1,12 @@
+# Ideal workflow:
+# people come here for some introductory training and a badge (different levels for friends, family, caregivers, therapists)
+# get suggestions for what words to focus on next
+# include a list of current focus words (by default they start to fade out after 2 weeks, are gone by 4 weeks)
+# quick popup for suggestions on what to do around the current focus words
+# quick popup for a book to read related to the current focus words
+# easy assessments based on current focus words
+
+
 class WordData < ApplicationRecord
   include SecureSerialize
   include GlobalId
@@ -16,6 +25,7 @@ class WordData < ApplicationRecord
     self.data ||= {}
     self.random_id ||= (rand(9999999999) + Time.now.to_i)
     self.enforce_ids
+    self.data['related_words'] = self.possibly_related_words
     true
   end
   
@@ -25,7 +35,7 @@ class WordData < ApplicationRecord
       if self.data[param] && self.data[param].is_a?(Array)
         self.data[param].each_with_index do |obj, idx|
           if obj.is_a?(Hash)
-            obj['id'] ||= "#{idx}_#{rand(99)}_#{Time.now.to_i}"
+            obj['id'] ||= "#{idx}_#{rand(999)}_#{Time.now.to_i}"
           end
         end
       end
@@ -33,12 +43,130 @@ class WordData < ApplicationRecord
         if rev['changes'][param] && rev['changes'][param].is_a?(Array)
           rev['changes'][param].each_with_index do |obj, idx|
             if obj.is_a?(Hash)
-              obj['id'] ||= "r#{idx}_#{rand(99)}#{Time.now.to_i}"
+              obj['id'] ||= "r#{idx}_#{rand(999)}_#{Time.now.to_i}"
             end
           end
         end
       end
     end
+  end
+  
+  def display_id
+    "#{self.word}:#{self.locale}"
+  end
+  
+  def self.suggestions_for(user, include_linked_users=false)
+    # TODO: bump if at the user's modeling level
+    # TODO: major unbump if already used or downvoted/dismissed
+    # TODO: add jitter so it's not always the same order every time
+    # TODO: weighting function for past words, words that are fading out
+    res = {
+      'modeling' => [],
+      'activities' => [],
+      'prompts' => []
+    }
+    refs = user.current_words(!!include_linked_users)
+    focus_words = refs.map{|r| r['word'] }
+    strict_re = focus_words.length > 0 ? Regexp.new(focus_words.map{|w| "\\b#{w}\\b" }.join('|'), 'i') : /$^/
+    loose_re = focus_words.length > 0 ? Regexp.new(focus_words.map{|w| "\\b#{w}" }.join('|'), 'i') : /$^/
+    # TODO: define starred_ids
+    starred_ids = {}
+    # TODO: define finished_ids
+    finished_ids = {}
+    all_ids = refs.map{|r| r['internal_id'] }
+    histories = {}
+    now = Time.now.to_i
+    year_ago = 1.year.ago.to_i
+    past_words = []
+    user.past_words.each do |word|
+      all_ids << word['internal_id']
+      stamp = Time.parse(word['added']).to_i
+      histories[word['internal_id']] = [0, stamp - year_ago].max.to_f / (now - year_ago).to_f
+      past_words << word['word']
+    end
+    strict_past = past_words.length > 0 ? Regexp.new(past_words.map{|w| "\\b#{w}\\b" }.join('|'), 'i') : /$^/
+    loose_past = past_words.length > 0 ? Regexp.new(past_words.map{|w| "\\b#{w}" }.join('|'), 'i') : /$^/
+    words = WordData.find_all_by_global_id(all_ids)
+    all_words = []
+    words.each{|word| all_words << [word, histories[word.global_id] || 1.0] }
+    all_words.each do |word, history_distance|
+      [1,2,3].each do |level|
+        (word.data["level_#{level}_modeling_examples"] || []).each do |ex|
+          score = 1
+          parts = ex['sentence'].downcase.split(/\s/)
+          matches = parts & focus_words
+          score += matches.length
+          score += ex['text'].scan(strict_re).length.to_f / 3.0
+          score += ex['text'].scan(loose_re).length.to_f / 10.0
+          score += ex['text'].scan(strict_past).length.to_f / 6.0
+          score += ex['text'].scan(loose_past).length.to_f / 10.0
+          score *= 2 if starred_ids[ex['id']]
+          score *= history_distance
+          res['modeling'] << {
+            'id' => ex['id'],
+            'word' => word.word,
+            'locale' => word.locale,
+            'level' => level,
+            'data' => ex,
+            'history_distance' => history_distance,
+            'match_score' => score.round(3)
+          } unless finished_ids[ex['id']]
+        end
+      end
+      ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos'].each do |activity|
+        (word.data[activity] || []).each do |ex|
+          score = 1
+          if ex['related_words']
+            parts = ex['related_words'].split(/[,\s]/)
+            matches = parts & focus_words
+            score += matches.length
+          end
+          if ex['supplement']
+            score += ex['supplement'].scan(strict_re).length.to_f / 6.0
+            score += ex['supplement'].scan(loose_re).length.to_f / 20.0
+            score += ex['supplement'].scan(strict_past).length.to_f / 9.0
+            score += ex['supplement'].scan(loose_past).length.to_f / 30.0
+          end
+#          raise ex.to_json if ex['id'] == '0_38_1502394250'
+          score += ex['text'].scan(strict_re).length.to_f / 3.0
+          score += ex['text'].scan(loose_re).length.to_f / 10.0
+          score += ex['text'].scan(strict_past).length.to_f / 6.0
+          score += ex['text'].scan(loose_past).length.to_f / 10.0
+          score *= 2 if starred_ids[ex['id']]
+          score *= history_distance
+          res['activities'] << {
+            'id' => ex['id'],
+            'word' => word.word,
+            'locale' => word.locale,
+            'type' => activity,
+            'data' => ex,
+            'history_distance' => history_distance,
+            'match_score' => score.round(3)
+          } unless finished_ids[ex['id']]
+        end
+      end
+      (word.data['prompts'] || []).each do |ex|
+        score = 1
+        score += ex['text'].scan(strict_re).length.to_f / 3.0
+        score += ex['text'].scan(loose_re).length.to_f / 10.0
+        score += ex['text'].scan(strict_past).length.to_f / 6.0
+        score += ex['text'].scan(loose_past).length.to_f / 20.0
+        score *= 2 if starred_ids[ex['id']]
+        score *= history_distance
+        res['prompts'] << {
+          'id' => ex['id'],
+          'word' => word.word,
+          'locale' => word.locale,
+          'data' => ex,
+          'history_distance' => history_distance,
+          'match_score' => score.round(3)
+        } unless finished_ids[ex['id']]
+      end
+    end
+    res['modeling'] = res['modeling'].shuffle.sort_by{|m| m['match_score'] }.reverse
+    res['activities'] = res['activities'].shuffle.sort_by{|m| m['match_score'] }.reverse
+    res['prompts'] = res['prompts'].shuffle.sort_by{|m| m['match_score'] }.reverse
+    res
   end
   
   def self.find_or_initialize_by_path(str)
@@ -53,12 +181,48 @@ class WordData < ApplicationRecord
     res
   end
   
+  def linked_words
+    all = (self.data['related_words'] || self.possibly_related_words).map(&:downcase)
+    tallies = {}
+    all.each do |word|
+      tallies[word] = (tallies[word] || 0) + 1
+    end
+    tallies
+  end
+  
+  def possibly_related_words
+    res = []
+    ['verbs', 'adjectives', 'pronouns', 'determiners', 'time_based_words', 'location_based_words', 'other_words'].each do |key|
+      words = self.data[key]
+      res += words.split(/,/) if words && words.length > 0
+      res += words.split(/,/) if words && words.length > 0
+    end
+    [1,2,3].each do |level|
+      (self.data["level_#{level}_modeling_examples"] || []).each do |ex|
+        res += ex['sentence'].downcase.split(/\s/) if ex['sentence']
+        res += ex['text'].downcase.split(/\s/) if ex['text']
+      end
+    end
+    ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos'].each do |activity|
+      (self.data[activity] || []).each do |ex|
+        res += ex['related_words'].split(/[,\s]/) if ex['related_words']
+        res += ex['supplement'].split(/\s/) if ex['supplement']
+        res += ex['text'].split(/\s/) if ex['text']
+      end
+    end
+    (self.data['prompts'] || []).each do |ex|
+      res += ex['text'].split(/\s/) if ex['text']
+    end
+    res
+  end
+
+  
   STRING_PARAMS = ['border_color', 'background_color', 'description', 'parts_of_speech', 'verbs',
         'adjectives', 'pronouns', 'determiners', 'time_based_words', 'location_based_words',
         'other_words', 'related_categories', 'references']
   OBJ_PARAMS = ['image', 'usage_examples', 'level_1_modeling_examples', 'level_2_modeling_examples', 
         'level_3_modeling_examples', 'prompts', 'learning_projects', 'activity_ideas', 'books', 
-        'topic_starters', 'videos', 'authors']
+        'topic_starters', 'videos']
   
   def process_params(params, user_params)
     self.generate_defaults

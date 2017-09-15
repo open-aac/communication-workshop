@@ -10,13 +10,40 @@
       <a href='#' style='font-size: 20px;'>{{t "Something cool and important for you to learn." key='lesson_name'}}</a>
     {{/unless}}
     <br/>(localStorage to remember if they've done any before registering, even)
-    <div style='text-align: center; margin: 50px;'>
-      <button class='btn btn-primary btn-lg'>{{t "What Should I Do Next? Surprise Me!" key='surprise_me'}}</button>
-    </div>
   </div>
+  {{#if session.user.current_words}}
+    <div class='col-sm-6 col-sm-offset-3'>
+      <h2>{{t "Current Focus Words" key='current_focus_words'}}</h2>
+      {{#each session.user.current_words as |word|}}
+        <div style='max-width: 300px; margin: 0 auto;'>
+          <div class='list-group pills'>
+            {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+              {{word.word}}
+              {{#if word.concludes}}
+                <div style='font-size: 14px;'>{{t "concludes" key='concludes'}} {{from_now word.concludes}}</div>
+              {{/if}}
+            {{/link-to}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    <div class='col-sm-12' style='margin-top: -50px;'>
+      <div style='text-align: center; margin: 50px;'>
+        <button class='btn btn-primary btn-lg' {{action 'suggestions' 'modeling'}}>{{t "Modeling Ideas" key='modeling_ideas'}}</button>
+        <button class='btn btn-primary btn-lg' {{action 'suggestions' 'activities'}}>{{t "Activity Ideas" key='activity_ideas'}}</button>
+        <button class='btn btn-primary btn-lg' {{action 'suggestions' 'prompts'}}>{{t "Prompts" key='prompts'}}</button>
+      </div>
+    </div>
+  {{/if}}
 
   <div class='col-sm-6' style='text-align: center;'>
-    <h4>{{t "Words" key='words'}}</h4>
+    <h4>
+      {{#if session.user.current_words}}
+        {{t "Additional Words" key='additional_words'}}
+      {{else}}
+        {{t "Words" key='words'}}
+      {{/if}}
+    </h4>
     {{#if words.loading}}
       {{t "Loading words..." key='loading_words'}}
     {{else if words.error}}

@@ -93,10 +93,63 @@ export default Ember.Controller.extend({
     res[activity] = true;
     return res;
   }.property('activity', 'model.id'),
+  word_status: function() {
+    var res = {};
+    if(this.get('adding.pending')) {
+      res = {pending: true};
+    } else if(this.get('adding.error')) {
+      res = {error: true};
+    }
+    if(this.get('session.user')) {
+      var words = this.get('session.user.current_words') || [];
+      var model = this.get('model');
+      var match = words.find(function(w) { return w.id == model.get('id'); });
+      if(match) {
+        res.added = true;
+        res.concludes = match.concludes;
+        res.users = match.users;
+      }
+    }
+    return res;
+  }.property('adding', 'session.user.id', 'session.user.current_words'),
   actions: {
     update_image: function(image, key) {
       if(!key || key === 'image') {
         this.set('model.image', image);
+      }
+    },
+    add_word: function() {
+      var _this = this;
+      if(session.get('user')) {
+        _this.set('adding', {pending: true});
+        session.ajax('/api/v1/words/' + this.get('model.id') + '/add', {
+          type: 'POST',
+          data: {
+            append: true
+          }
+        }).then(function(res) {
+          _this.set('adding', null);
+          session.get('user').reload();
+        }, function(err) {
+          _this.set('adding', {error: true});
+        });
+      }
+    },
+    remove_word: function() {
+      var _this = this;
+      if(session.get('user')) {
+        _this.set('adding', {pending: true});
+        session.ajax('/api/v1/words/' + this.get('model.id') + '/remove', {
+          type: 'POST',
+          data: {
+            append: true
+          }
+        }).then(function(res) {
+          _this.set('adding', null);
+          session.get('user').reload();
+        }, function(err) {
+          _this.set('adding', {error: true});
+        });
       }
     },
     save: function() {

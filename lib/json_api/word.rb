@@ -7,7 +7,7 @@ module JsonApi::Word
     
   def self.build_json(word, args={})
     json = {}
-    json['id'] = "#{word.word}:#{word.locale}"
+    json['id'] = word.display_id
     json['word'] = word.word
     json['locale'] = word.locale
     json['pending'] = !word.id
