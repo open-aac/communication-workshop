@@ -1,8 +1,14 @@
 require 'json_api/word'
+require 'typhoeus'
 
 class Api::WordsController < ApplicationController
   def index
-    words = WordData.all.order('random_id')
+    words = WordData.all
+    if params['sort'] == 'recommended' && @api_user
+      words = @api_user.related_words
+    else
+      words = words.order('random_id')
+    end
     render json: JsonApi::Word.paginate(params, words)
   end
   
