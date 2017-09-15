@@ -1,8 +1,24 @@
 import Ember from 'ember';
 import modal from '../../utils/modal';
 import i18n from '../../utils/i18n';
+import session from '../../utils/session';
+
 
 export default Ember.Controller.extend({
+  keyed_colors: function() {
+    return [
+      {"border":"#ccc","fill":"#fff","color":"White","types":["conjunction"],"style":Ember.String.htmlSafe("border-color: #ccc; background: #fff;")},
+      {"border":"#dd0","fill":"#ffa","color":"Yellow","hint":"people","types":["pronoun"],"style":Ember.String.htmlSafe("border-color: #dd0; background: #ffa;")},
+      {"border":"#6d0","fill":"#cfa","color":"Green","hint":"actions","types":["verb"],"style":Ember.String.htmlSafe("border-color: #6d0; background: #cfa;")},
+      {"fill":"#fca","color":"Orange","hint":"nouns","types":["noun","nominative"],"border":"#ff7011","style":Ember.String.htmlSafe("border-color: #ff7011; background: #fca;")},
+      {"fill":"#acf","color":"Blue","hint":"describing words","types":["adjective"],"border":"#1170ff","style":Ember.String.htmlSafe("border-color: #1170ff; background: #acf;")},
+      {"fill":"#caf","color":"Purple","hint":"questions","types":["question"],"border":"#7011ff","style":Ember.String.htmlSafe("border-color: #7011ff; background: #caf;")},
+      {"fill":"#faa","color":"Red","hint":"negations","types":["negation","expletive","interjection"],"border":"#ff1111","style":Ember.String.htmlSafe("border-color: #ff1111; background: #faa;")},
+      {"fill":"#fac","color":"Pink","hint":"social words","types":["preposition"],"border":"#ff1170","style":Ember.String.htmlSafe("border-color: #ff1170; background: #fac;")},
+      {"fill":"#ca8","color":"Brown","hint":"adverbs","types":["adverb"],"border":"#835d38","style":Ember.String.htmlSafe("border-color: #835d38; background: #ca8;")},
+      {"fill":"#ccc","color":"Gray","hint":"determiners","types":["article","determiner"],"border":"#808080","style":Ember.String.htmlSafe("border-color: #808080; background: #ccc;")}
+    ]
+  }.property(),
   button: function() {
     return {
       background_color: this.get('model.background_color'),
@@ -36,6 +52,38 @@ export default Ember.Controller.extend({
     level['level_' + num] = true;
     return level;
   }.property('modeling_level', 'model.id'),
+  default_values: function() {
+    if(this.get('editing') && !this.get('model.background_color') && !this.get('model.border_color')) {
+      var _this = this;
+      session.ajax('/api/v1/words/' + this.get('model.word') + '/defaults', {type: 'GET'}).then(function(res) {
+        if(!_this.get('model.background_color')) {
+          _this.set('model.background_color', res.background_color);
+        }
+        if(!_this.get('model.border_color')) {
+          _this.set('model.border_color', res.border_color);
+        }
+        if(!_this.get('model.parts_of_speech')) {
+          _this.set('model.parts_of_speech', res.parts_of_speech);
+        }
+        if(!_this.get('model.image') && res.image_url) {
+          session.ajax('https://www.opensymbols.org/api/v1/symbols/search?q=' + encodeURIComponent(_this.get('model.word')), { type: 'GET' }).then(function(list) {
+            var item = list.find(function(i) { return i.image_url == res.image_url; });
+            if(item) {
+              _this.set('model.image', {
+                image_url: item.image_url,
+                thumbnail_url: item.image_url,
+                license: item.license,
+                author: item.author,
+                author_url: item.author_url,
+                license_url: item.license_url,
+                source_url: item.source_url
+              });
+            }
+          }, function(err) { debugger});
+        }
+      }, function(err) { });
+    }
+  }.observes('editing', 'model.background_color', 'model.border_color'),
   current_activity: function() {
     var activity = this.get('activity') || 'learning_projects';
     var res = {
@@ -68,6 +116,13 @@ export default Ember.Controller.extend({
     save_with_credit: function() {
       this.set('model.revision_credit', this.get('revision.user_identifier'));
       this.send('save');
+    },
+    color: function(color) {
+      this.set('model.background_color', color.fill);
+      this.set('model.border_color', color.border);
+      if(!this.get('model.parts_of_speech') && color.types) {
+        this.set('model.parts_of_speech', color.types[0]);
+      }
     },
     set_level: function(level) {
       this.set('modeling_level', level);

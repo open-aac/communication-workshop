@@ -35,6 +35,8 @@ Rails.application.routes.draw do
   book_id_regex = /\d+-[\w-]+/
 
   scope 'api/v1', module: 'api' do
+    get '/words/suggestions' => 'words#suggestions'
+    get '/words/:id/defaults' => 'words#defaults'
     resources :words
     resources :categories
     resources :books, {constraints: {id: book_id_regex}}

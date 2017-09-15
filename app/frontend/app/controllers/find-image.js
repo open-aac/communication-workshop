@@ -26,14 +26,13 @@ export default modal.ModalController.extend({
       var res = [];
       data.forEach(function(item) {
         res.push({
-            image_url: item.image_url,
-            thumbnail_url: item.image_url,
-            license: item.license,
-            author: item.author,
-            author_url: item.author_url,
-            license_url: item.license_url,
-            source_url: item.source_url
-
+          image_url: item.image_url,
+          thumbnail_url: item.image_url,
+          license: item.license,
+          author: item.author,
+          author_url: item.author_url,
+          license_url: item.license_url,
+          source_url: item.source_url
         });
       });
       return res;
