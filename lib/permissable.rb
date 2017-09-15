@@ -118,7 +118,6 @@ module Permissable
     end
     
     def add_permissions(*actions, &block)
-      puts self.to_s
       scopes = ['full']
       if actions[-1].is_a?(Array)
         scopes += actions.pop

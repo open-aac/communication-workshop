@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170815185101) do
+ActiveRecord::Schema.define(version: 20170828213925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,16 @@ ActiveRecord::Schema.define(version: 20170815185101) do
     t.datetime "updated_at", null: false
     t.index ["ref_id"], name: "index_books_on_ref_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_books_on_user_id", using: :btree
+  end
+
+  create_table "lessons", force: :cascade do |t|
+    t.string   "module_id"
+    t.boolean  "required"
+    t.boolean  "root"
+    t.text     "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["module_id"], name: "index_lessons_on_module_id", using: :btree
   end
 
   create_table "settings", force: :cascade do |t|
@@ -53,6 +63,14 @@ ActiveRecord::Schema.define(version: 20170815185101) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_auths_on_user_id", unique: true, using: :btree
+  end
+
+  create_table "user_data", force: :cascade do |t|
+    t.integer  "user_id"
+    t.text     "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_data_on_user_id", unique: true, using: :btree
   end
 
   create_table "user_words", force: :cascade do |t|

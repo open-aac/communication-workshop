@@ -2,6 +2,10 @@ class User < ApplicationRecord
   include SecureSerialize
   include GlobalId
   include Processable
+  include Permissions
+
+  add_permissions('view', ['*']) {|user| user == self }
+  add_permissions('edit', 'delete') {|user| user == self || user.admin? }
 
   secure_serialize :settings
   before_save :generate_defaults

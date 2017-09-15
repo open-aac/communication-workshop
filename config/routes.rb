@@ -38,8 +38,11 @@ Rails.application.routes.draw do
     get '/words/suggestions' => 'words#suggestions'
     get '/words/:id/defaults' => 'words#defaults'
     resources :words
+    post '/words/:id/add' => 'words#add'
+    post '/words/:id/remove' => 'words#remove'
     resources :categories
     resources :books, {constraints: {id: book_id_regex}}
+    resources :users
     get '/books/:id/json' => 'books#book_json', constraints: {id: book_id_regex}
     get '/search/books' => 'search#books'
   end

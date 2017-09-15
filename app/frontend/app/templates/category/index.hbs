@@ -80,20 +80,62 @@
     {{example-carousel entries=current_activity.list type=current_activity.type}}
   </div>
 {{else}}
-  - {{partial 'none-specified'}}
+  <div style='padding: 30px 20px;'>
+    {{partial 'none-specified'}}
+  </div>
 {{/if}}
 
 <h2>{{t "Phrase Categories" key='phrase_categories'}}</h2>
 {{phrase-categories entries=model.phrase_categories filter=modeling_level}}
 
 <h2>{{t "Attribution and References" key='attribution_and_references'}}</h2>
-attribution by list of authors<br/>
-<div style='white-space: pre-line;'>{{model.references}}</div>
+<div style='max-width: 600px;'>
+  {{t "This material is released by CoughDrop, Inc. and the authors listed under a" key='license_1'}}
+  <a href='https://creativecommons.org/licenses/by/4.0/' target='_blank'>{{t "CC Attribution" key='cc_by'}}</a> {{t "license. You are free to use it in your own materials with proper attribution." key='license_2'}}<br/><br/>
+</div>
+{{#if model.approved_user_identifiers}}
+  <strong>{{t "Attributed authors:" key='attributed_authors'}}</strong>
+  <ul class='list-unstyled' style='margin-left: 20px;'>
+  {{#each model.approved_user_identifiers as |id|}}
+    <li>{{id}}</li>
+  {{/each}}
+  </ul>
+{{/if}}
+{{#if model.references}}
+<div style='white-space: pre-line;'>
+<strong>{{t "References:" key='references'}}</strong>
+{{model.references}}
+</div>
+{{/if}}
 
 </div>
 {{#unless editing}}
   <div style='margin-top: 50px;'>
-    <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Word Settings" key='edit_word_settings'}}</button>
+    {{#if model.permissions.edit}}
+      <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Word Settings" key='edit_word_settings'}}</button>
+      {{#if model.revisions}}
+        <div style='margin-top: 20px;'>
+          {{t "Pending revisions submitted by:" key='pending_revisions_submitted_by'}}
+          <div class='list-group' style='max-width: 250px;'>
+            {{#each model.revisions as |rev|}}
+              <a href="#" {{action 'set_revision' rev}} class='list-group-item'>{{rev.user_identifier}}</a>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+    {{else if session.isAuthenticated}}
+      <button class='btn btn-default' {{action 'edit'}}>{{t "Suggest Word Revisions" key='suggest_word_changes'}}</button>
+      {{#if model.revisions}}
+        <div style='margin-top: 20px;'>
+          {{t "Pending revisions submitted by:" key='pending_revisions_submitted_by'}}
+          <div class='list-group' style='max-width: 250px;'>
+            {{#each model.revisions as |rev|}}
+              <span class='list-group-item'>{{rev.user_identifier}}</span>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
   </div>
 {{else}}
   <h2 style='margin-top: 100px;'>{{t "Edit Word Settings" key='edit_word_settings'}}</h2>

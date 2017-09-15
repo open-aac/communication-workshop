@@ -12,8 +12,10 @@ module JsonApi::Category
     json['locale'] = cat.locale
     json['pending'] = !cat.id
     
-    if args[:permissions] && cat.data
-#      json['permissions'] = badge.permissions_for(args[:permissions])
+    if args[:permissions]
+      json['permissions'] = cat.permissions_for(args[:permissions])
+    end
+    if cat.data
       # other data to include
       WordCategory::STRING_PARAMS.each do |param|
         json[param] = cat.data[param].to_s if cat.data[param]
