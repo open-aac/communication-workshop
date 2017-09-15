@@ -68,6 +68,7 @@ export default Ember.Component.extend({
     if(this.get('type') === 'book' && entry && entry.url && (!entry.image || !entry.text)) {
       this.find_book(entry.url).then(function(res) {
         Ember.set(entry, 'book_type', res.book_type);
+        Ember.set(entry, 'supplement', res.contents);
         if(!entry.text) {
           Ember.set(entry, 'text', res.title);
         }
