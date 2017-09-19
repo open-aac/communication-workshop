@@ -5,6 +5,7 @@ export default Ember.Component.extend({
   willInsertElement: function() {
     this.setup();
 
+    var _this = this;
     var listener = function(event) {
       if(event.data && event.data.type == 'aac_event') {
         var buttons = _this.get('buttons') || [];
