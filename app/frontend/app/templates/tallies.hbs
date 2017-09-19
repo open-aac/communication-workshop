@@ -1,0 +1,19 @@
+<h3>{{current_results.title}}</h3>
+<div class='row'>
+  {{#each current_results.entries as |entry|}}
+    <div class='col-sm-3' style='text-align: right; height: 30px; vertical-align: middle; line-height: 30px; padding: 5px 10px 5px 0; font-size: 20px;'>
+      {{entry.text}}
+    </div>
+    <div class='col-sm-9'>
+      <div style='max-width: 300px;  border-right: 2px solid #ccc; padding: 5px 0;'>
+        <div style={{entry.style}}>
+          <span style='opacity: 0.7; text-shadow: 2px 0 0 #888, -2px 0 0 #888, 0 2px 0 #888, 0 -2px 0 #888, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;'>{{entry.total}} votes</span>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+  <div class='col-sm-6' style='margin-top: 30px;'>
+    <button class='btn btn-default' {{action 'previous'}}>Previous</button>
+    <button class='btn btn-default' {{action 'next'}}>Next</button>
+  </div>
+</div>

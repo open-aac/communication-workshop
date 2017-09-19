@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post '/token' => 'session#token'
   get '/api/v1/token_check' => 'session#token_check'
   get '/auth/coughdrop/:id' => 'session#coughdrop_auth'
+  get '/scratch/:page_id' => ember_handler
 
   protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|
     u = User.find_by(:user_name => username)
@@ -40,10 +41,14 @@ Rails.application.routes.draw do
     resources :words
     post '/words/:id/add' => 'words#add'
     post '/words/:id/remove' => 'words#remove'
+    post '/words/:id/star/:activity_id' => 'words#star_activity'
+    post '/words/:id/unstar/:activity_id' => 'words#unstar_activity'
     resources :categories
     resources :books, {constraints: {id: book_id_regex}}
     resources :users
     get '/books/:id/json' => 'books#book_json', constraints: {id: book_id_regex}
     get '/search/books' => 'search#books'
+    post '/search/tallies' => 'search#tallies'
+    get '/search/tallies' => 'search#tallies'
   end
 end

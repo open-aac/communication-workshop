@@ -41,4 +41,26 @@ class Api::SearchController < ApplicationController
       render json: json
     end
   end
+  
+  def tallies
+    tallies = JSON.parse(Setting.get('vote-tallies')) rescue nil
+    tallies ||= {}
+    action = params['tally']
+    if params['content']
+      json = JSON.parse(params['content']) rescue nil
+      if json && json['action']
+        action = json['action']
+      end
+    end
+    if action
+      hash, vote = action.split(/:/)
+      if hash && vote
+        tallies[hash] ||= {}
+        tallies[hash][vote] ||= 0
+        tallies[hash][vote] += 1
+      end
+      Setting.set('vote-tallies', tallies.to_json)
+    end
+    render json: tallies
+  end
 end

@@ -20,7 +20,7 @@
 {{#if current_level.modeling_examples}}
   <em class='text-muted'>{{current_level.description}}</em>
   <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
-    {{example-carousel entries=current_level.modeling_examples type='modeling'}}
+    {{example-carousel entries=current_level.modeling_examples type='modeling' pin='pin'}}
   </div>
 {{else}}
   <div style='padding: 30px 20px;'>
@@ -72,7 +72,7 @@
 </ul>
 {{#if current_activity.list}}
   <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
-    {{example-carousel entries=current_activity.list type=current_activity.type}}
+    {{example-carousel entries=current_activity.list type=current_activity.type pin='pin'}}
   </div>
 {{else}}
   <div style='padding: 30px 20px;'>

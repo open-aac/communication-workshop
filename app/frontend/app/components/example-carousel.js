@@ -11,6 +11,7 @@ export default Ember.Component.extend({
       _this.set('fullscreen', e == fs);
     };
     this.set('handler', handler);
+    this.set('session', session);
     document.addEventListener('fullscreenchange', handler);
     document.addEventListener('webkitfullscreenchange', handler);
     document.addEventListener('onmozfullscreenchange', handler);

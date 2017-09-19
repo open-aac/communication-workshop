@@ -4,9 +4,10 @@
     <div>
       {{button-preview button=button}}
       <img src={{model.image.image_url}} style='width: 200px; max-height: 200px; vertical-align: top;' />
+      <!-- TODO: include alternate images/buttons if there are any -->
     </div>
 
-
+    FULL SCREEN LINK FOR WORD IMAGE(s)
     {{#if word_status.pending}}
       {{t "Updating word..." key='adding_word'}}
     {{else if word_status.error}}
@@ -38,7 +39,7 @@
 <h2>{{t "Examples of When to Use" key='usage_examples'}}</h2>
 {{#if model.usage_examples}}
   <div style='white-space: initial; max-width: 500px;'>
-    {{example-carousel entries=model.usage_examples type='usage_example'}}
+    {{example-carousel entries=model.usage_examples type='usage_example' pin='pin'}}
   </div>
 {{else}}
   <div style='padding: 30px 20px;'>
@@ -55,7 +56,7 @@
 {{#if current_level.modeling_examples}}
   <em class='text-muted'>{{current_level.description}}</em>
   <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
-    {{example-carousel entries=current_level.modeling_examples type='modeling'}}
+    {{example-carousel entries=current_level.modeling_examples type='modeling' pin='pin'}}
   </div>
 {{else}}
   <em class='text-muted'>{{current_level.description}}</em>
@@ -75,7 +76,7 @@
 </ul>
 {{#if current_activity.list}}
   <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
-    {{example-carousel entries=current_activity.list type=current_activity.type}}
+    {{example-carousel entries=current_activity.list type=current_activity.type pin='pin'}}
   </div>
 {{else}}
   <div style='padding: 30px 20px;'>

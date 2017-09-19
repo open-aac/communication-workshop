@@ -9,7 +9,7 @@
     {{else if suggestions.error}}
       {{t "Error loading suggestions" key='error_loading_suggestions'}}
     {{else if suggestions}}
-      {{example-carousel entries=mapped_suggestions type='individual'}}
+      {{example-carousel entries=mapped_suggestions type='individual' pin='pin'}}
     {{else}}
       {{t "No suggestions found" key='no_suggestions_found'}}
     {{/if}}
