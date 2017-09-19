@@ -3,7 +3,19 @@ import i18n from '../utils/i18n';
 
 export default Ember.Component.extend({
   willInsertElement: function() {
-    debugger
+    this.setup();
+
+    var listener = function(event) {
+      if(event.data && event.data.type == 'aac_event') {
+        var buttons = _this.get('buttons') || [];
+        buttons.push(event.data);
+        _this.set('buttons', [].concat(buttons));
+      }
+    };
+    window.addEventListener('message', listener);
+    this.set('listener', listener);
+  },
+  setup: function() {
     var _this = this;
     this.set('current_index', 0);
     var rules = this.get('rules') || '';
@@ -49,7 +61,7 @@ export default Ember.Component.extend({
         prompt = "";
       } else if(line.match(/[^\s]/)) {
         any_line = true;
-        prompt = prompt + line + "\n";
+        prompt = prompt + line + "\n\n";
       }
     });
     if(board && !board.match(/embed/)) {
@@ -64,20 +76,14 @@ export default Ember.Component.extend({
       });
     }
     this.set('activities', activities);
-    var listener = function(event) {
-      if(event.data && event.data.type == 'aac_event') {
-        var buttons = _this.get('buttons') || [];
-        buttons.push(event.data);
-        _this.set('buttons', buttons);
-      }
-    };
-    window.addEventListener('message', listener);
-    this.set('listener', listener);
   },
+  reset_on_change: function() {
+    if(this.get('reset_id')) {
+      this.setup();
+    }
+  }.observes('reset_id'),
   check_activity: function() {
-    debugger
     if(this.get('buttons') && this.get('current_activity.sequence.length')) {
-      debugger
       var buttons = this.get('buttons') || [];
       var sequence = this.get('current_activity.sequence');
       var sequence_idx = 0;

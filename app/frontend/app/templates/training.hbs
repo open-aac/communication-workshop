@@ -1,5 +1,9 @@
-<div style='margin: 10px 0 50px;'>
-{{training-render rules=stash}}
+<div style='margin: 10px 0 150px;'>
+{{training-render rules=rules reset_id=reset_id}}
 </div>
-{{textarea class='form-control' rows='8' value=stash}}
-<button class='btn btn-default' {{action 'update'}}>Update</button>
+<strong>Below is the code that is used to drive the training. Hit "Update" to restart and test any changes.</strong>
+{{textarea class='form-control rule_code' rows='8' value=stash}}
+<div style='margin-top: 5px;'>
+  <button class='btn btn-default' {{action 'update'}}>Update</button>
+  <button class='btn btn-default' {{action 'reset'}}>Reset</button>
+</div>
