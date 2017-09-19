@@ -21,7 +21,16 @@ module JsonApi::Word
         json[param] = word.data[param].to_s if word.data[param]
       end
       WordData::OBJ_PARAMS.each do |param|
-        json[param] = word.data[param] if word.data[param]
+        if word.data[param]
+          if word.data[param].is_a?(Array)
+            word.data[param].each do |obj|
+              if obj['id'] && !obj['id'].match(/:/)
+                obj['id'] = "#{word.global_id}:#{obj['id']}"
+              end
+            end
+          end
+          json[param] = word.data[param]
+        end
       end
       json['related_identifiers'] = word.data['all_user_identifiers']
       json['approved_user_identifiers'] = word.data['approved_user_identifiers']

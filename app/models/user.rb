@@ -47,8 +47,8 @@ class User < ApplicationRecord
   def add_word(word, params)
     append = params['append']
     users = params['users']
-    self.settings['current_words'] ||= []
-    self.settings['current_words'] = [] unless append
+    self.conclude_words(!append)
+    self.settings['prior_words'] = self.settings['prior_words'].select{|w| w['internal_id'] != word.global_id }
     self.settings['current_words'] << {
       id: word.display_id,
       internal_id: word.global_id,
@@ -57,8 +57,31 @@ class User < ApplicationRecord
       added: Time.now.iso8601,
       concludes: words_expire.from_now.iso8601
     }
+    self.settings['prior_words'] = self.settings['prior_words'].reverse.uniq{|w| w['internal_id'] }.reverse
+    self.settings['current_words'] = self.settings['current_words'].reverse.uniq{|w| w['internal_id'] }.reverse
     self.save
     [self.settings['user_name']]
+  end
+  
+  def conclude_words(conclude_all=false)
+    now = Time.now.iso8601
+    self.settings['prior_words'] ||= []
+    self.settings['current_words'] ||= []
+    oldies = self.settings['current_words'].select{|w| w['concludes'] && w['concludes'] < now }
+    if conclude_all
+      oldies = self.settings['current_words']
+      self.settings['current_words'] = []
+    end
+    oldies.each do |w|
+      self.settings['prior_words'] << {
+        id: w['id'],
+        internal_id: w['internal_id'],
+        locale: w['locale'],
+        word: w['word'],
+        auto_concluded: !!(!conclude_all && w['concludes']),
+        concluded: w['concludes'] || now
+      }
+    end
   end
   
   def words_expire
@@ -67,31 +90,100 @@ class User < ApplicationRecord
 
   def remove_word(word, params)
     users = params['users']
-    self.settings['current_words'] ||= []
+    self.conclude_words
+    added = self.settings['current_words'].detect{|w| w['internal_id'] == word.global_id }
+    if added && added['added'] && added['added'] < 24.hours.ago.iso8601
+      self.settings['prior_words'] << {
+        id: word.display_id,
+        internal_id: word.global_id,
+        word: word.word,
+        locale: word.locale,
+        concluded: Time.now.iso8601
+      }
+    end
     self.settings['current_words'] = self.settings['current_words'].select{|w| w['internal_id'] != word.global_id }
+    self.settings['prior_words'] = self.settings['prior_words'].reverse.uniq{|w| w['internal_id'] }.reverse
+    self.settings['current_words'] = self.settings['current_words'].reverse.uniq{|w| w['internal_id'] }.reverse
     self.save
     [self.settings['user_name']]
   end
   
+  def star_activity(word, activity, action)
+    ref_id = "#{word.global_id}:#{activity['id']}"
+    self.settings['starred_activity_ids'] = (self.settings['starred_activity_ids'] || []).select{|id| id != ref_id }
+    if action == :star
+      self.settings['starred_activity_ids'] << ref_id
+      WordLink.find_or_create_by(:word_id => word.id, :link_id => self.id, :link_type => 'User', :link_purpose => 'stars')
+    else
+      if !self.settings['starred_activity_ids'].detect{|id| id.match(/^#{word.global_id}/) }
+        WordLink.where(:word_id => word.id, :link_id => self.id, :link_type => 'User', :link_purpose => 'stars').destroy_all
+      end
+    end
+    self.save
+    # TODO: some way to link users to words/activities so that it's easier to count
+    # the stars for each activity
+    {:success => true, :starred => action == :star}
+  end
+
   def current_words(include_linked_users=true)
     words = {}
+    now = Time.now.iso8601
     (self.settings['current_words'] || []).each do |word|
-      words[word['id']] ||= {
-        'id' => word['id'],
-        'internal_id' => word['internal_id'],
-        'word' => word['word'],
-        'locale' => word['locale'],
-        'concludes' => word['concludes'],
-        'users' => []
-      }
-      # TODO: figure out concludes with multiple users
-      words[word['id']]['users'] << self.settings['user_name']
+      if !word['concludes'] || word['concludes'] > now
+        words[word['id']] ||= {
+          'id' => word['id'],
+          'internal_id' => word['internal_id'],
+          'word' => word['word'],
+          'locale' => word['locale'],
+          'concludes' => word['concludes'],
+          'users' => []
+        }
+        # TODO: figure out concludes with multiple users
+        words[word['id']]['users'] << self.settings['user_name']
+      end
     end
     res = []
     words.each do |id, word|
       res << word
     end
     res
+  end
+  
+  def prior_words(include_linked_users=true)
+    words = {}
+    now = Time.now.iso8601
+    (self.settings['prior_words'] || []).each do |word|
+      words[word['id']] ||= {
+        'id' => word['id'],
+        'internal_id' => word['internal_id'],
+        'word' => word['word'],
+        'locale' => word['locale'],
+        'concluded' => word['concluded'],
+        'users' => []
+      }
+      words[word['id']]['concluded'] = [word['concluded'], words[word['id']['concluded']]].max
+      words[word['id']]['users'] << self.settings['user_name']
+    end
+    (self.settings['current_words'] || []).each do |word|
+      if word['concludes'] || word['concludes'] < now
+        words[word['id']] ||= {
+          'id' => word['id'],
+          'internal_id' => word['internal_id'],
+          'word' => word['word'],
+          'locale' => word['locale'],
+          'concluded' => word['concludes'],
+          'users' => []
+        }
+        words[word['id']]['concluded'] = [word['concluded'], words[word['id']['concluded']]].max
+        words[word['id']]['users'] << self.settings['user_name']
+      end
+    end
+    res = []
+    words.each do |id, word|
+      res << word
+    end
+    res
+    
   end
   
   def related_words(include_linked_users=true)

@@ -29,13 +29,32 @@ class WordData < ApplicationRecord
     true
   end
   
+  def find_activity(activity_id)
+    parts = activity_id.split(/:/, 2)
+    return nil if parts[0] != self.global_id && parts[0] != self.data['pre_id']
+    OBJ_PARAMS.each do |param|
+      if self.data[param] && self.data[param].is_a?(Array)
+        self.data[param].each do |obj|
+          if obj.is_a?(Hash)
+            return obj if obj['id'] == parts[1]
+          end
+        end
+      end
+    end
+    nil
+  end
+  
   def enforce_ids
     self.data ||= {}
+    pre = self.global_id || (self.data['pre_id'] ||= "p_#{rand(999)}")
     OBJ_PARAMS.each do |param|
       if self.data[param] && self.data[param].is_a?(Array)
         self.data[param].each_with_index do |obj, idx|
           if obj.is_a?(Hash)
-            obj['id'] ||= "#{idx}_#{rand(999)}_#{Time.now.to_i}"
+            obj['id'] ||= "#{pre}:#{idx}_#{rand(999)}_#{Time.now.to_i}"
+            if !obj['id'].match(/:/)
+              obj['id'] = pre + ":" + obj['id']
+            end
           end
         end
       end
@@ -43,7 +62,10 @@ class WordData < ApplicationRecord
         if rev['changes'][param] && rev['changes'][param].is_a?(Array)
           rev['changes'][param].each_with_index do |obj, idx|
             if obj.is_a?(Hash)
-              obj['id'] ||= "r#{idx}_#{rand(999)}_#{Time.now.to_i}"
+              obj['id'] ||= "#{pre}:r#{idx}_#{rand(999)}_#{Time.now.to_i}"
+              if !obj['id'].match(/:/)
+                obj['id'] = pre + ":" + obj['id']
+              end
             end
           end
         end
@@ -71,6 +93,7 @@ class WordData < ApplicationRecord
     loose_re = focus_words.length > 0 ? Regexp.new(focus_words.map{|w| "\\b#{w}" }.join('|'), 'i') : /$^/
     # TODO: define starred_ids
     starred_ids = {}
+    (user.settings['starred_activity_ids'] || []).each{|id| starred_ids[id] = true }
     # TODO: define finished_ids
     finished_ids = {}
     all_ids = refs.map{|r| r['internal_id'] }

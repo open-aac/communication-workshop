@@ -57,21 +57,19 @@ class Api::WordsController < ApplicationController
   end
   
   def add
-    word = WordData.find_or_initialize_by_path(params['id'])
-    return unless exists?(@api_user, 'user_required')
-    return unless exists?(word, params['id'])
-    return unless allowed?(word, 'view')
-    @api_user.add_word(word, params)
-    render json: {added: true}
+    add_or_remove_word(params, :add)
   end
 
   def remove
-    word = WordData.find_or_initialize_by_path(params['id'])
-    return unless exists?(@api_user, 'user_required')
-    return unless exists?(word, params['id'])
-    return unless allowed?(word, 'view')
-    @api_user.remove_word(word, params)
-    render json: {removed: true}
+    add_or_remove_word(params, :remove)
+  end
+  
+  def star_activity
+    star_or_unstar_activity(params, :star)
+  end
+  
+  def unstar_activity
+    star_or_unstar_activity(params, :unstar)
   end
   
   def suggestions
@@ -86,5 +84,35 @@ class Api::WordsController < ApplicationController
     return unless allowed?(word 'delete')
     word.destroy
     render json: JsonApi::Word.as_json(word, wrapper: true, permissions: @api_user)
+  end
+  
+  protected
+  
+  def add_or_remove_word(params, action)
+    word = WordData.find_or_initialize_by_path(params['id'])
+    return unless exists?(@api_user, 'user_required')
+    return unless exists?(word, params['id'])
+    return unless allowed?(word, 'view')
+    if action == :add
+      @api_user.add_word(word, params)
+      render json: {added: true}
+    elsif action == :remove
+      @api_user.remove_word(word, params)
+      render json: {removed: true}
+    end
+  end
+  
+  def star_or_unstar_activity(params, action)
+    word = WordData.find_by_path(params['id'])
+    return unless exists?(@api_user, 'user_required')
+    return unless exists?(word, params['id'])
+    return unless allowed?(word, 'view')
+    activity = word.find_activity(params['activity_id'])
+    return unless exists?(activity, params['activity_id'])
+    res = @api_user.star_activity(word, activity, action)
+    if !res[:success]
+      return api_error(400, {error: 'starring action failed'})
+    end
+    render json: {starred: res[:starred]}
   end
 end

@@ -23,6 +23,10 @@ export default Ember.Component.extend({
     document.removeEventListener('webkitfullscreenchange', handler);
     document.removeEventListener('onmozfullscreenchange', handler);
   },
+  pinned: function() {
+    var ids = this.get('session.user.starred_activity_ids');
+    return !!(ids && this.get('current_entry.id') && ids.indexOf(this.get('current_entry.id')) != -1);
+  }.property('session.user.starred_activity_ids', 'current_entry.id'),
   session: function() {
     return session;
   }.property(),
@@ -68,8 +72,10 @@ export default Ember.Component.extend({
     confirm_revision: function() {
       this.sendAction('update_revision_object', this.get('current_entry'), this.get('revision_attribute'));
     },
-    pin: function() {
-      debugger
+    pin: function(action, activity) {
+      if(activity.id) {
+        this.sendAction('pin', activity.id, action);
+      }
     },
     full_screen: function() {
       var e = this.get('element') || {};

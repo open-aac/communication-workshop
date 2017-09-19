@@ -16,6 +16,7 @@ module JsonApi::User
       json['permissions'] = user.permissions_for(args[:permissions])
       if json['permissions']['view']
         json['current_words'] = user.current_words
+        json['starred_activity_ids'] = user.settings['starred_activity_ids']
       end
     end
     

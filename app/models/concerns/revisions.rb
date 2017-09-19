@@ -47,11 +47,12 @@ module Revisions
         end
       end
       if changes.keys.length > 0
+        pre = self.global_id || (self.data['pre_id'] ||= "p_#{rand(999)}")
         self.data['revisions'] ||= []
         self.data['revisions'] << {
           'user_identifier' => user_params['user_identifier'], 
           'changes' => changes,
-          'id' => "#{Time.now.iso8601}_#{rand(9999)}"
+          'id' => "#{pre}:#{Time.now.iso8601}_#{rand(9999)}"
         }
         self.pending_since ||= Time.now
       end

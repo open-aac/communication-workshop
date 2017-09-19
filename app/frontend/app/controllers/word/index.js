@@ -188,6 +188,12 @@ export default Ember.Controller.extend({
       this.set('model.revision_credit', null);
       this.set('revision', null);
     },
+    pin: function(activity_id, action) {
+      var _this = this;
+      session.ajax('/api/v1/words/' + this.get('model.id') + '/' + action + '/' + activity_id, {type: 'POST'}).then(function(res) {
+        _this.get('session.user').reload();
+      }, function(err) { debugger });
+    },
     cancel: function() {
       this.get('model').rollbackAttributes();
       this.set('model.revision_credit', null);
