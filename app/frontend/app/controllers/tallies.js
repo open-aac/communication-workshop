@@ -98,7 +98,7 @@ var results = [
       },
       {
         text: "Jacob Black",
-        key: 'red',
+        key: 'jacob',
         color: "#a00",
         border: "#800",
       },
