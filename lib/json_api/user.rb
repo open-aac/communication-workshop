@@ -16,7 +16,11 @@ module JsonApi::User
       json['permissions'] = user.permissions_for(args[:permissions])
       if json['permissions']['view']
         json['current_words'] = user.current_words
+        json['created'] = user.created_at
         json['starred_activity_ids'] = user.settings['starred_activity_ids']
+        json['external_tracking'] = user.settings['external_tracking']
+        json['modeling_level'] = user.settings['modeling_level']
+        json['focus_length'] = user.settings['focus_length']
       end
     end
     

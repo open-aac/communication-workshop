@@ -4,7 +4,9 @@ require 'typhoeus'
 class Api::WordsController < ApplicationController
   def index
     words = WordData.all
-    if params['sort'] == 'recommended' && @api_user
+    if params['q']
+      words = words.where(:word => params['q'].downcase)
+    elsif params['sort'] == 'recommended' && @api_user
       words = @api_user.related_words
     else
       words = words.order('random_id')
@@ -84,6 +86,20 @@ class Api::WordsController < ApplicationController
     return unless allowed?(word 'delete')
     word.destroy
     render json: JsonApi::Word.as_json(word, wrapper: true, permissions: @api_user)
+  end
+  
+  def perform_activity
+    activity_id = params['id'] || ''
+    word_id = activity_id.split(/:/)[0]
+    word = WordData.find_by_path(word_id)
+    return unless exists?(word, word_id)
+    return unless allowed?(word, 'view')
+    res = @api_user.track_activity(word, activity_id, params['details'])
+    if res
+      render json: res
+    else
+      api_eror 400, {error: 'activity tracking failed'}
+    end
   end
   
   protected

@@ -36,9 +36,10 @@ export default Ember.Component.extend({
       context.fill();
 
       context.textAlign = 'center';
+      var label = button.label || '';
       var size = 80;
       context.font = size + 'px Arial';
-      while(size > 40 && context.measureText(button.label || '').width > 470) {
+      while(size > 40 && context.measureText(label).width > 470) {
         size = size - 5;
         context.font = size + 'px Arial';
       }
@@ -46,16 +47,16 @@ export default Ember.Component.extend({
       context.save();
       context.rect(pad, 0, width - pad - pad - context.lineWidth, height);
       context.clip();
-      if(size <= 40 && context.measureText(button.label || '').width > 470) {
-        var words = button.label.split(/\s/);
+      if(size <= 40 && context.measureText(label).width > 470) {
+        var words = label.split(/\s/);
         var top = [];
-        while(top.join(' ').length < button.label.length / 2) {
+        while(top.join(' ').length < label.length / 2) {
           top.push(words.shift());
         }
         context.fillText(top.join(' '), width / 2, pad + (pad / 3) + size);
         context.fillText(words.join(' '), width / 2, pad + (pad / 3) + size + size);
       } else {
-        context.fillText(button.label, width / 2, pad + size);
+        context.fillText(label, width / 2, pad + size);
       }
       context.restore();
       context.save();
@@ -84,5 +85,10 @@ export default Ember.Component.extend({
       context.restore();
       context.restore();
     }
-  }.observes('button.id')
+  }.observes('button.id'),
+  aggressive_redraw: function() {
+    if(this.get('watch')) {
+      this.redraw();
+    }
+  }.observes('button.border_color', 'button.background_color', 'button.label', 'button.image_url', 'watch'),
 });

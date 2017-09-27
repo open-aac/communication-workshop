@@ -9,6 +9,7 @@ const Router = Ember.Router.extend({
 Router.map(function() {
   this.route('index', {path: '/'});
   this.route('login', {path: '/login'});
+  this.route('user', {path: '/users/:user_id'});
   this.route('category', {path: '/categories/:category/:locale'}, function() {
   });
   this.route('tallies', {path: '/scratch/tallies'});

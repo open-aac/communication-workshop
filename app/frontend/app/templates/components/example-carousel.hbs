@@ -1,36 +1,102 @@
 <div style={{if tall 'margin-bottom: 40px;'}} class={{if fullscreen 'box fullscreen' 'box'}}>
   <div class='left'>
     <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'>Prev</button>
-    {{#if entries.length}}
-      <div style='text-align: right;'>
+    <div style='text-align: right; height: 30px;'>
+      {{#if entries.length}}
         {{readable_index}} of {{entries.length}}
-      </div>
-    {{/if}}
+      {{/if}}
+    </div>
+    {{#unless update_revision_object}}
+      {{#if session.isAuthenticated}}
+        <div style='margin-top: 50px;'>
+          <button class={{if current_entry.performed 'btn btn-primary' 'btn btn-default'}} style='width: 100%; height: 60px; margin-bottom: 2px;' {{action 'perform' current_entry}}><span class='glyphicon glyphicon-ok'></span></button>
+          {{#if allow_skip}}
+            <button class={{if current_entry.skipped 'btn btn-primary' 'btn btn-default'}} style='width: 100%; height: 60px;' {{action 'skip' current_entry}}><span class='glyphicon glyphicon-remove'></span></button>
+          {{/if}}
+        </div>
+      {{/if}}
+    {{/unless}}
   </div>
   <div class='middle'>
     {{#if current_entry}}
       <div class='entry'>
-        {{image-with-attribution stretch=true image=current_entry.image tall=tall border=false url=current_entry.url fullscreen=fullscreen}}
         <div style='text-align: center;'>
-          {{#if prompt_type}}
-            {{current_entry.prompt_type}}<br/>
-          {{/if}}
-          {{#if include_sentence}}
-            <strong>"{{current_entry.sentence}}"</strong><br/>
-          {{/if}}
-          {{#if include_url}}
-            <a href={{current_entry.url}} target="_blank">{{current_entry.text}}</a>
-          {{else}}
-            {{current_entry.text}}
-          {{/if}}
-          <div class='entry_description'>
-            {{#if description}}
-              {{current_entry.description}}<br/>
-            {{/if}}
-            {{#if related_words}}
-              {{current_entry.related_words}}<br/>
-            {{/if}}
+        {{#if current_entry.perform_details}}
+          <div style='height: 222px; text-align: left;' class='row'>
+            <div class='col-sm-4'>
+              <img src={{current_entry.image.image_url}} style='width: 100px; height: 100px; object-fit: contain; object-position: center;'/>
+            </div>
+            <div class='col-sm-8' style='padding-left: 0;'>
+              {{#if save_status.saving}}
+                {{t "Saving..." key='saving'}}
+              {{else if save_status.error}}
+                {{t "Error, save failed" key='saving_failed'}}
+              {{else}}
+                {{t "This activity was completed on:" key='activity_completed'}}
+              {{/if}}<br/>
+              <span style='display: inline-block; width: 55%;'>
+                {{input type='date' class='form-control' value=current_entry.perform_details.date}}
+              </span>
+              <span style='display: inline-block; width: 42%;'>
+                {{input type='time' class='form-control' value=current_entry.perform_details.time}}
+              </span>
+              <div style='margin: 3px 0;'>
+                <span style='display: inline-block; margin: 0; width: 23.5%;'>
+                  <button class={{current_entry_classes.level_1_class}} {{action 'set_success_level' current_entry 1}}>
+                    <span class='face sad'></span>
+                    Poor
+                  </button>
+                </span>
+                <span style='display: inline-block; margin: 0; width: 23.5%;'>
+                  <button class={{current_entry_classes.level_2_class}} {{action 'set_success_level' current_entry 2}}>
+                    <span class='face neutral'></span>
+                    Ok
+                  </button>
+                </span>
+                <span style='display: inline-block; margin: 0; width: 23.5%;'>
+                  <button class={{current_entry_classes.level_3_class}} {{action 'set_success_level' current_entry 3}}>
+                    <span class='face happy'></span>
+                    Good
+                  </button>
+                </span>
+                <span style='display: inline-block; margin: 0; width: 23.5%;'>
+                  <button class={{current_entry_classes.level_4_class}} {{action 'set_success_level' current_entry 4}}>
+                    <span class='face laugh'></span>
+                    Super
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div class='col-sm-12'>
+              {{textarea class='form-control' rows='2' value=current_entry.perform_details.notes placeholder="Additional notes"}}
+              <div style='margin-top: 3px;'>
+                <button class='btn btn-primary' {{action 'close_perform_details' current_entry}}>{{t "Done" key='done'}}</button>
+                <button class='btn btn-default' {{action 'unperform' current_entry}}>{{t "Undo" key='undo'}}</button>
+              </div>
+            </div>
           </div>
+        {{else}}
+          {{image-with-attribution stretch=true image=current_entry.image tall=tall border=false url=current_entry.url fullscreen=fullscreen}}
+        {{/if}}
+        {{#if prompt_type}}
+          {{current_entry.prompt_type}}<br/>
+        {{/if}}
+        {{#if include_sentence}}
+          <strong>"{{current_entry.sentence}}"</strong><br/>
+        {{/if}}
+        {{#if include_url}}
+          <a href={{current_entry.url}} target="_blank">{{current_entry.text}}</a>
+        {{else}}
+          {{current_entry.text}}
+        {{/if}}
+        <div class='entry_description'>
+          {{#if description}}
+            {{current_entry.description}}<br/>
+          {{/if}}
+          {{#if related_words}}
+            {{current_entry.related_words}}<br/>
+          {{/if}}
+        </div>
         </div>
       </div>
     {{else}}

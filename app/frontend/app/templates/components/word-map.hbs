@@ -1,0 +1,14 @@
+{{#if buttons}}
+  <div style={{box_style}}>
+    {{#each buttons as |button|}}
+      {{button-preview button=button small=true}}
+    {{/each}}
+  </div>
+  {{#if allow_show_all}}
+    <div style='text-align: right; margin: 0 5px;'>
+      <a href="#" {{action 'show_all'}}>{{t "show all" key='show_all'}}</a>
+    </div>
+  {{/if}}
+{{else}}
+  {{t "None defined" key='none_defined'}}
+{{/if}}

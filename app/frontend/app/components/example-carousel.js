@@ -74,10 +74,12 @@ export default Ember.Component.extend({
   actions: {
     next: function() {
       var idx = this.get('current_index') || 0;
+      this.set('current_entry.perform_details', null);
       this.set('current_index', Math.min(idx + 1, (this.get('entries') || []).length - 1));
     },
     previous: function() {
       var idx = this.get('current_index') || 0;
+      this.set('current_entry.perform_details', null);
       this.set('current_index', Math.max(idx - 1, 0));
     },
     confirm_revision: function() {
@@ -87,6 +89,55 @@ export default Ember.Component.extend({
       if(activity.id) {
         this.sendAction('pin', activity.id, action);
       }
+    },
+    save_perform_details: function(activity, details) {
+      var _this = this;
+      var activity_id = Ember.get(activity, 'id');
+      details = details || Ember.get(activity, 'perform_details');
+      _this.set('save_status', {saving: true});
+      session.ajax('/api/v1/activities/' + activity_id + '/perform', {
+        type: 'POST',
+        data: {
+          details: details
+        }
+      }).then(function(res) {
+        _this.set('save_status', null);
+        if(res.activity_id == activity_id && Ember.get(activity, 'perform_details')) {
+          Ember.set(activity, 'perform_details', res);
+        }
+      }, function(err) {
+        _this.set('save_status', {error: true});
+      });
+    },
+    perform: function(activity) {
+      // ajax call, change UI to prompt for more details
+      var _this = this;
+      Ember.set(activity, 'performed', true);
+      var d = (new Date());
+      Ember.set(activity, 'perform_details', {
+//         date: (d.getFullYear()) + "-" + ("00" + (d.getMonth() + 1)).slice(-2) + "-" + ("00" + d.getDate()).slice(-2),
+//         time: ("00" + d.getHours()).slice(-2) + ":" + ("00" + d.getMinutes()).slice(-2)
+      });
+      _this.set('save_status', null);
+      this.send('save_perform_details', activity);
+    },
+    unperform: function(activity) {
+      Ember.set(activity, 'performed', false);
+      Ember.set(activity, 'perform_details', null);
+      this.send('save_perform_details', activity, {remove: true});
+    },
+    close_perform_details: function(activity) {
+      this.send('save_perform_details', activity);
+      Ember.set(activity, 'perform_details', null);
+    },
+    set_success_level: function(activity, level) {
+      Ember.set(activity, 'perform_details.success_level', level);
+    },
+    skip: function(activity) {
+      Ember.set(activity, 'skipped', true);
+      debugger
+      // ajax call, then hit next
+      this.send('next');
     },
     full_screen: function() {
       var e = this.get('element') || {};

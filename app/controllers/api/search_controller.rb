@@ -1,5 +1,6 @@
 require 'typhoeus'
 class Api::SearchController < ApplicationController
+  
   def books
     url = params['url'] || ''
     if url.match(/https?:\/\/tarheelreader.org\/.+\/.+\/.+\/.+\//)

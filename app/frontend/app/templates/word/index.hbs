@@ -2,8 +2,12 @@
 {{#if model.image}}
   <div>
     <div>
-      {{button-preview button=button}}
-      <img src={{model.image.image_url}} style='width: 200px; max-height: 200px; vertical-align: top;' />
+      {{#each buttons as |button|}}
+        {{button-preview button=button}}
+      {{/each}}
+      {{#if single_button}}
+        <img src={{single_button.image_url}} style='width: 200px; max-height: 200px; vertical-align: top;' />
+      {{/if}}
       <!-- TODO: include alternate images/buttons if there are any -->
     </div>
 
@@ -129,7 +133,7 @@
 
 <h2>{{t "Attribution and References" key='attribution_and_references'}}</h2>
 <div style='max-width: 600px;'>
-  {{t "This material is released by CoughDrop, Inc. and the authors listed under a" key='license_1'}}
+  {{t "This material is released by CoughDrop, Inc. with special thanks to the contributors listed under a" key='license_1'}}
   <a href='https://creativecommons.org/licenses/by/4.0/' target='_blank'>{{t "CC Attribution" key='cc_by'}}</a> {{t "license. You are free to use it in your own materials with proper attribution." key='license_2'}}<br/><br/>
 </div>
 {{#if model.approved_user_identifiers}}
@@ -560,7 +564,7 @@
         <label for="attribution" class="col-sm-3 control-label">{{t "Attribution" key='attribution'}}</label>
         <div class="col-sm-5">
           <p class='form-control-static'>
-            {{t "If your revision is accepted, you will be included as one of the authors for this content. Please note that submitted material will be released under a Creative Commons (CC-By) license, which allows for commercial or non-commercial use with attribution." key='license_reminder'}}
+            {{t "If your revision is accepted, you will be included as one of the authors for this content. Please note that submitted material will be released under a Creative Commons (CC-By) license by \"CoughDrop and additional authors\", which allows for commercial or non-commercial use with attribution." key='license_reminder'}}
             <a href='https://creativecommons.org/licenses/by/4.0/' target='_blank'>{{t "review CC-By license details here" key='review_cc_by_license'}}</a>
           </p>
         </div>

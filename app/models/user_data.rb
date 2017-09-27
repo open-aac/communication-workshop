@@ -1,4 +1,14 @@
 class UserData < ApplicationRecord
+  include SecureSerialize
+  include GlobalId
+
+  secure_serialize :data
+  before_save :generate_defaults
+  
+  def generate_defaults
+    self.data ||= {}
+    true
+  end
 end
     # per-day usage of each word (not always available)
     # per-day modeling of each word (not always available)

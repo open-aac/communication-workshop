@@ -1,18 +1,30 @@
-<header id='header' style='display: none;'>
+<header id='header'>
   <span style='padding-right: 20px; font-weight: bold;' id='title'>
     {{#link-to 'index'}}
       Learn AAC
     {{/link-to}}
   </span>
-  <form style='display: inline;' {{action 'search' on='submit'}}>
+  <form style='display: inline; position: relative;' {{action 'search' on='submit'}}>
     <span style='display: inline-block; width: 150px;'>
-      {{input type='text' class='form-control input-sm' value=search placeholder='find cool stuff'}}
+      {{input type='text' class='form-control input-sm' value=search_string placeholder='find cool stuff'}}
     </span>
     <button type='submit' class='btn btn-default btn-sm' style='margin-top: -1px;'>{{t "Go" key='go'}}</button>
+    {{#if search_status}}
+      <div style='position: absolute; bottom: -45px; left: 10px; width: 160px; height: 35px; padding: 5px; background: #fff; border: 1px solid #000; text-align: center; color: #888; border-radius: 3px;'>
+        {{#if search_status.none}}
+          {{t "no match found" key='no_match_found'}}
+        {{else}}
+          {{t "error performing search" key='error_retrieving_results'}}
+        {{/if}}
+      </div>
+    {{/if}}
   </form>
   <div style='float: right; padding: 5px;'>
     {{#if session.isAuthenticated}}
-      {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}&nbsp;&nbsp;
+      {{#link-to 'user' session.user.user_name}}
+        {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}
+      {{/link-to}}
+      &nbsp;&nbsp;
       <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
     {{else}}
       {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}

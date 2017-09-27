@@ -1,0 +1,208 @@
+<h2>{{#if model.name}}{{model.name}}{{else}}{{model.user_name}}{{/if}}</h2>
+{{#unless editing}}
+<div style='margin-bottom: 50px;'>
+  {{#if model.created}}
+    {{t "started" key='started'}}
+    {{from_now model.created}}{{/if}}{{#if model.modeling_level}}{{t " level %{lvl} communication" key='level_n_communicator' lvl=model.modeling_level}}
+  {{/if}}
+
+  {{#if model.current_words}}
+    <div style='margin-bottom: 20px;'>
+      <h4>
+        {{t "Focus Words" key='focus_words'}}
+      </h4>
+      <div style='max-width: 300px;'>
+        <div class='list-group pills'>
+          {{#each model.current_words as |word|}}
+            {{#link-to 'word.index' word.word word.locale class='list-group-item'}}{{word.word}}{{/link-to}}
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if model.word_data.words}}
+    <h4>{{t "Word List" key='word_list'}}</h4>
+    <div style='max-height: 200px; overflow: auto; margin-bottom: 20px;'>
+      <ul class="list-group">
+        {{#each model.word_data.words as |word|}}
+          <li class="list-group-item">{{word}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+
+  {{#if model.word_data.word_map}}
+    <h4>{{t "Personalized Buttons" key='personalized_button'}}</h4>
+    {{word-map map=model.word_data.word_map}}
+  {{/if}}
+</div>
+{{/unless}}
+
+
+{{#if model.permissions.edit}}
+  {{#if editing}}
+    <form style='margin-top: 50px;' class='form-horizontal' {{action 'save' on='submit'}}>
+      <div class="form-group">
+        <label for="name" class="col-sm-3 control-label">{{t "Name" key='name'}}</label>
+        <div class="col-sm-3">
+          {{input type='text' class='form-control' value=model.name placeholder="Full Name"}}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email" class="col-sm-3 control-label">{{t "Email" key='email'}}</label>
+        <div class="col-sm-3">
+          {{input type='text' class='form-control' value=model.email placeholder="Email Address"}}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="modeling_level" class="col-sm-3 control-label">{{t "Modeling Level" key='modeling_level'}}</label>
+        <div class="col-sm-3">
+          {{bound-select select_class="form-control skip_select" select_id="modeling_level" content=modeling_levels selection=model.modeling_level action=(action (mut model.modeling_level)) }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="focus_length" class="col-sm-3 control-label">{{t "Focus Length" key='focus_length'}}</label>
+        <div class="col-sm-6">
+          <p class='form-control-static'>{{t "When adding a new focus word, how long should it stay \"in focus\"" key='how_long_in_focus'}}</p>
+        </div>
+        <div class="col-sm-3 col-sm-offset-3">
+          {{bound-select select_class="form-control skip_select" select_id="focus_length" content=modeling_levels selection=model.modeling_level action=(action (mut model.modeling_level)) }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="words" class="col-sm-3 control-label">{{t "Word List" key='words'}}</label>
+        <div class="col-sm-6">
+          {{#if editing_words}}
+            {{#if model.external_tracking}}
+              <p class='form-control-static'>{{t "Editing the word list will disconnect this user from automatic updates via the user's linked account." key='editing_will_unlink'}}</p>
+            {{/if}}
+            {{textarea value=model.pending_words class='form-control' rows='6' placeholder="One word/phrase per line, enter all the word available to this user, ideally with the most-accessible first."}}
+            <button class='btn btn-default' {{action 'cancel_edit_words'}}>{{"Cancel Changes" key='clear_changes'}}</button>
+          {{else}}
+            {{#if model.word_data.words}}
+              <p class='form-control-static'>
+                {{#if model.external_tracking}}
+                  {{t "The following word list is automatically updated from the user's linked account:" key='linked_account_words'}}<br />
+                {{else}}
+                  {{t "The following words are marked as available in the user's vocabulary:" key='accessible_words'}}<br />
+                {{/if}}
+              </p>
+              <div style='max-height: 200px; overflow: auto;'>
+                <ul class="list-group">
+                  {{#each model.word_data.words as |word|}}
+                    <li class="list-group-item">{{word}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{else}}
+              <p class='form-control-static'>
+                {{t "None defined." key='none_defined'}}
+              </p>
+              <p class='text-muted'>
+                {{t "The word list should include all words/phrases available to the user, can can be used by the system to recommend words and activities that will best match the communicator's vocabulary and layout." key='word_list_explainer'}}
+              </p>
+            {{/if}}
+            <div><button class='btn btn-default' {{action 'edit_words'}}>{{t "Edit Word List" key='edit_word_list'}}</button></div>
+          {{/if}}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="words" class="col-sm-3 control-label">{{t "Personalized Buttons" key='personalized_buttons'}}</label>
+        <div class="col-sm-9">
+          {{#if editing_word_map}}
+            {{#if model.external_tracking}}
+              <p class='form-control-static'>{{t "Editing personalized buttons will disconnect this user from automatic updates via the user's linked account." key='editing_map_will_unlink'}}</p>
+            {{else if model.word_data.linked_map_user_name}}
+              <p class='form-control-static'>{{t "Editing personalized buttons will unlink this user from the linked account, %{user_name}. Saving changes will copy all linked buttons but not receive any new changes made by that account." key='editing_will_unlink_from_user' user_name=model.word_data.linked_map_user_name}}</p>
+            {{/if}}
+            {{#each model.pending_word_map as |button|}}
+              <div class='row' style='margin-bottom: 10px;'>
+                <div class='col-sm-6'>
+                  <div style='float: left; margin-right: 10px;'>
+                    {{button-preview button=button small=true watch=true}}
+                  </div>
+                  {{image-with-attribution image=button.image ref=button label=button.label update_image='update_image'}}
+                </div>
+                <div class='col-sm-6'>
+                  <div style='margin-bottom: 5px;'>
+                    {{input type='text' value=button.label class='form-control' placeholder="Word/Label"}}
+                  </div>
+                  <div class="btn-group" style='margin-bottom: 5px;'>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Color As... <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      {{#each keyed_colors as |color|}}
+                        <li><a href="#" {{action 'color' color}}>
+                          <span class='color_box' style={{color.style}}></span>
+                          {{color.color}}{{#if color.hint}} ({{color.hint}}){{/if}}
+                        </a></li>
+                      {{/each}}
+                    </ul>
+                  </div>
+
+                  <div style='position: relative; margin-bottom: 5px;'>
+                    {{input type='text' value=button.border_color class='form-control pad_color_box' placeholder='Border Color'}}
+                    <span style='position: absolute; top: 2px; margin-left: 2px;'>
+                      {{color-box color=button.border_color}}
+                    </span>
+                  </div>
+
+                  <div style='position: relative;'>
+                    {{input type='text' value=button.background_color class='form-control pad_color_box' placeholder='Background Color'}}
+                    <span style='position: absolute; top: 2px; margin-left: 2px;'>
+                      {{color-box color=button.background_color}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {{else}}
+              <p class='form-control-static'>{{t "No personalizations have been defined yet." key='no_buttons_added'}}</p>
+            {{/each}}
+            <button class='btn btn-default' {{action 'add_button'}}>{{t "Add Button" key='add_button'}}</button>
+            <button class='btn btn-default' {{action 'cancel_edit_word_map'}}>{{"Cancel Changes" key='clear_changes'}}</button>
+          {{else}}
+            {{#if model.word_data.word_map}}
+              <p class='form-control-static'>
+                {{#if model.external_tracking}}
+                  {{t "These buttons are automatically updated from the user's linked account, and will replace the default buttons used by the system:" key='externally_replace_default_buttons'}}<br />
+                {{Else if model.word_data.linked_map_user_name}}
+                  {{t "These buttons are from the user account %{user_name} and will replace the default buttons used by the system:" key='user_name_replace_default_buttons' user_name=model.word_data.linked_map_user_name}}
+                {{else}}
+                  {{t "These buttons will replace the default buttons used by the system:" key='replace_default_buttons'}}<br />
+                {{/if}}
+              </p>
+              {{word-map map=model.word_data.word_map}}
+            {{else}}
+              <p class='form-control-static'>
+                {{t "None defined." key='none_defined'}}
+              </p>
+              <p class='text-muted'>
+                {{t "If the user's buttons are different than the system defaults, then adding the images and colors will help ensure that activities and assessments match what the communicator will see on their device. You can also share personalization lists across users if you are using a standardized button set (coming soon)." key='word_map_explainer'}}
+               </p>
+            {{/if}}
+            <div><button class='btn btn-default' {{action 'edit_word_map'}}>{{t "Edit Personalized Buttons" key='edit_personalized_buttons'}}</button></div>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class='form-group'>
+        <div class='col-sm-9 col-sm-offset-3'>
+          <button class='btn btn-primary' type='submit' disabled={{status.saving}}>
+            {{#if status.saving}}
+              {{t "Saving Settings..." key='saving_settings'}}
+            {{else if status.error}}
+              {{t "Error Saving Settings" key='error_saving_settings'}}
+            {{else}}
+              {{t "Saving Settings" key='save_settings'}}
+            {{/if}}
+          </button>
+          <button class='btn btn-default' type='button' {{action 'cancel'}}>{{t "Cancel" key='cancel'}}</button>
+        </div>
+      </div>
+    </form>
+  {{else}}
+    <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Profile" key='edit_profile'}}</button>
+  {{/if}}
+{{/if}}

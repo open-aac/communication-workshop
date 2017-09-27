@@ -116,6 +116,8 @@ class WordData < ApplicationRecord
       [1,2,3].each do |level|
         (word.data["level_#{level}_modeling_examples"] || []).each do |ex|
           score = 1
+          ex_id = ex['id']
+          ex_id = "#{word.global_id}:#{ex['id']}" if ex_id && !ex['id'].match(/:/)
           parts = ex['sentence'].downcase.split(/\s/)
           matches = parts & focus_words
           score += matches.length
@@ -126,11 +128,11 @@ class WordData < ApplicationRecord
           score *= 2 if starred_ids[ex['id']]
           score *= history_distance
           res['modeling'] << {
-            'id' => ex['id'],
+            'id' => ex_id,
             'word' => word.word,
             'locale' => word.locale,
             'level' => level,
-            'data' => ex,
+            'data' => ex.merge({'id' => ex_id}),
             'history_distance' => history_distance,
             'match_score' => score.round(3)
           } unless finished_ids[ex['id']]
@@ -139,6 +141,8 @@ class WordData < ApplicationRecord
       ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos'].each do |activity|
         (word.data[activity] || []).each do |ex|
           score = 1
+          ex_id = ex['id']
+          ex_id = "#{word.global_id}:#{ex['id']}" if ex_id && !ex['id'].match(/:/)
           if ex['related_words']
             parts = ex['related_words'].split(/[,\s]/)
             matches = parts & focus_words
@@ -158,17 +162,19 @@ class WordData < ApplicationRecord
           score *= 2 if starred_ids[ex['id']]
           score *= history_distance
           res['activities'] << {
-            'id' => ex['id'],
+            'id' => ex_id,
             'word' => word.word,
             'locale' => word.locale,
             'type' => activity,
-            'data' => ex,
+            'data' => ex.merge({'id' => ex_id}),
             'history_distance' => history_distance,
             'match_score' => score.round(3)
           } unless finished_ids[ex['id']]
         end
       end
       (word.data['prompts'] || []).each do |ex|
+        ex_id = ex['id']
+        ex_id = "#{word.global_id}:#{ex['id']}" if ex_id && !ex['id'].match(/:/)
         score = 1
         score += ex['text'].scan(strict_re).length.to_f / 3.0
         score += ex['text'].scan(loose_re).length.to_f / 10.0
@@ -177,10 +183,10 @@ class WordData < ApplicationRecord
         score *= 2 if starred_ids[ex['id']]
         score *= history_distance
         res['prompts'] << {
-          'id' => ex['id'],
+          'id' => ex_id,
           'word' => word.word,
           'locale' => word.locale,
-          'data' => ex,
+          'data' => ex.merge({'id' => ex_id}),
           'history_distance' => history_distance,
           'match_score' => score.round(3)
         } unless finished_ids[ex['id']]
@@ -262,7 +268,7 @@ class WordData < ApplicationRecord
         hash[string_param] = self.process_string(params[string_param])
       end
       ['border_color', 'background_color'].each do |key|
-        hash[key] = self.process_color(params[key]) if params[key]
+        hash[key] = self.process_color(params[key]) if params[key] && params[key].length > 0
       end
       OBJ_PARAMS.each do |obj_param|
         hash[obj_param] = params[obj_param]

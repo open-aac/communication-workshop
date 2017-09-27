@@ -3,6 +3,7 @@ class User < ApplicationRecord
   include GlobalId
   include Processable
   include Permissions
+  include WordMapping
 
   add_permissions('view', ['*']) {|user| user == self }
   add_permissions('edit', 'delete') {|user| user == self || user.admin? }
@@ -276,7 +277,68 @@ class User < ApplicationRecord
     end
     res
   end
-
+  
+  def track_activity(word, activity_id, details)
+    details ||= {}
+    time = Time.parse("#{details['date'] || ''}T#{details['time'] | ''}") rescue nil
+    activity = word.find_activity(activity_id)
+    return false unless activity
+    
+    cutoff = 12.hours.ago.iso8601
+    
+    data = UserData.find_or_create_by(:user_id => self.id)
+    data.data ||= {}
+    data.data['activities'] ||= []
+    match = data.data['activities'].detect{|a| a['id'] == activity_id && a['tracked'] > cutoff }
+    
+    res = {
+      'unique_id' => "#{activity_id}:#{Time.now.to_i}",
+      'id' => activity_id,
+      'activity_id' => activity_id,
+      'text' => activity['text'],
+    }
+    ['success_level', 'notes'].each{|k| res[k] = details[k] if details[k] }
+    if time || !match || !match['tracked']
+      time ||= Time.now
+      iso = time.utc.iso8601
+      res = res.merge({
+        'tracked' => iso,
+        'date' => iso[0, 10],
+        'time' => iso[11, 5],
+      })
+    end
+    # if this activity has already been tracked recently, override the last instance
+    if match
+      if details['remove']
+        data.data['activities'] -= [match]
+      else
+        match.merge!(res)
+        res.merge!(match)
+        res['updated'] = true
+      end
+    else
+      data.data['activities'] << res
+    end
+    data.save
+    res
+  end
+  
+  def recent_activities(include_supervisees=true)
+    users = [self]
+    datas = UserData.where(:id => users.map(&:id))
+    res = []
+    cutoff = 2.weeks.ago.iso8601
+    user_names = {}
+    users.each{|u| user_names[u.id] = u.settings['user_name'] }
+    datas.each do |data|
+      data.data['activities'].each do |activity|
+        if activity['tracked'] > cutoff
+          res << {'unique_id' => "#{activity['activity_id']}:#{activity['tracked']}"}.merge(activity).merge({'user_id' => data.related_global_id(data.user_id), 'user_name' => user_names[data.user_id]})
+        end
+      end
+    end
+    res.sort_by{|a| a['tracked'] }.reverse
+  end
   
   def self.user_name_hash(str)
     GoSecure.sha512(str, 'hashed_user_name')
@@ -300,7 +362,12 @@ class User < ApplicationRecord
       self.settings['user_name'] = params['user_name']
     end
     # TODO: alert new and old email address when changed
-    self.settings['email'] = params['email']
+    self.settings['email'] = params['email'] if params['email']
+    self.settings['name'] = params['name'] if params['name']
+    self.settings['modeling_level'] = params['modeling_level'] if params['modeling_level']
+    self.settings['focus_length'] = params['focus_length'] if params['focus_length']
+    self.process_map(params)
+    true
   end
 
   def generate_token!
