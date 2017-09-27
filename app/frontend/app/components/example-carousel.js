@@ -40,6 +40,17 @@ export default Ember.Component.extend({
     var index = this.get('current_index') || 0;
     return (this.get('entries') || [])[index];
   }.property('entries', 'entries.length', 'current_index'),
+  current_entry_classes: function() {
+    var res = {};
+    for(var idx = 1; idx <= 4; idx++) {
+      var klass = 'btn btn-default face_button';
+      if(this.get('current_entry.perform_details.success_level') == idx) {
+        klass = 'btn btn-primary face_button';
+      }
+      res['level_' + idx + '_class'] = Ember.String.htmlSafe(klass);
+    }
+    return res;
+  }.property('current_entry.perform_details.success_level'),
   readable_index: function() {
     return (this.get('current_index') || 0) + 1;
   }.property('current_index'),

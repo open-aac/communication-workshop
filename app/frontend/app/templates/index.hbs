@@ -81,13 +81,33 @@
   {{#if session.isAuthenticated}}
     <div class='col-sm-6 col-sm-offset-3' style='text-align: center;'>
       <h4>Activity Report!</h4>
-      You did lots of cool stuff, yo?
+      {{#if events.loading}}
+        {{t "Loading events..." key='loading_events'}}
+      {{else if events.error}}
+        {{t "Error loading events" key='error_loading_events'}}
+      {{else if events}}
+        <ul class='list_group'>
+        {{#each events as |event|}}
+          <li class='list-group-item' style='text-align: left;'>
+            {{#if event.success_level}}
+              <div class='face_button' style='float: left; width: auto; margin-right: 5px; margin-top: 5px;'>
+                <span class={{event.face_class}}></span>
+              </div>
+            {{/if}}
+            {{event.text}} - {{event.user_name}}
+            <div class='text-muted'>{{from_now event.tracked}}</div>
+          </li>
+        {{/each}}
+        </ul>
+      {{else}}
+        {{t "No recent activity" key='no_recent_activity'}}
+      {{/if}}
     </div>
   {{/if}}
 </div>
 
 
-<div style='white-space: pre-line;'>
+<div style='white-space: pre-line; display: none;'>
 Activities based around a topic/context instead of a word:
 
 - meal time

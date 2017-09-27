@@ -171,3 +171,27 @@
 .rule_code {
   font-family: Courier;
 }
+
+.face_button {
+  font-size: 12px;
+  line-height: 12px;
+  width: 100%; 
+  white-space: normal;
+  .face {
+    display: block;
+    margin: 0 auto 5px;
+    width: 30px;
+    height: 30px;
+    background-image: url(/images/faces.png);
+    background-size: auto 30px;
+    &.happy {
+      background-position-x: -30px;
+    }
+    &.neutral {
+      background-position-x: -59px;
+    }
+    &.sad {
+      background-position-x: -89px;
+    }
+  }
+}

@@ -10,7 +10,6 @@ export default modal.ModalController.extend({
     var type = _this.get('model.type');
     session.ajax('/api/v1/words/suggestions', {type: 'GET'}).then(function(res) {
       _this.set('suggestions', res[type]);
-      console.log(res[type]);
     }, function(err) {
       _this.set('suggestions', {error: true});
     });
