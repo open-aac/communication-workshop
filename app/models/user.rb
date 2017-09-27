@@ -325,7 +325,7 @@ class User < ApplicationRecord
   
   def recent_activities(include_supervisees=true)
     users = [self]
-    datas = UserData.where(:id => users.map(&:id))
+    datas = UserData.where(:user_id => users.map(&:id))
     res = []
     cutoff = 2.weeks.ago.iso8601
     user_names = {}
