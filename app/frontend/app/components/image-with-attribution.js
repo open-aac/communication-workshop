@@ -65,7 +65,7 @@ export default Ember.Component.extend({
       var _this = this;
       modal.open('find-image', {label: this.get('label'), image: this.get('image')}).then(function(res) {
         if(res && res.image) {
-          _this.sendAction('update_image', res.image);
+          _this.sendAction('update_image', res.image, _this.get('ref'));
         }
       });;
     }

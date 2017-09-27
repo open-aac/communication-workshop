@@ -28,7 +28,7 @@ class User < ApplicationRecord
   end
 
   def permission_scopes
-    []
+    ['full']
   end
   
   def valid_password?(str)

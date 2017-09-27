@@ -19,15 +19,33 @@ export default Ember.Controller.extend({
       {"fill":"#ccc","color":"Gray","hint":"determiners","types":["article","determiner"],"border":"#808080","style":Ember.String.htmlSafe("border-color: #808080; background: #ccc;")}
     ]
   }.property(),
-  button: function() {
-    return {
+  buttons: function() {
+    var map = session.get('user.full_word_map') || [];
+    var locale = this.get('model.locale');
+    var word = this.get('model.word');
+    var fallback = {
       background_color: this.get('model.background_color'),
       border_color: this.get('model.border_color'),
       label: this.get('model.word'),
       image_url: this.get('model.image.image_url'),
       id: this.get('model.id')
     };
-  }.property('model.id', 'model.word', 'model.image', 'model.border_color', 'model.background_color'),
+    if(map[locale] && map[locale][word] && map[locale][word]['results'] && map[locale][word]['results'].length > 0) {
+      return map[locale][word]['results'].map(function(r) {
+        return {
+          background_color: r.background_color || fallback.background_color,
+          border_color: r.border_color || fallback.border_color,
+          label: fallback.label,
+          id: fallback.id,
+          image_url: (r.image && r.image.image_url) || fallback.image_url
+        };
+      });
+    }
+    return [fallback];
+  }.property('session.user.full_word_map', 'model.id'),
+  single_button: function() {
+    return this.get('buttons').length == 1 ? this.get('buttons')[0] : nil;
+  }.property('buttons.@each.image_url'),
   image_style: function() {
     var css = "width: 100px; padding: 10px; max-height: 100px; border-width: 3px; border-radius: 5px; border-style: solid;";
     var border = this.get('model.border_color') || '#888';
@@ -40,9 +58,9 @@ export default Ember.Controller.extend({
     var num = this.get('modeling_level') || 1;
     var desc = i18n.t('one_button', "1-button communicators");
     if(num === 2) {
-      desc = i18n.t('two_button', "2-3 button communicators");
+      desc = i18n.t('two_button', "2-3 -button communicators");
     } else if(num === 3) {
-      desc = i18n.t('three_plus_button', ">3-button communicators");
+      desc = i18n.t('three_plus_button', "4+ -button communicators");
     }
     var level = {
       modeling_examples: this.get('model.level_' + num + '_modeling_examples'),
