@@ -1,4 +1,4 @@
-require 'json_api/lesson'
+# require 'json_api/lesson'
 
 class Api::LessonsController < ApplicationController
   def index
