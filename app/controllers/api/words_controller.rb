@@ -44,7 +44,7 @@ class Api::WordsController < ApplicationController
     hash = JSON.parse(json)
     button = hash['buttonset']['buttons'].detect{|b| b['label'] == params['id']}
     if button
-      res = Typhoeus.get("https://app.mycoughdrop.com/api/v1/search/parts_of_speech?q=morning&access_token=#{ENV['COUGHDROP_TOKEN']}")
+      res = Typhoeus.get("https://app.mycoughdrop.com/api/v1/search/parts_of_speech?q=#{params['id']}&access_token=#{ENV['COUGHDROP_TOKEN']}")
       pos = JSON.parse(res.body) rescue nil
       render json: {
         background_color: button['background_color'],
