@@ -9,7 +9,7 @@ export default Ember.Component.extend({
     var button = this.get('button');
     var $canvas = Ember.$(this.element).find("canvas");
     var _this = this;
-    if($canvas[0]) {
+    if($canvas[0] && button) {
       $canvas.attr('width', 500);
       $canvas.attr('height', 500);
       var context = $canvas[0].getContext('2d');
