@@ -11,6 +11,7 @@ export default Ember.Controller.extend({
         identification: this.get('user_name'),
         password: this.get('password')
       }).then(function(res) {
+        session.load_user();
         _this.transitionToRoute('index');
       });
     },

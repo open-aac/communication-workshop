@@ -21,7 +21,7 @@
   </form>
   <div style='float: right; padding: 5px;'>
     {{#if session.isAuthenticated}}
-      {{#link-to 'user' session.user.user_name}}
+      {{#link-to 'user' session.user_name}}
         {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}
       {{/link-to}}
       &nbsp;&nbsp;

@@ -4,14 +4,9 @@ import session from '../utils/session';
 export default Ember.Controller.extend({
   load_user: function() {
     var _this = this;
-    if(!_this.get('user.id')) {
-      session.set('user', {loading: true});
-      _this.store.findRecord('user', 'self').then(function(u) {
-        u.load_map();
-        session.set('user', u);
-      }, function(err) {
-        session.set('user', {error: true});
-      });
+    if(!_this.get('user.id') && session.get('user_name')) {
+      session.data_store = _this.store;
+      session.load_user();
     }
   },
   clear_search_status: function() {

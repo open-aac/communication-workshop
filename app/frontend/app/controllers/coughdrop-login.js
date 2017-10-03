@@ -20,6 +20,8 @@ export default modal.ModalController.extend({
       });
       session.store('just_logged_in', true);
       session.restore();
+      session.data_store = _this.store;
+      session.load_user();
       modal.close('coughdrop-login');
       _this.transitionToRoute('index');
     }, function(err) {
