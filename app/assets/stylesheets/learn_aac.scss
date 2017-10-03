@@ -22,6 +22,11 @@
   margin-top: 40px;
 }
 
+.fit_image {
+  object-fit: contain;
+  object-position: center;
+}
+
 .pad_color_box {
   padding-left: 40px;
 }

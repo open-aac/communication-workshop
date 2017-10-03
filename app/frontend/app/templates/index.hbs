@@ -18,6 +18,9 @@
         <div style='max-width: 300px; margin: 0 auto;'>
           <div class='list-group pills'>
             {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+              {{#if word.best_image_url}}
+                <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -10px 0 -6px;' />
+              {{/if}}
               {{word.word}}
               {{#if word.concludes}}
                 <div style='font-size: 14px;'>{{t "concludes" key='concludes'}} {{from_now word.concludes}}</div>
@@ -52,7 +55,12 @@
       <div style='max-width: 300px; margin: 0 auto;'>
       <div class='list-group pills'>
         {{#each words as |word|}}
-          {{#link-to 'word.index' word.word word.locale class='list-group-item'}}{{word.word}}{{/link-to}}
+          {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+            {{#if word.best_image_url}}
+              <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+            {{/if}}
+            {{word.word}}
+          {{/link-to}}
         {{/each}}
       </div>
       </div>
@@ -70,7 +78,12 @@
       <div style='max-width: 300px; margin: 0 auto;'>
       <div class='list-group pills'>
         {{#each categories as |cat|}}
-          {{#link-to 'category.index' cat.category cat.locale class='list-group-item'}}{{cat.category}}{{/link-to}}
+          {{#link-to 'category.index' cat.category cat.locale class='list-group-item'}}
+            {{#if cat.best_image_url}}
+              <img src={{cat.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+            {{/if}}
+            {{cat.category}}
+          {{/link-to}}
         {{/each}}
       </div>
       </div>
