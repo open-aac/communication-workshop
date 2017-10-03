@@ -53,6 +53,7 @@ Rails.application.routes.draw do
     resources :users do
       get '/word_map' => 'users#full_map'
       get '/words' => 'users#words'
+      post '/update_word_map' => 'users#update_word_map'
     end
     get '/books/:id/json' => 'books#book_json', constraints: {id: book_id_regex}
     get '/search/books' => 'search#books'

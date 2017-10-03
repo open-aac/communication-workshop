@@ -6,7 +6,7 @@ export default Ember.Controller.extend({
     var _this = this;
     _this.set('words', {loading: true});
     this.store.query('word', {sort: 'recommended'}).then(function(res) {
-      _this.set('words', res);
+      _this.set('words', res.slice(0, 5));
     }, function() {
       _this.set('words', {error: true});
     });
@@ -15,7 +15,7 @@ export default Ember.Controller.extend({
     var _this = this;
     _this.set('categories', {loading: true});
     this.store.query('category', {sort: 'recommended'}).then(function(res) {
-      _this.set('categories', res);
+      _this.set('categories', res.slice(0, 5));
     }, function() {
       _this.set('categories', {error: true});
     });

@@ -36,6 +36,7 @@
     <h4>{{t "Personalized Buttons" key='personalized_button'}}</h4>
     {{word-map map=model.word_data.word_map}}
   {{/if}}
+
 </div>
 {{/unless}}
 
@@ -204,5 +205,18 @@
     </form>
   {{else}}
     <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Profile" key='edit_profile'}}</button>
+    {{#if model.external_tracking}}
+      <button class='btn btn-default btn-sm' {{action 'update_word_map'}}>
+        {{#if update_status.loading}}
+          {{t "Updating Word List..." key='updating_word_list'}}
+        {{else if update_status.error}}
+          {{t "Error Updating Word List" key='error_updating_word_list'}}
+        {{else if update_status.updated}}
+          {{t "Word List Updated!" key='updated_word_list'}}
+        {{else}}
+          {{t "Update Word List" key='update_word_list'}}
+        {{/if}}
+      </button>
+    {{/if}}
   {{/if}}
 {{/if}}

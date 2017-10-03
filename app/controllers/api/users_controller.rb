@@ -25,6 +25,15 @@ class Api::UsersController < ApplicationController
     end
   end
   
+  def update_word_map
+    user = User.find_by_path(params['user_id'])
+    return unless exists?(user, params['user_id'])
+    return unless allowed?(user, 'edit')
+    res = false
+    res = user.update_external_map if user.settings['external_tracking']
+    render json: {updated: res}
+  end
+  
   def full_map
     user = User.find_by_path(params['user_id'])
     return unless exists?(user, params['user_id'])

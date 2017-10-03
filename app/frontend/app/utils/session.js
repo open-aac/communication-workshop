@@ -148,6 +148,16 @@ var session = Ember.Object.extend({
 
     return store_data;
   },
+  load_user: function() {
+    if(!session.data_store) { return; }
+    session.set('user', {loading: true});
+    session.data_store.findRecord('user', 'self').then(function(u) {
+      u.load_map();
+      session.set('user', u);
+    }, function(err) {
+      session.set('user', {error: true});
+    });
+  },
   override: function(options) {
     var data = session.restore();
     data.access_token = options.access_token;

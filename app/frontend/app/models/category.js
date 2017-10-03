@@ -1,9 +1,11 @@
 import Ember from 'ember';
 import DS from 'ember-data';
+import session from '../utils/session';
 
 var Category = DS.Model.extend({
   didLoad: function() {
     var _this = this;
+    this.set('session', session);
     ['level_1_modeling_examples', 'level_2_modeling_examples', 'level_3_modeling_examples', 'activity_ideas', 'books', 'videos', 'phrase_categories'].forEach(function(key) {
       if(!_this.get(key)) {
         _this.set(key, []);

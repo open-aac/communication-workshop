@@ -10,11 +10,20 @@ var User = DS.Model.extend({
   permissions: DS.attr('raw'),
   current_words: DS.attr('raw'),
   external_tracking: DS.attr('boolean'),
+  external_account: DS.attr('string'),
   modeling_level: DS.attr('string'),
   focus_length: DS.attr('string'),
   starred_activity_ids: DS.attr('raw'),
   words: DS.attr('raw'),
   word_map: DS.attr('raw'),
+  map_current_words: function() {
+    var map = session.get('user.full_word_map') || [];
+    (this.get('current_words') || []).forEach(function(word) {
+      if(map[word.locale] && map[word.locale][word.word] && map[word.locale][word.word].image && map[word.locale][word.word].image.image_url) {
+        Ember.set(word, 'best_image_url', map[word.locale][word.word].image.image_url);
+      }
+    });
+  }.observes('current_words', 'session.user.full_word_map'),
   load_map: function(force) {
     var _this = this;
     if(this.get('full_word_map') && !force) {

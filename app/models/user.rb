@@ -385,12 +385,16 @@ class User < ApplicationRecord
         user = opts[:current_user]
         user.settings['email'] ||= opts[:email]
         user.settings['name'] ||= opts[:remote_name]
+        user.settings['external_tracking'] = true
+        user.settings['external_account'] = opts[:source]
       else
         user = User.new
         user.settings = {
           user_name: "#{opts[:source]}::#{opts[:remote_user_name]}",
           email: opts[:email],
-          name: opts[:remote_name]
+          name: opts[:remote_name],
+          external_tracking: true,
+          external_account: opts[:source]
         }
       end
       user.save!

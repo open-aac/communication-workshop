@@ -9,7 +9,8 @@ class Api::WordsController < ApplicationController
     elsif params['sort'] == 'recommended' && @api_user
       words = @api_user.related_words
     else
-      words = words.order('random_id')
+      ptr = WordData.count
+      words = words.order('random_id').offset(rand(ptr / 4))
     end
     render json: JsonApi::Word.paginate(params, words)
   end

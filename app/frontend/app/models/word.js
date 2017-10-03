@@ -1,9 +1,11 @@
 import Ember from 'ember';
 import DS from 'ember-data';
+import session from '../utils/session';
 
 var Word = DS.Model.extend({
   didLoad: function() {
     var _this = this;
+    _this.set('session', session);
     ['usage_examples', 'level_1_modeling_examples', 'level_2_modeling_examples', 'level_3_modeling_examples', 'prompts', 'learning_projects', 'activity_ideas', 'books', 'topic_starters', 'videos'].forEach(function(key) {
       if(!_this.get(key)) {
         _this.set(key, []);

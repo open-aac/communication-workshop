@@ -1,3 +1,5 @@
+require 'typhoeus' 
+
 module WordMapping
   extend ActiveSupport::Concern
   
@@ -9,6 +11,7 @@ module WordMapping
       self.settings['words'] = nil
       self.settings['word_map'] = nil
       self.settings['external_tracking'] = true
+      self.settings['external_source_url'] = params['external_source_url'] if params['external_source_url']
       # TODO: schedule :update_map
     elsif params['linked_map_code']
       user_id, code = params['linked_map_code'].split(/:/)
@@ -40,13 +43,62 @@ module WordMapping
     if remote_url && self.settings['external_tracking']
       # server call to retrieve the latest version of the mapping
       # persist words and word_map
-      true
+      res = Typhoeus.get(remote_url)
+      if res.headers['Location'] && res.code >= 300 && res.code <= 399
+        res = Typhoeus.get(res.headers['Location'])
+      end
+      json = JSON.parse(res.body) rescue nil
+      puts json.to_json
+      if json && json['word_map']
+        tmp_words = []
+        map = {}
+        json['word_map'].each do |locale, locale_map|
+          locale_map.each do |word, attrs|
+            word = word.downcase
+            tmp_words << word
+            map[locale] ||= {}
+            obj = {
+              'label' => attrs['label'] || word,
+            }
+            ['border_color', 'background_color'].each do |key|
+              obj[key] = attrs[key] if attrs[key]
+            end
+            if attrs['image'] && attrs['image']['image_url']
+              obj['image'] = {}
+              ['image_url', 'license', 'author', 'author_url', 'license_url', 'source_url'].each do |key|
+                obj['image'][key] = attrs['image'][key] if attrs['image'][key]
+              end
+              obj['image_url'] = obj['image']['image_url']
+            end
+            map[locale][word] = obj
+          end
+        end
+        if json['words']
+          tmp_words = json['words']
+        else
+          tmp_words.uniq!
+        end
+        if tmp_words.length > 0
+          self.settings['words'] = tmp_words
+          self.settings['word_map'] = map
+          self.save
+          return true
+        end
+      end
+      false
     end
     false
   end 
   
   def update_external_map
     # schedule an update and return a progress object
+    # TODO: if for a CoughDrop account, then the URL must be custom-generated to support timing out
+    url = self.settings['external_source_url']
+    ua = UserAlias.find_by(:user => self, :source => 'coughdrop')
+    if ua && ua.settings['access_token'] && self.settings['external_tracking']
+      url = "#{ENV['COUGHDROP_HOST']}/api/v1/users/self/word_map?access_token=#{ua.settings['access_token']}"
+    end
+    self.update_map(url) if url
   end
   
   def word_map

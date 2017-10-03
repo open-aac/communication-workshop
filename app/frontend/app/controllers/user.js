@@ -5,6 +5,7 @@ import i18n from '../utils/i18n';
 export default Ember.Controller.extend({
   setup: function() {
     this.set('editing', false);
+    this.set('update_status', null);
   },
   modeling_levels: function() {
     var res = [
@@ -74,6 +75,19 @@ export default Ember.Controller.extend({
         Ember.set(ref, 'image', image);
         Ember.set(ref, 'image_url', image.image_url);
       }
+    },
+    update_word_map: function() {
+      var _this = this;
+      _this.set('update_status', {loading: true});
+      session.ajax('/api/v1/users/' + _this.get('model.id') + '/update_word_map', {type: 'POST'}).then(function(res) {
+        _this.get('model').load_map(true).then(function(res) {
+          _this.set('update_status', {updated: true});
+        }, function(err) {
+          _this.set('update_status', {error: true});
+        });
+      }, function(err) {
+        _this.set('update_status', {error: true});
+      });
     }
   }
 });
