@@ -34,6 +34,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'typhoeus'
 gem 'stripe'
 gem 'go_secure'
+gem 'permissable-coughdrop'
 gem 'sanitize'
 gem 'obf'
 

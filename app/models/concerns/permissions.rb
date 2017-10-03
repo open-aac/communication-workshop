@@ -1,3 +1,5 @@
+require 'permissable'
+
 module Permissions
   extend ActiveSupport::Concern
   include Permissable::InstanceMethods
