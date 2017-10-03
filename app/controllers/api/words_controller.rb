@@ -50,7 +50,7 @@ class Api::WordsController < ApplicationController
       render json: {
         background_color: button['background_color'],
         border_color: button['border_color'],
-        parts_of_speech: pos && pos['types'] && pos['types'].join(','),
+        parts_of_speech: pos && pos['types'] && pos['types'].join(', '),
         image_url: button['image'],
         sentences: pos && pos['sentences'] && pos['sentences'].select{|s| s['approved'] }.map{|s| s['sentence'] }
       }
