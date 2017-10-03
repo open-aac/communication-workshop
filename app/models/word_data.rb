@@ -134,7 +134,8 @@ class WordData < ApplicationRecord
             'level' => level,
             'data' => ex.merge({'id' => ex_id}),
             'history_distance' => history_distance,
-            'match_score' => score.round(3)
+            'match_score' => score.round(3),
+            'jittered_match_score' => (score.round(3) + (rand - 0.5))
           } unless finished_ids[ex['id']]
         end
       end
@@ -189,13 +190,14 @@ class WordData < ApplicationRecord
           'locale' => word.locale,
           'data' => ex.merge({'id' => ex_id}),
           'history_distance' => history_distance,
-          'match_score' => score.round(3)
+          'match_score' => score.round(3),
+          'jittered_match_score' => (score.round(3) + (rand - 0.5))
         } unless finished_ids[ex['id']]
       end
     end
-    res['modeling'] = res['modeling'].shuffle.sort_by{|m| m['match_score'] }.reverse
-    res['activities'] = res['activities'].shuffle.sort_by{|m| m['match_score'] }.reverse
-    res['prompts'] = res['prompts'].shuffle.sort_by{|m| m['match_score'] }.reverse
+    res['modeling'] = res['modeling'].shuffle.sort_by{|m| m['jittered_match_score'] }.reverse
+    res['activities'] = res['activities'].shuffle.sort_by{|m| m['jittered_match_score'] }.reverse
+    res['prompts'] = res['prompts'].shuffle.sort_by{|m| m['jittered_match_score'] }.reverse
     res
   end
   
