@@ -36,7 +36,17 @@ var Category = DS.Model.extend({
   time_based_words: DS.attr('string'),
   location_based_words: DS.attr('string'),
   other_words: DS.attr('string'),
-  references: DS.attr('string')
+  references: DS.attr('string'),
+  best_image_url: function() {
+    var map = session.get('user.full_word_map') || [];
+    var locale = this.get('locale');
+    var word = this.get('word');
+    var fallback = this.get('image.image_url');
+    if(map[locale] && map[locale][word] && map[locale][word]['image'] && map[locale][word].image.image_url) {
+      return map[locale][word].image.image_url;
+    }
+    return fallback;
+  }.property('session.user.full_word_map', 'model.id'),
 });
 
 export default Category;

@@ -3,6 +3,9 @@ import DS from 'ember-data';
 import session from '../utils/session';
 
 var User = DS.Model.extend({
+  didLoad: function() {
+    this.set('session', session);
+  },
   user_name: DS.attr('string'),
   name: DS.attr('string'),
   admin: DS.attr('boolean'),
