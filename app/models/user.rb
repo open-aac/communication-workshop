@@ -190,9 +190,12 @@ class User < ApplicationRecord
   def related_words(include_linked_users=true)
     current = self.current_words
     current_hash = {}
+    available_hash = {}
+    (self.settings['words'] || []).each{|w| available_hash[w] = true }
     current.each{|w| current_hash[w['word']] = true }
     past = self.past_words
     link_weights = {}
+    max_tally = 0
     valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
     valid.each do |word|
       word.linked_words.each do |link, tally|
@@ -200,24 +203,37 @@ class User < ApplicationRecord
         link_weights[word.locale][link] ||= 0
         link_weights[word.locale][link] += tally
         link_weights[word.locale][link] += tally if current_hash[link]
+        max_tally = [max_tally, tally * 2].max
       end
     end
+    
     res = []
     link_weights.each do |locale, weights|
       matches = WordData.where(:locale => locale, :word => weights.to_a.map(&:first))
       map = {}
       matches.each{|w| map[w.word] = w }
-      weights.to_a.sort_by(&:last).reverse.map(&:first).each do |str|
-        res << map[str] if map[str] && !current_hash[str]
+      weights.to_a.each do |str, weight|
+        res << [map[str], weight] if map[str] && !current_hash[str]
       end
     end
+    res = res.sort_by{|word, weight| [-1 * weight, word.word] }.map(&:first)
+
     if res.length < 25
-      WordData.all.order('random_id').limit(50).each do |word|
+      ptr = WordData.count
+      WordData.where(:word => self.settings['words']).order('word').each do |word|
+        if res.length < 25
+          res << word unless res.include?(word) || current_hash[word.word]
+        end
+      end
+      WordData.all.order('random_id').limit(50).offset(rand(ptr / 4)).each do |word|
         if res.length < 25
           res << word unless res.include?(word) || current_hash[word.word]
         end
       end
     end
+    list = []
+    res.each_with_index{|w, idx| list << [w, idx] }
+    res = list.sort_by{|w, idx| [available_hash[w.word] ? 0 : 1, idx] }.map(&:first)
     res
   end
 
@@ -229,7 +245,7 @@ class User < ApplicationRecord
     link_weights = {}
     valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
     valid.each do |word|
-      cats = (word.data['related_categories'] || '').split(/,/)
+      cats = (word.data['related_categories'] || '').split(/,/).map(&:strip)
       link_weights[word.locale]
       cats.each do |link, tally|
         link_weights[word.locale] ||= {}
@@ -248,7 +264,8 @@ class User < ApplicationRecord
       end
     end
     if res.length < 25
-      WordCategory.all.order('random_id').limit(50).each do |cat|
+      ptr = WordCategory.count
+      WordCategory.all.order('random_id').limit(50).offset(rand(ptr / 4)).each do |cat|
         if res.length < 25
           res << cat unless res.include?(cat)
         end
