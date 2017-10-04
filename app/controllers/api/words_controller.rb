@@ -10,7 +10,7 @@ class Api::WordsController < ApplicationController
       words = @api_user.related_words
     else
       ptr = WordData.count
-      words = words.order('random_id').offset(rand(ptr / 4))
+      words = words.order('random_id').offset(rand(ptr / 4)).limit(50).to_a.sort_by{|w| rand }
     end
     render json: JsonApi::Word.paginate(params, words)
   end

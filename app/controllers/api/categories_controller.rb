@@ -6,7 +6,7 @@ class Api::CategoriesController < ApplicationController
     if params['sort'] == 'recommended' && @api_user
       categories = @api_user.related_categories
     else
-      categories = categories.order('random_id')
+      categories = categories.order('random_id').limit(50).to_a.sort_by{|w| rand }
     end
     render json: JsonApi::Category.paginate(params, categories)
   end
