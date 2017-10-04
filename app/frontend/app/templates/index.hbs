@@ -1,4 +1,4 @@
-<h1>{{t "Super Awesome Words!" key='words_and_stuff'}}</h1>
+<h1>{{t "AAC Workshop" key='aac_workshop'}}</h1>
 
 <div class='row'>
   <div class='banner col-sm-12' style='display: none;'>
@@ -114,6 +114,12 @@
         </ul>
       {{else}}
         {{t "No recent activity" key='no_recent_activity'}}
+        <p class='text-muted' style='text-align: left; margin-top: 20px;'>
+          {{t "As you check off activities and score your participation in them, you'll see a history of those activities here." key='activity_explainer'}}
+          {{#if session.user.external_account}}
+            {{t "In addition, if you select focus words and tie them back to your CoughDrop account, you'll see usage reports related to those words show up as well." key='external_account_activity_explainer'}}
+          {{/if}}
+        </p>
       {{/if}}
     </div>
   {{/if}}

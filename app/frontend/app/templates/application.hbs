@@ -1,12 +1,23 @@
 <header id='header'>
-  <span style='padding-right: 20px; font-weight: bold;' id='title'>
+  <span style='padding-right: 20px; font-weight: bold; padding-left: 10px; font-size: 20px;' id='title'>
     {{#link-to 'index'}}
-      Learn AAC
+      {{t "AAC Workshop" key='aac_workshop'}}
     {{/link-to}}
   </span>
-  <form style='display: inline; position: relative;' {{action 'search' on='submit'}}>
+  <div style='float: right; padding: 5px;'>
+    {{#if session.isAuthenticated}}
+      {{#link-to 'user' session.user_name}}
+        {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}
+      {{/link-to}}
+      &nbsp;&nbsp;
+      <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
+    {{else}}
+      {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}
+    {{/if}}
+  </div>
+  <form style='display: inline; position: relative; float: right; margin-right: 30px;' {{action 'search' on='submit'}}>
     <span style='display: inline-block; width: 150px;'>
-      {{input type='text' class='form-control input-sm' value=search_string placeholder='find cool stuff'}}
+      {{input type='text' class='form-control input-sm' value=search_string placeholder='find a core word'}}
     </span>
     <button type='submit' class='btn btn-default btn-sm' style='margin-top: -1px;'>{{t "Go" key='go'}}</button>
     {{#if search_status}}
@@ -19,17 +30,6 @@
       </div>
     {{/if}}
   </form>
-  <div style='float: right; padding: 5px;'>
-    {{#if session.isAuthenticated}}
-      {{#link-to 'user' session.user_name}}
-        {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}
-      {{/link-to}}
-      &nbsp;&nbsp;
-      <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
-    {{else}}
-      {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}
-    {{/if}}
-  </div>
 </header>
 <div class='container'>
 {{outlet}}
