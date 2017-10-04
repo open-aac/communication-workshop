@@ -195,7 +195,6 @@ class User < ApplicationRecord
     current.each{|w| current_hash[w['word']] = true }
     past = self.past_words
     link_weights = {}
-    max_tally = 0
     valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
     valid.each do |word|
       word.linked_words.each do |link, tally|
@@ -203,7 +202,6 @@ class User < ApplicationRecord
         link_weights[word.locale][link] ||= 0
         link_weights[word.locale][link] += tally
         link_weights[word.locale][link] += tally if current_hash[link]
-        max_tally = [max_tally, tally * 2].max
       end
     end
     
@@ -240,6 +238,8 @@ class User < ApplicationRecord
   def related_categories(include_linked_users=true)
     current = self.current_words
     current_hash = {}
+    available_hash = {}
+    (self.settings['words'] || []).each{|w| available_hash[w] = true }
     current.each{|w| current_hash[w['word']] = true }
     past = self.past_words
     link_weights = {}
@@ -247,11 +247,14 @@ class User < ApplicationRecord
     valid.each do |word|
       cats = (word.data['related_categories'] || '').split(/,/).map(&:strip)
       link_weights[word.locale]
-      cats.each do |link, tally|
+      cats.each do |link|
         link_weights[word.locale] ||= {}
         link_weights[word.locale][link] ||= 0
         link_weights[word.locale][link] += 1
         link_weights[word.locale][link] += 1 if current_hash[word.word]
+        if available_hash[word.word]
+          link_weights[word.locale][link] += 5
+        end
       end
     end
     res = []
