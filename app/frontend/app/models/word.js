@@ -37,6 +37,7 @@ var Word = DS.Model.extend({
   parts_of_speech: DS.attr('string'),
   verbs: DS.attr('string'),
   adjectives: DS.attr('string'),
+  adverbs: DS.attr('string'),
   pronouns: DS.attr('string'),
   determiners: DS.attr('string'),
   time_based_words: DS.attr('string'),

@@ -102,6 +102,10 @@
       <td>{{#if model.adjectives}}{{word-list list=model.adjectives locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
     </tr>
     <tr>
+      <td>{{t "adverbs" key='adverbs'}}</td>
+      <td>{{#if model.adverbs}}{{word-list list=model.adverbs locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
       <td>{{t "pronouns" key='pronouns'}}</td>
       <td>{{#if model.pronouns}}{{word-list list=model.pronouns locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
     </tr>
@@ -367,6 +371,20 @@
         <div class='col-sm-4 revision'>
           <p class='form-control-static'>{{revision.changes.adjectives}}</p>
           <button class='btn btn-default accept_revision' {{action 'accept_revision' 'adjectives'}}><span class='glyphicon glyphicon-ok'></span></button>
+        </div>
+      {{/if}}
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='adverbs'>{{t "Adverbs" key='adverbs'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='adverbs' value=model.adverbs class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      {{#if revision.changes.adverbs}}
+        <div class='col-sm-4 revision'>
+          <p class='form-control-static'>{{revision.changes.adverbs}}</p>
+          <button class='btn btn-default accept_revision' {{action 'accept_revision' 'adverbs'}}><span class='glyphicon glyphicon-ok'></span></button>
         </div>
       {{/if}}
       <div style='clear: left;'></div>

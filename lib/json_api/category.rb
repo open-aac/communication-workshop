@@ -26,6 +26,10 @@ module JsonApi::Category
       json['related_identifiers'] = cat.data['all_user_identifiers']
       json['approved_user_identifiers'] = cat.data['approved_user_identifiers']
       json['revisions'] = cat.data['revisions'] || []
+      
+      if json['permissions'] && json['permissions']['view']
+#        json = json.merge(cat.related_activities)
+      end
     end
     json
   end

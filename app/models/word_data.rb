@@ -16,6 +16,7 @@ class WordData < ApplicationRecord
 
   secure_serialize :data
   before_save :generate_defaults
+  after_save :update_related_categories
 
   add_permissions('view', ['*']) { true }
   add_permissions('revise', ['*']) {|user| !!user }
@@ -27,6 +28,28 @@ class WordData < ApplicationRecord
     self.enforce_ids
     self.data['related_words'] = self.possibly_related_words
     true
+  end
+
+  def update_related_categories
+    return if @skip_related_update
+    
+    categories = (self.data['related_categories'] || '').split(/,/).map(&:strip)
+    records = WordCategory.where(:locale => self.locale, :category => categories)
+    records.each do |cat|
+      type = (self.data['parts_of_speech'] || '').split(/,/)[0]
+      type = nil unless ['verb', 'noun', 'pronoun', 'adjective', 'adverb', 'determiner', 'interjection'].include?(type)
+      type = type + 's' if type
+      if cat.data && type
+        orig = cat.data[type]
+        cat.data[type] ||= ''
+        list = cat.data[type].split(/,/).map(&:strip)
+        list << self.word
+        cat.data[type] = list.uniq.join(', ')
+        cat.instance_variable_set('@skip_related_update', true)
+        cat.save if cat.data[type] != orig
+        cat.instance_variable_set('@skip_related_update', false)
+      end
+    end
   end
   
   def find_activity(activity_id)
@@ -224,7 +247,7 @@ class WordData < ApplicationRecord
   
   def possibly_related_words
     res = []
-    ['verbs', 'adjectives', 'pronouns', 'determiners', 'time_based_words', 'location_based_words', 'other_words'].each do |key|
+    ['verbs', 'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_based_words', 'location_based_words', 'other_words'].each do |key|
       words = self.data[key]
       res += words.split(/,/) if words && words.length > 0
       res += words.split(/,/) if words && words.length > 0
@@ -250,7 +273,7 @@ class WordData < ApplicationRecord
 
   
   STRING_PARAMS = ['border_color', 'background_color', 'description', 'parts_of_speech', 'verbs',
-        'adjectives', 'pronouns', 'determiners', 'time_based_words', 'location_based_words',
+        'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_based_words', 'location_based_words',
         'other_words', 'related_categories', 'references']
   OBJ_PARAMS = ['image', 'usage_examples', 'level_1_modeling_examples', 'level_2_modeling_examples', 
         'level_3_modeling_examples', 'prompts', 'learning_projects', 'activity_ideas', 'books', 
