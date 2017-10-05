@@ -5,6 +5,20 @@ export default Ember.Component.extend({
   willInsertElement: function() {
     this.update_filtered_list();
   },
+  unused_categories: function() {
+    var list = [
+      i18n.t('questions', "Questions"),
+      i18n.t('observations', "Observations"),
+      i18n.t('social_phrases', "Social Phrases"),
+      i18n.t('choice_making', "Choice-Making")
+    ];
+    (this.get('entries') || []).forEach(function(entry) {
+      if(list.indexOf(entry.category) != -1) {
+        list.splice(list.indexOf(entry.category), 1);
+      }
+    });
+    return list.map(function(c) { return {label: c}; });
+  }.property('entries.@each.category'),
   update_filtered_list: function() {
     var _this = this;
     (this.get('entries') || []).forEach(function(entry) {
@@ -47,6 +61,9 @@ export default Ember.Component.extend({
     },
     add_category: function(cat) {
       this.get('entries').pushObject({});
+    },
+    set_category: function(entry, text) {
+      Ember.set(entry, 'category', text);
     },
     set_level: function(level) {
       if(level === 'all' && !this.get('filter_all')) {

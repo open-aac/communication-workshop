@@ -1,7 +1,7 @@
 <div>
 {{#if model.image}}
   <div>
-    <img src={{model.image.image_url}} style={{image_style}} />
+    <img src={{model.image.image_url}} class='fit_image' style={{image_style}} />
     <div style='margin-bottom: 20px;'>
       {{model.description}}
     </div>
@@ -40,6 +40,10 @@
     <tr>
       <td>{{t "adjectives" key='adjectives'}}</td>
       <td>{{#if model.adjectives}}{{word-list list=model.adjectives locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
+    </tr>
+    <tr>
+      <td>{{t "adverbs" key='adverbs'}}</td>
+      <td>{{#if model.adverbs}}{{word-list list=model.adverbs locale=model.locale}}{{else}}{{partial 'none-specified'}}{{/if}}</td>
     </tr>
     <tr>
       <td>{{t "pronouns" key='pronouns'}}</td>
@@ -148,44 +152,6 @@
       </div>
     </div>
     <div class="form-group">
-      <label for="parts_of_speech" class="col-sm-3 control-label">{{t "Parts of Speech" key='parts_of_speech'}}</label>
-      <div class="col-sm-5">
-        {{input type='text' id='parts_of_speech' value=model.parts_of_speech class='form-control'}}
-        comma-separated, most common first
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="usage_examples" class="col-sm-3 control-label">
-        {{t "Usage Examples" key='usage_examples'}}
-        <div class='text-muted' style='font-weight: normal;'>{{t "Ideas for different ways this word can be used, or specific situations where it could be useful" key='usage_examples_explainer'}}</div>
-      </label>
-      <div class="col-sm-5">
-        {{prompt-carousel entries=model.usage_examples type='usage_example'}}
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="modeling_examples" class="col-sm-3 control-label">
-        {{t "Modeling Examples" key='modeling_examples'}}
-        <div class='text-muted' style='font-weight: normal;'>{{t "Example phrases that modelers can use to teach or reinforce this word to communicators (remember, always try to model a level higher than the communicator)" key='modeling_examples_explainer'}}</div>
-      </label>
-      <div class="col-sm-5">
-        <p class='form-control-static'>{{t "Level 1 (1-button communicators)" key='level_1'}}</p>
-        {{prompt-carousel entries=model.level_1_modeling_examples type='modeling'}}
-      </div>
-      <div class="col-sm-5 col-sm-offset-3">
-        <p class='form-control-static'>{{t "Level 2 (2-3 button communicators)" key='level_2'}}</p>
-      </div>
-      <div class='col-sm-5 col-sm-offset-3'>
-        {{prompt-carousel entries=model.level_2_modeling_examples type='modeling'}}
-      </div>
-      <div class="col-sm-5 col-sm-offset-3">
-        <p class='form-control-static'>{{t "Level 3 (>3 button communicators)" key='level_3'}}</p>
-      </div>
-      <div class='col-sm-5 col-sm-offset-3'>
-        {{prompt-carousel entries=model.level_3_modeling_examples type='modeling'}}
-      </div>
-    </div>
-    <div class="form-group">
       <label for="related_core_words" class="col-sm-3 control-label">{{t "Related Core Words" key='related_core_words examples'}}</label>
       <div class="col-sm-2 control-label">
         <label for='verbs'>{{t "Verbs" key='verbs'}}</label>
@@ -200,6 +166,14 @@
       </div>
       <div class='col-sm-3'>
         {{input type='text' id='adjectives' value=model.adjectives class='form-control' placeholder='list, of, core, words'}}
+      </div>
+      <div style='clear: left;'></div>
+
+      <div class="col-sm-2 col-sm-offset-3 control-label">
+        <label for='adverbs'>{{t "Adverbs" key='adverbs'}}</label>
+      </div>
+      <div class='col-sm-3'>
+        {{input type='text' id='adverbs' value=model.adverbs class='form-control' placeholder='list, of, core, words'}}
       </div>
       <div style='clear: left;'></div>
 
@@ -242,6 +216,45 @@
         {{input type='text' id='other_words' value=model.other_words class='form-control' placeholder='list, of, core, words'}}
       </div>
     </div>
+
+    <div class="form-group">
+      <label for="modeling_examples" class="col-sm-3 control-label">
+        {{t "Modeling Examples" key='modeling_examples'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Example phrases that modelers can use to teach or reinforce this word to communicators (remember, always try to model a level higher than the communicator)" key='modeling_examples_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        <p class='form-control-static'>{{t "Level 1 (1-button communicators)" key='level_1'}}</p>
+        {{prompt-carousel entries=model.level_1_modeling_examples type='modeling'}}
+      </div>
+      {{#if revision.changes.level_1_modeling_examples}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.level_1_modeling_examples type='modeling' revision_attribute='level_1_modeling_examples' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
+      <div class="col-sm-5 col-sm-offset-3">
+        <p class='form-control-static'>{{t "Level 2 (2-3 button communicators)" key='level_2'}}</p>
+      </div>
+      <div class='col-sm-5 col-sm-offset-3'>
+        {{prompt-carousel entries=model.level_2_modeling_examples type='modeling'}}
+      </div>
+      {{#if revision.changes.level_2_modeling_examples}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.level_2_modeling_examples type='modeling' revision_attribute='level_2_modeling_examples' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
+      <div class="col-sm-5 col-sm-offset-3">
+        <p class='form-control-static'>{{t "Level 3 (>3 button communicators)" key='level_3'}}</p>
+      </div>
+      <div class='col-sm-5 col-sm-offset-3'>
+        {{prompt-carousel entries=model.level_3_modeling_examples type='modeling'}}
+      </div>
+      {{#if revision.changes.level_3_modeling_examples}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.level_3_modeling_examples type='modeling' revision_attribute='level_3_modeling_examples' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
+    </div>
+
     <div class="form-group">
       <label for="related_categories" class="col-sm-3 control-label">{{t "Related Categories and Fringe Topics" key='related_categories'}}</label>
       <div class="col-sm-5">
@@ -257,6 +270,11 @@
       <div class="col-sm-5">
         {{prompt-carousel entries=model.activity_ideas type='description_with_link'}}
       </div>
+      {{#if revision.changes.activity_ideas}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.activity_ideas type='activities' revision_attribute='activity_ideas' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
     </div>
     <div class="form-group">
       <label for="books" class="col-sm-3 control-label">
@@ -266,6 +284,11 @@
       <div class="col-sm-5">
         {{prompt-carousel entries=model.books type='book'}}
       </div>
+      {{#if revision.changes.books}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.books type='books' revision_attribute='books' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
     </div>
     <div class="form-group">
       <label for="videos" class="col-sm-3 control-label">
@@ -275,7 +298,13 @@
       <div class="col-sm-5">
         {{prompt-carousel entries=model.videos type='video'}}
       </div>
+      {{#if revision.changes.videos}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.videos type='videos' revision_attribute='videos' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
     </div>
+
     <div class="form-group">
       <label for="phrase_categories" class="col-sm-3 control-label">
         {{t "Phrase Categories" key='phrase_categories'}}

@@ -4,7 +4,7 @@ import i18n from '../../utils/i18n';
 
 export default Ember.Controller.extend({
   image_style: function() {
-    var css = "width: 100px; padding: 10px; max-height: 100px; border-width: 3px; border-radius: 5px; border-style: solid;";
+    var css = "width: 200px; padding: 10px; height: 200px; border-width: 3px; border-radius: 5px; border-style: solid;";
     var border = this.get('model.border_color') || '#888';
     var background = this.get('model.background_color') || '#fff';
     css = css + "border-color: " + border + ";";

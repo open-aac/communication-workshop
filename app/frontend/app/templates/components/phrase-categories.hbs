@@ -2,7 +2,19 @@
   <div class='row'>
     {{#each entries as |cat|}}
       <div class='col-sm-5'>
-        {{input class='form-control' type='text' value=cat.category placeholder="Category"}}
+        <div class='input-group'>
+          {{input class='form-control' type='text' value=cat.category placeholder="Category"}}
+          {{#if unused_categories}}
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                {{#each unused_categories as |set_cat|}}
+                  <li><a href="#" {{action 'set_category' cat set_cat.label}}>{{set_cat.label}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
+          {{/if}}
+        </div>
       </div>
       <div class='col-sm-6' style='margin-bottom: 5px;'>
         {{textarea class='form-control' rows='3' value=cat.phrases placeholder="list, of, phrases"}}
