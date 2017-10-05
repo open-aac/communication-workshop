@@ -6,6 +6,7 @@ module Revisions
   def process_revisions(user_params, &block)
     if user_params['editable']
       block.call(self.data)
+      self.has_content = true
       if user_params['revision_credit']
         add_user_identifier(user_params['revision_credit'])
       end

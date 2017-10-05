@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170828213925) do
+ActiveRecord::Schema.define(version: 20171004165833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,7 +101,9 @@ ActiveRecord::Schema.define(version: 20170828213925) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.datetime "pending_since"
+    t.boolean  "has_content"
     t.index ["category", "locale"], name: "index_word_categories_on_category_and_locale", unique: true, using: :btree
+    t.index ["has_content", "random_id"], name: "index_word_categories_on_has_content_and_random_id", using: :btree
     t.index ["random_id"], name: "index_word_categories_on_random_id", using: :btree
   end
 
@@ -113,6 +115,8 @@ ActiveRecord::Schema.define(version: 20170828213925) do
     t.datetime "updated_at",    null: false
     t.float    "random_id"
     t.datetime "pending_since"
+    t.boolean  "has_content"
+    t.index ["has_content", "random_id"], name: "index_word_data_on_has_content_and_random_id", using: :btree
     t.index ["random_id"], name: "index_word_data_on_random_id", using: :btree
     t.index ["word", "locale"], name: "index_word_data_on_word_and_locale", unique: true, using: :btree
   end

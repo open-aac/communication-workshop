@@ -207,7 +207,7 @@ class User < ApplicationRecord
     
     res = []
     link_weights.each do |locale, weights|
-      matches = WordData.where(:locale => locale, :word => weights.to_a.map(&:first))
+      matches = WordData.where(:has_content => true, :locale => locale, :word => weights.to_a.map(&:first))
       map = {}
       matches.each{|w| map[w.word] = w }
       weights.to_a.each do |str, weight|
@@ -218,12 +218,12 @@ class User < ApplicationRecord
 
     if res.length < 25
       ptr = WordData.count
-      WordData.where(:word => self.settings['words']).order('word').each do |word|
+      WordData.where(:has_content => true, :word => self.settings['words']).order('word').each do |word|
         if res.length < 25
           res << word unless res.include?(word) || current_hash[word.word]
         end
       end
-      WordData.all.order('random_id').limit(50).offset(rand(ptr / 4)).each do |word|
+      WordData.where(:has_content => true).order('random_id').limit(50).offset(rand(ptr / 4)).each do |word|
         if res.length < 25
           res << word unless res.include?(word) || current_hash[word.word]
         end
@@ -259,7 +259,7 @@ class User < ApplicationRecord
     end
     res = []
     link_weights.each do |locale, weights|
-      matches = WordCategory.where(:locale => locale, :category => weights.to_a.map(&:first))
+      matches = WordCategory.where(:has_content => true, :locale => locale, :category => weights.to_a.map(&:first))
       map = {}
       matches.each{|w| map[w.category] = w }
       weights.to_a.sort_by(&:last).reverse.map(&:first).each do |str|
@@ -268,7 +268,7 @@ class User < ApplicationRecord
     end
     if res.length < 25
       ptr = WordCategory.count
-      WordCategory.all.order('random_id').limit(50).offset(rand(ptr / 4)).each do |cat|
+      WordCategory.where(:has_content => true).order('random_id').limit(50).offset(rand(ptr / 4)).each do |cat|
         if res.length < 25
           res << cat unless res.include?(cat)
         end

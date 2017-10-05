@@ -3,7 +3,7 @@ require 'typhoeus'
 
 class Api::WordsController < ApplicationController
   def index
-    words = WordData.all
+    words = WordData.where(:has_content => true)
     if params['q']
       words = words.where(:word => params['q'].downcase)
     elsif params['sort'] == 'recommended' && @api_user

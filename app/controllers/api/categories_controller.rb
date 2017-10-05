@@ -2,7 +2,7 @@ require 'json_api/category'
 
 class Api::CategoriesController < ApplicationController
   def index
-    categories = WordCategory.all
+    categories = WordCategory.where(:has_content => true)
     if params['sort'] == 'recommended' && @api_user
       categories = @api_user.related_categories
     else
