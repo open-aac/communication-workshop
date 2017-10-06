@@ -5,6 +5,8 @@ class Api::CategoriesController < ApplicationController
     categories = WordCategory.where(:has_content => true)
     if params['sort'] == 'recommended' && @api_user
       categories = @api_user.related_categories
+    elsif params['sort'] == 'alpha'
+      categories = categories.order('category')
     else
       categories = categories.order('random_id').limit(50).to_a.sort_by{|w| rand }
     end

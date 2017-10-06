@@ -1,0 +1,18 @@
+{{#if categories.loading}}
+  {{t "Loading Categories..." key='loading_categories'}}
+{{else if categories.error}}
+  {{t "Error Loading Categories" key='error_loading_categories'}}
+{{else}}
+  <div style='max-width: 400px;'>
+    <div class='list-group pills'>
+      {{#each categories as |cat|}}
+        {{#link-to 'category.index' cat.category cat.locale class='list-group-item'}}
+          {{#if cat.best_image_url}}
+            <img src={{cat.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+          {{/if}}
+          {{cat.category}}
+        {{/link-to}}
+      {{/each}}
+    </div>
+  </div>
+{{/if}}

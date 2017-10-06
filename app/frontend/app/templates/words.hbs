@@ -1,0 +1,18 @@
+{{#if words.loading}}
+  {{t "Loading Words..." key='loading_words'}}
+{{else if words.error}}
+  {{t "Error Loading Words" key='error_loading_words'}}
+{{else}}
+  <div style='max-width: 400px;'>
+    <div class='list-group pills'>
+      {{#each words as |word|}}
+        {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+          {{#if word.best_image_url}}
+            <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+          {{/if}}
+          {{word.word}}
+        {{/link-to}}
+      {{/each}}
+    </div>
+  </div>
+{{/if}}

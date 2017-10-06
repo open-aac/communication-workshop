@@ -3,11 +3,13 @@ require 'typhoeus'
 
 class Api::WordsController < ApplicationController
   def index
-    words = WordData.where(:has_content => true)
+    words = WordData.where(:has_content => true, :locale => (params['locale'] || 'en'))
     if params['q']
       words = words.where(:word => params['q'].downcase)
     elsif params['sort'] == 'recommended' && @api_user
       words = @api_user.related_words
+    elsif params['sort'] == 'alpha'
+      words = words.order('word')
     else
       ptr = WordData.count
       words = words.order('random_id').offset(rand(ptr / 4)).limit(50).to_a.sort_by{|w| rand }

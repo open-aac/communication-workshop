@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   get '/auth/coughdrop/:id' => 'session#coughdrop_auth'
   get '/scratch/:page_id' => ember_handler
   get '/users/:user_name' => ember_handler
+  get '/words/:locale' => ember_handler
+  get '/categories/:locale' => ember_handler
 
   protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|
     u = User.find_by(:user_name => username)
