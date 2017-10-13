@@ -47,14 +47,19 @@ class Api::WordsController < ApplicationController
     hash = JSON.parse(json)
     button = hash['buttonset']['buttons'].detect{|b| b['label'] == params['id']}
     if button
-      res = Typhoeus.get("https://app.mycoughdrop.com/api/v1/search/parts_of_speech?q=#{params['id']}&access_token=#{ENV['COUGHDROP_TOKEN']}")
+      res = Typhoeus.get("https://app.mycoughdrop.com/api/v1/search/parts_of_speech?q=#{params['id']}&suggestions=true&access_token=#{ENV['COUGHDROP_TOKEN']}")
       pos = JSON.parse(res.body) rescue nil
+      res = Typhoeus.get("http://relatedwords.org/api/related?term=#{params['id']}")
+      related = JSON.parse(res.body) rescue []
+      
       render json: {
         background_color: button['background_color'],
         border_color: button['border_color'],
         parts_of_speech: pos && pos['types'] && pos['types'].join(', '),
         image_url: button['image'],
-        sentences: pos && pos['sentences'] && pos['sentences'].select{|s| s['approved'] }.map{|s| s['sentence'] }
+        sentences: pos && pos['sentences'] && pos['sentences'].select{|s| s['approved'] }.map{|s| s['sentence'] },
+        pairs: ((pos && pos['pairs']) || []).map{|p| p['partner'] }.compact.select{|w| w != params['id'] },
+        related: related[0, 50].map{|w| w['word'] }
       }
     else
       render api_error(404, {error: 'no button found'})

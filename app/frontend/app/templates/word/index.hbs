@@ -301,6 +301,12 @@
       </label>
       <div class="col-sm-5">
         {{prompt-carousel entries=model.usage_examples type='usage_example'}}
+        {{#if model.sentence_suggestions}}
+          <p class='text-info' style='margin-top: -30px; margin-left: 70px;'>
+            <b><span class='glyphicon glyphicon-info-sign'></span> {{t "Some sentences to get you thinking:" key='sentence_examples'}}</b><br/>
+            {{#each model.sentence_suggestions as |sug|}}{{sug}}<br/>{{/each}}
+          </p>
+        {{/if}}
       </div>
       {{#if revision.changes.usage_examples}}
         <div class='col-sm-4 revision'>
@@ -316,6 +322,12 @@
       <div class="col-sm-5">
         <p class='form-control-static'>{{t "Level 1 (1-button communicators)" key='level_1'}}</p>
         {{prompt-carousel entries=model.level_1_modeling_examples type='modeling'}}
+        {{#if available_partners}}
+          <p class='text-info' style='margin-top: -30px; margin-left: 70px;'>
+            <b><span class='glyphicon glyphicon-info-sign'></span> {{t "Some possible word pairs:" key='word_pairs'}}</b>
+            {{#each model.sentence_suggestions as |sug|}}{{sug}}, {{/each}}{{t "etc." key='etc'}}
+          </p>
+        {{/if}}
       </div>
       {{#if revision.changes.level_1_modeling_examples}}
         <div class='col-sm-4 revision'>
@@ -347,7 +359,16 @@
     </div>
     <div class="form-group">
       <label for="related_core_words" class="col-sm-3 control-label">{{t "Related Core Words" key='related_core_words examples'}}</label>
-      <div class="col-sm-2 control-label">
+      {{#if available_suggestions}}
+        <div class="col-sm-2 control-label">
+          <label for='verbs' class='text-info'><span class='glyphicon glyphicon-info-sign'></span> {{t "Suggestions" key='suggestions'}}</label>
+        </div>
+        <div class='col-sm-3'>
+          <p class='form-control-static text-info'>{{#each available_suggestions as |sug|}}{{sug}}, {{/each}}{{t "etc." key='etc'}}</p>
+        </div>
+        <div style='clear: left;'></div>
+      {{/if}}
+      <div class={{if available_suggestions "col-sm-2 col-sm-offset-3 control-label" "col-sm-2 control-label"}}>
         <label for='verbs'>{{t "Verbs" key='verbs'}}</label>
       </div>
       <div class='col-sm-3'>

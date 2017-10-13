@@ -70,9 +70,43 @@ export default Ember.Controller.extend({
     level['level_' + num] = true;
     return level;
   }.property('modeling_level', 'model.id'),
+  available_suggestions: function() {
+    var map = session.get('user.full_word_map');
+    var _this = this;
+    var res = [];
+    if(map[_this.get('model.locale')]) {
+      var words = map[_this.get('model.locale')];
+      (_this.get('model.related_suggestions') || []).forEach(function(word) {
+        if(words[word]) {
+          res.push(word);
+        }
+      });
+      (_this.get('model.partner_suggestions') || []).forEach(function(word) {
+        if(words[word]) {
+          res.push(word);
+        }
+      });
+    }
+    return res.uniq();
+  }.property('model.related_suggestions', 'session.user.full_word_map'),
+  available_partners: function() {
+    var map = session.get('user.full_word_map');
+    var _this = this;
+    var res = [];
+    if(map[_this.get('model.locale')]) {
+      var words = map[_this.get('model.locale')];
+      (_this.get('model.partner_suggestions') || []).forEach(function(word) {
+        if(words[word]) {
+          res.push(word);
+        }
+      });
+    }
+    return res;
+  }.property('model.partner_suggestions', 'session.user.full_word_map'),
   default_values: function() {
-    if(this.get('editing') && !this.get('model.background_color') && !this.get('model.border_color')) {
+    if(this.get('editing') && !this.get('model.defaults_loaded')) {
       var _this = this;
+      _this.set('model.defaults_loaded', true);
       session.ajax('/api/v1/words/' + this.get('model.word') + '/defaults', {type: 'GET'}).then(function(res) {
         if(!_this.get('model.background_color')) {
           _this.set('model.background_color', res.background_color);
@@ -83,6 +117,10 @@ export default Ember.Controller.extend({
         if(!_this.get('model.parts_of_speech')) {
           _this.set('model.parts_of_speech', res.parts_of_speech);
         }
+        _this.set('model.sentence_suggestions', res.sentences);
+        _this.set('model.partner_suggestions', res.pairs);
+        _this.set('model.related_suggestions', res.related);
+
         if(!_this.get('model.image') && res.image_url) {
           session.ajax('https://www.opensymbols.org/api/v1/symbols/search?q=' + encodeURIComponent(_this.get('model.word')), { type: 'GET' }).then(function(list) {
             var item = list.find(function(i) { return i.image_url == res.image_url; });
@@ -99,9 +137,11 @@ export default Ember.Controller.extend({
             }
           }, function(err) { debugger});
         }
-      }, function(err) { });
+      }, function(err) {
+        _this.set('model.defaults_loaded', null);
+      });
     }
-  }.observes('editing', 'model.background_color', 'model.border_color'),
+  }.observes('model.defaults_loaded', 'editing', 'model.background_color', 'model.border_color'),
   current_activity: function() {
     var activity = this.get('activity') || 'learning_projects';
     var res = {
