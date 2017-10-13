@@ -5,18 +5,50 @@ export default Ember.Component.extend({
   didInsertElement: function() {
     this.redraw();
   },
+  canvas_style: function() {
+    if(this.get('fullscreen')) {
+      var total = this.get('total_buttons') || 1;
+      var rows = 1;
+      var columns = 1;
+      if(total == 1) {
+      } else if(total == 2) {
+        columns = 2;
+      } else if(total <= 4) {
+        rows = 2;
+        columns = 2;
+      } else if(total <= 6) {
+        rows = 2;
+        columns = 3;
+      } else if(total <= 9) {
+        rows = 3;
+        columns = 4;
+      } else {
+        rows = Math.ceil(Math.sqrt(total));
+        columns = rows;
+      }
+      var width = (((window.screen && window.screen.width) || window.innerWidth) * 0.8) / columns;
+      var height = (((window.screen && window.screen.height) || window.innerHeight) * 0.8) / rows;
+      width = Math.min(width, height);
+      height = width;
+      return Ember.String.htmlSafe('width: ' + width + 'px; height: ' + height + 'px;');
+    } else if(this.get('small')) {
+      return Ember.String.htmlSafe('width: 120px; height: 120px;');
+    } else {
+      return Ember.String.htmlSafe( 'width: 200px; height: 200px;');
+    }
+  }.property('small', 'fullscreen'),
   redraw: function() {
     var button = this.get('button');
     var $canvas = Ember.$(this.element).find("canvas");
     var _this = this;
     if($canvas[0] && button) {
-      $canvas.attr('width', 500);
-      $canvas.attr('height', 500);
+      $canvas.attr('width', 1000);
+      $canvas.attr('height', 1000);
       var context = $canvas[0].getContext('2d');
-      var width = 500;
-      var height = 500;
-      var radius = 50;
-      var pad = 20;
+      var width = 1000;
+      var height = 1000;
+      var radius = 100;
+      var pad = 40;
       context.save();
       context.clearRect(0, 0, width, height);
       context.beginPath();
@@ -29,7 +61,7 @@ export default Ember.Component.extend({
       context.arcTo(pad, height - pad, pad, height - pad - radius, radius);
       context.lineTo(pad, pad + radius);
       context.arcTo(pad, pad, pad + radius, pad, radius);
-      context.lineWidth = 25;
+      context.lineWidth = 50;
       context.fillStyle = button.background_color || '#fff';
       context.strokeStyle = button.border_color || '#ddd';
       context.stroke();
@@ -37,9 +69,9 @@ export default Ember.Component.extend({
 
       context.textAlign = 'center';
       var label = button.label || '';
-      var size = 80;
+      var size = 160;
       context.font = size + 'px Arial';
-      while(size > 40 && context.measureText(label).width > 470) {
+      while(size > 80 && context.measureText(label).width > (width - 30)) {
         size = size - 5;
         context.font = size + 'px Arial';
       }
@@ -47,7 +79,7 @@ export default Ember.Component.extend({
       context.save();
       context.rect(pad, 0, width - pad - pad - context.lineWidth, height);
       context.clip();
-      if(size <= 40 && context.measureText(label).width > 470) {
+      if(size <= 80 && context.measureText(label).width > (width - 30)) {
         var words = label.split(/\s/);
         var top = [];
         while(top.join(' ').length < label.length / 2) {
@@ -69,7 +101,7 @@ export default Ember.Component.extend({
             // TODO: proportional drawing
             var width = img.width;
             var height = img.height;
-            var x = 75, y = 125, w = 350, h = 350;
+            var x = 150, y = 250, w = 700, h = 700;
             if(width > height) {
               var scaled_height = h * (height / width);
               y = y + ((h - scaled_height) / 2);

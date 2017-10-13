@@ -172,6 +172,30 @@
     }
   }
 }
+.box.image {
+  position: relative; 
+  padding-right: 40px; 
+  display: inline-block;
+  button {
+    top: 0px;
+    right: 0px;
+    position: absolute;
+  }
+  &.fullscreen {
+    padding-right: 90px;
+    overflow: hidden;
+    .sub {
+      margin-top: 10vh;
+      margin-left: 10vw;
+      text-align: center;
+    }
+    button {
+      font-size: 50px;
+      top: 10px;
+      right: 10px;
+    }
+  }
+}
 
 .rule_code {
   font-family: Courier;
@@ -198,5 +222,13 @@
     &.sad {
       background-position-x: -89px;
     }
+  }
+}
+.dim_until_hover {
+  .glyphicon {
+    opacity: 0.7;
+  }
+  &:hover .glyphicon {
+    opacity: 1.0;
   }
 }

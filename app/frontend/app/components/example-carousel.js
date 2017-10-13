@@ -40,6 +40,21 @@ export default Ember.Component.extend({
     var index = this.get('current_index') || 0;
     return (this.get('entries') || [])[index];
   }.property('entries', 'entries.length', 'current_index'),
+  entry_class: function() {
+    if(this.get('book_type')) {
+      return Ember.String.htmlSafe('glyphicon glyphicon-book');
+    } else if(this.get('video_type')) {
+      return Ember.String.htmlSafe('glyphicon glyphicon-play-circle');
+    } else if(this.get('prompt_type')) {
+      return Ember.String.htmlSafe('glyphicon glyphicon-question-sign');
+    } else if(this.get('type') == 'learning_projects' || this.get('current_entry.type') == 'learning_projects') {
+      return Ember.String.htmlSafe('glyphicon glyphicon-briefcase');
+    } else if(this.get('type') == 'modeling' || this.get('current_entry.type') == 'modeling') {
+      return Ember.String.htmlSafe('glyphicon glyphicon-hand-up');
+    } else if(this.get('type') == 'topic_starters' || this.get('current_entry.type') == 'topic_starters') {
+      return Ember.String.htmlSafe('glyphicon glyphicon-comment');
+    }
+  }.property('current_entry', 'current_entry.type', 'type'),
   current_entry_classes: function() {
     var res = {};
     for(var idx = 1; idx <= 4; idx++) {
@@ -65,6 +80,12 @@ export default Ember.Component.extend({
     return this.get('type') === 'learning_projects' || this.get('type') == 'activity_ideas' || this.get('type') === 'books' || this.get('type') == 'videos' ||
             this.get('current_entry.type') === 'learning_projects' || this.get('current_entry.type') == 'activity_ideas' || this.get('current_entry.type') === 'books' || this.get('current_entry.type') == 'videos';
   }.property('type', 'current_entry.type'),
+  book_type: function() {
+    return this.get('type') == 'books' || this.get('current_entry.type') == 'books';
+  }.property('current_entry.type', 'type'),
+  video_type: function() {
+    return this.get('type') == 'videos' || this.get('current_entry.type') == 'videos';
+  }.property('current_entry.type', 'type'),
   include_sentence: function() {
     return this.get('type') === 'modeling' || this.get('current_entry.type') == 'modeling';
   }.property('type', 'current_entry.type'),

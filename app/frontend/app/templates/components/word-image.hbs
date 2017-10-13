@@ -1,0 +1,20 @@
+<div class={{if fullscreen 'box image fullscreen' 'box image'}}>
+  <div class='sub'>
+    {{#each buttons as |button|}}
+      {{button-preview button=button fullscreen=fullscreen total_buttons=buttons.length}}
+    {{/each}}
+    {{#if single_button}}
+      {{#unless fullscreen}}
+        <img src={{single_button.image_url}} style='width: 200px; max-height: 200px; vertical-align: top;' />
+      {{/unless}}
+    {{/if}}
+  </div>
+  <button class='btn btn-default' {{action 'full_screen'}}>
+    {{#if fullscreen}}
+      <span class='glyphicon glyphicon-resize-small'></span>
+    {{else}}
+      <span class='glyphicon glyphicon-resize-full'></span>
+    {{/if}}
+  </button>
+  <!-- TODO: include alternate images/buttons if there are any -->
+</div>
