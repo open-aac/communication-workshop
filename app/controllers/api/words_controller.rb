@@ -58,7 +58,7 @@ class Api::WordsController < ApplicationController
         parts_of_speech: pos && pos['types'] && pos['types'].join(', '),
         image_url: button['image'],
         sentences: pos && pos['sentences'] && pos['sentences'].select{|s| s['approved'] }.map{|s| s['sentence'] },
-        pairs: ((pos && pos['pairs']) || []).map{|p| p['partner'] }.compact.select{|w| w != params['id'] },
+        pairs: ((pos && pos['recent_usage'] && pos['recent_usage']['pairs']) || []).map{|p| p['partner'] }.compact.select{|w| w != params['id'] },
         related: related[0, 50].map{|w| w['word'] }
       }
     else
