@@ -325,7 +325,7 @@
         {{#if available_partners}}
           <p class='text-info' style='margin-top: -30px; margin-left: 70px;'>
             <b><span class='glyphicon glyphicon-info-sign'></span> {{t "Some possible word pairs:" key='word_pairs'}}</b>
-            {{#each model.sentence_suggestions as |sug|}}{{sug}}, {{/each}}{{t "etc." key='etc'}}
+            {{#each available_partners as |sug|}}{{sug}}, {{/each}}{{t "etc." key='etc'}}
           </p>
         {{/if}}
       </div>
