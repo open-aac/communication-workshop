@@ -35,7 +35,7 @@ export default Ember.Component.extend({
   }.property('update_revision_object', 'fullscreen'),
   clear_on_change: function() {
     this.set('current_index', 0);
-  }.property('entries', 'type'),
+  }.observes('entries', 'type'),
   current_entry: function() {
     var index = this.get('current_index') || 0;
     return (this.get('entries') || [])[index];
