@@ -87,7 +87,7 @@ export default modal.ModalController.extend({
       return Ember.RSVP.reject(i18n.t('pixabay_not_configured', "Pixabay hasn't been properly configured for CoughDrop"));
     }
     var type = 'photo';
-    return Ember.$.ajax('https://pixabay.com/api/?key=' + window.pixabay_key + '&q=' + text + '&image_type=' + type + '&per_page=30&safesearch=true', { type: 'GET'
+    return Ember.$.ajax('https://pixabay.com/api/?key=' + window.pixabay_key + '&q=' + text + '&image_type=' + type + '&response_group=high_resolution&per_page=30&safesearch=true', { type: 'GET'
     }).then(function(data) {
       var res = [];
       ((data || {}).hits || []).forEach(function(hit) {
@@ -97,13 +97,14 @@ export default modal.ModalController.extend({
           content_type = 'image/png';
           ext = 'png';
         }
+        var url = location.protocol + "//" + location.host + "/api/v1/images/pixabay/" + hit.id_hash;
         res.push({
-          image_url: hit.webformatURL,
+          image_url: url,
           thumbnail_url: hit.previewURL || hit.webformatURL,
           width: hit.webformatWidth,
           height: hit.webformatHeight,
           license: 'public domain',
-          author: 'unknown',
+          author: hit.user,
           author_url: 'https://creativecommons.org/publicdomain/zero/1.0/',
           license_url: 'https://creativecommons.org/publicdomain/zero/1.0/',
           source_url: hit.pageURL

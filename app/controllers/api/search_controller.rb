@@ -64,4 +64,24 @@ class Api::SearchController < ApplicationController
     end
     render json: tallies
   end
+  
+  def pixabay_redirect
+    id = params['id']
+    key = ENV['PIXABAY_KEY']
+    if !id
+      render text: "missing id"
+      return
+    end
+    if !key
+      render text: "missing key"
+      return
+    end
+    res = Typhoeus.get("https://pixabay.com/api/?key=#{key}&id=#{id}&response_group=high_resolution")
+    json = JSON.parse(res.body) rescue nil
+    if !json
+      render text: "bad response from pixabay"
+      return
+    end
+    redirect_to json['hits'][0]['largeImageURL']
+  end
 end
