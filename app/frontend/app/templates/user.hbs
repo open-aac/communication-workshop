@@ -53,9 +53,39 @@
       <div class="form-group">
         <label for="email" class="col-sm-3 control-label">{{t "Email" key='email'}}</label>
         <div class="col-sm-3">
-          {{input type='text' class='form-control' value=model.email placeholder="Email Address"}}
+          {{input type='text' id='email' class='form-control' value=model.email placeholder="Email Address"}}
         </div>
       </div>
+      {{#if resetting_password}}
+        <div class="form-group">
+          <label for="old_password" class="col-sm-3 control-label">{{t "Old Password" key='old_password'}}</label>
+          <div class="col-sm-3">
+            {{input type='password' id='old_password' class='form-control' value=model.old_password}}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password" class="col-sm-3 control-label">{{t "New Password" key='new_password'}}</label>
+          <div class="col-sm-3">
+            {{input type='password' id='password' class='form-control' value=model.password}}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password2" class="col-sm-3 control-label">{{t "Confirm New Password" key='confirm_new_password'}}</label>
+          <div class="col-sm-3">
+            {{input type='password' id='password2' class='form-control' value=password2}}
+            {{#if password_mismatch}}
+              <p class='text-danger'>{{t "passwords don't match" key='passwords_dont_match'}}</p>
+            {{/if}}
+          </div>
+        </div>
+      {{else}}
+        <div class="form-group">
+          <label for="email" class="col-sm-3 control-label">{{t "Password" key='password'}}</label>
+          <div class="col-sm-3">
+            <p class='form-control-static'><a href="#" {{action 'reset_password'}}>{{t "change password" key='change_password'}}</a></p>
+          </div>
+        </div>
+      {{/if}}
       <div class="form-group">
         <label for="modeling_level" class="col-sm-3 control-label">{{t "Modeling Level" key='modeling_level'}}</label>
         <div class="col-sm-3">
@@ -68,7 +98,7 @@
           <p class='form-control-static'>{{t "When adding a new focus word, how long should it stay \"in focus\"" key='how_long_in_focus'}}</p>
         </div>
         <div class="col-sm-3 col-sm-offset-3">
-          {{bound-select select_class="form-control skip_select" select_id="focus_length" content=modeling_levels selection=model.modeling_level action=(action (mut model.modeling_level)) }}
+          {{bound-select select_class="form-control skip_select" select_id="focus_length" content=modeling_lengths selection=model.modeling_level action=(action (mut model.modeling_level)) }}
         </div>
       </div>
       <div class="form-group">
@@ -190,13 +220,13 @@
 
       <div class='form-group'>
         <div class='col-sm-9 col-sm-offset-3'>
-          <button class='btn btn-primary' type='submit' disabled={{status.saving}}>
+          <button class='btn btn-primary' type='submit' disabled={{save_disabled}}>
             {{#if status.saving}}
               {{t "Saving Settings..." key='saving_settings'}}
             {{else if status.error}}
               {{t "Error Saving Settings" key='error_saving_settings'}}
             {{else}}
-              {{t "Saving Settings" key='save_settings'}}
+              {{t "Save Settings" key='save_settings'}}
             {{/if}}
           </button>
           <button class='btn btn-default' type='button' {{action 'cancel'}}>{{t "Cancel" key='cancel'}}</button>

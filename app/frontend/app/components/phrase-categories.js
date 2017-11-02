@@ -7,10 +7,10 @@ export default Ember.Component.extend({
   },
   unused_categories: function() {
     var list = [
-      i18n.t('questions', "Questions"),
-      i18n.t('observations', "Observations"),
-      i18n.t('social_phrases', "Social Phrases"),
-      i18n.t('choice_making', "Choice-Making")
+      i18n.t('questions', "Questions/Seeking Information"),
+      i18n.t('observations', "Observations/Providing Information"),
+      i18n.t('social_phrases', "Social Phrases/Engagement"),
+      i18n.t('choice_making', "Choice-Making/Refusal")
     ];
     (this.get('entries') || []).forEach(function(entry) {
       if(list.indexOf(entry.category) != -1) {

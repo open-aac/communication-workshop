@@ -11,6 +11,9 @@
             <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
           {{/if}}
           {{word.word}}
+          {{#if word.pending_revisions}}
+            <span class='glyphicon glyphicon-comment' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
+          {{/if}}
         {{/link-to}}
       {{/each}}
     </div>

@@ -223,7 +223,7 @@
         <div class='text-muted' style='font-weight: normal;'>{{t "Example phrases that modelers can use to teach or reinforce this word to communicators (remember, always try to model a level higher than the communicator)" key='modeling_examples_explainer'}}</div>
       </label>
       <div class="col-sm-5">
-        <p class='form-control-static'>{{t "Level 1 (1-button communicators)" key='level_1'}}</p>
+        <p class='form-control-static'>{{t "Level 1 (1-word communicators)" key='level_1'}}</p>
         {{prompt-carousel entries=model.level_1_modeling_examples type='modeling'}}
       </div>
       {{#if revision.changes.level_1_modeling_examples}}
@@ -232,7 +232,7 @@
         </div>
       {{/if}}
       <div class="col-sm-5 col-sm-offset-3">
-        <p class='form-control-static'>{{t "Level 2 (2-3 button communicators)" key='level_2'}}</p>
+        <p class='form-control-static'>{{t "Level 2 (2-3 word communicators)" key='level_2'}}</p>
       </div>
       <div class='col-sm-5 col-sm-offset-3'>
         {{prompt-carousel entries=model.level_2_modeling_examples type='modeling'}}
@@ -243,7 +243,7 @@
         </div>
       {{/if}}
       <div class="col-sm-5 col-sm-offset-3">
-        <p class='form-control-static'>{{t "Level 3 (>3 button communicators)" key='level_3'}}</p>
+        <p class='form-control-static'>{{t "Level 3 (4+ word communicators)" key='level_3'}}</p>
       </div>
       <div class='col-sm-5 col-sm-offset-3'>
         {{prompt-carousel entries=model.level_3_modeling_examples type='modeling'}}

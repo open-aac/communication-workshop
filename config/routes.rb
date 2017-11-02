@@ -6,12 +6,17 @@ Rails.application.routes.draw do
   root ember_handler
   get '/login' => ember_handler
   post '/token' => 'session#token'
+  get '/terms' => 'render#terms'
+  get '/privacy' => 'render#privacy'
+  get '/register' => ember_handler
   get '/api/v1/token_check' => 'session#token_check'
   get '/auth/coughdrop/:id' => 'session#coughdrop_auth'
   get '/scratch/:page_id' => ember_handler
   get '/users/:user_name' => ember_handler
   get '/words/:locale' => ember_handler
   get '/categories/:locale' => ember_handler
+  get '/forgot_password' => ember_handler
+  get '/users/:user_name/password_reset/:code' => ember_handler
 
   protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|
     u = User.find_by(:user_name => username)
@@ -57,6 +62,8 @@ Rails.application.routes.draw do
       get '/word_map' => 'users#full_map'
       get '/words' => 'users#words'
       post '/update_word_map' => 'users#update_word_map'
+      post '/password_reset' => 'users#forgot_password', on: :collection
+      post '/password_reset' => 'users#reset_password'
     end
     get '/books/:id/json' => 'books#book_json', constraints: {id: book_id_regex}
     get '/search/books' => 'search#books'

@@ -13,6 +13,9 @@ export default Ember.Route.extend({
   setupController: function(controller, model) {
     model.load_words();
     controller.set('model', model);
+    controller.set('resetting_password', false);
+    model.set('password', null);
+    model.set('old_password', null);
     controller.setup();
   }
 });

@@ -13,11 +13,11 @@ export default Ember.Controller.extend({
   }.property('model.border_color', 'model.background_color'),
   current_level: function() {
     var num = this.get('modeling_level') || 1;
-    var desc = i18n.t('one_button', "1-button communicators");
+    var desc = i18n.t('one_button', "1-word communicators");
     if(num === 2) {
-      desc = i18n.t('two_button', "2-3 button communicators");
+      desc = i18n.t('two_button', "2-3 word communicators");
     } else if(num === 3) {
-      desc = i18n.t('three_plus_button', ">3-button communicators");
+      desc = i18n.t('three_plus_button', "4+ word communicators");
     }
     var level = {
       modeling_examples: this.get('model.level_' + num + '_modeling_examples'),

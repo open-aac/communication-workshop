@@ -10,6 +10,10 @@ Router.map(function() {
   this.route('index', {path: '/'});
   this.route('login', {path: '/login'});
   this.route('user', {path: '/users/:user_id'});
+  this.route('register', {path: '/register'});
+  this.route('forgot_password', {path: '/forgot_password'});
+  this.route('password-reset', {path: '/users/:user_id/password_reset/:code'});
+
   this.route('categories', {path: '/categories/:locale'});
   this.route('words', {path: '/words/:locale'});
   this.route('category', {path: '/categories/:category/:locale'}, function() {

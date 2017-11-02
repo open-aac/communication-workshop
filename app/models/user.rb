@@ -45,6 +45,34 @@ class User < ApplicationRecord
     res
   end
   
+  def password_reset_token
+    clean_password_reset_tokens
+    token = "#{Time.now.to_i}-#{GoSecure.nonce('password_reset_token')}"
+    self.settings['password_reset_tokens'] << token
+    self.save
+    token
+  end
+  
+  def clean_password_reset_tokens
+    self.settings['password_reset_tokens'] ||= []
+    self.settings['password_reset_tokens'].select do |token|
+      ts, extra = token.split('-')
+      ts = ts.to_i
+      return ts > 3.weeks.ago.to_i
+    end
+  end
+  
+  def update_password(token, password)
+    clean_password_reset_tokens
+    if self.settings['password_reset_tokens'].include?(token)
+      self.settings['password_reset_tokens'] -= [token]
+      self.generate_password(password)
+      self.save
+    else
+      false
+    end
+  end
+  
   def add_word(word, params)
     append = params['append']
     users = params['users']
@@ -363,14 +391,15 @@ class User < ApplicationRecord
   def self.user_name_hash(str)
     GoSecure.sha512(str, 'hashed_user_name')
   end
-  
+    
   def self.email_hash(str)
     GoSecure.sha512(str.downcase, 'hashed_email')
   end
 
   def process_params(params, user_params)
+    self.settings ||= {}
     if !self.id && params['user_name']
-      if !params['user_name'].match(/^[\w_-]+$/)
+      if !params['user_name'].match(/^[\w_-]+$/) || params['user_name'].length < 3
         add_processing_error("invalid user name")
         return false
       end
@@ -381,7 +410,18 @@ class User < ApplicationRecord
       end
       self.settings['user_name'] = params['user_name']
     end
+    if !self.id
+      self.settings['password'] ||= self.generate_password(params['password'] || rand(99999999).to_s)
+    end
+    if !params['password'].blank? && !params['old_password'].blank?
+      if self.valid_password?(params['old_password'])
+        self.generate_password(params['password'])
+      else
+        self.add_processing_error('password mismatch')
+      end
+    end
     # TODO: alert new and old email address when changed
+    self.settings['terms_agree'] = params['terms_agree'] if params['terms_agree']
     self.settings['email'] = params['email'] if params['email']
     self.settings['name'] = params['name'] if params['name']
     self.settings['modeling_level'] = params['modeling_level'] if params['modeling_level']

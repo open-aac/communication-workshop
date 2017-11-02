@@ -1,0 +1,6 @@
+<%= @user.settings['name'] %> just signed up for Communication Workshop!<br/><br/>
+User name: <b><a href="<%= JsonApi::Json.current_host %>/<%= @user.settings['user_name'] %>"><%= @user.settings['user_name'] %></a></b><br/>
+Email: <b><%= @user.settings['email'] %></b><br/><br/>
+
+Thanks!<br/>
+-The CoughDrop Team

@@ -32,6 +32,10 @@
             {{t "Log In" key='log_in'}}
           {{/if}}
         </button>
+        <span style='margin-left: 10px;'>
+          {{#link-to 'forgot_password'}}{{t "forgot password?" key='forgot_password'}}{{/link-to}} |
+          {{#link-to 'register'}}{{t "register" key='register'}}{{/link-to}}
+        </span>
       </div>
     </div>
   </form>

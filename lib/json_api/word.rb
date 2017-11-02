@@ -11,6 +11,7 @@ module JsonApi::Word
     json['word'] = word.word
     json['locale'] = word.locale
     json['pending'] = !word.id
+    json['pending_revisions'] = (word.data['revisions'] || []).length > 0
     
     if args[:permissions]
       json['permissions'] = word.permissions_for(args[:permissions])

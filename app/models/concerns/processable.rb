@@ -56,6 +56,7 @@ module Processable
   def process_boolean(bool)
     return bool == true || bool == '1' || bool == 'true'
   end
+
   
   module ClassMethods
     def process_new(params, non_user_params=nil)

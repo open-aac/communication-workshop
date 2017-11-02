@@ -9,12 +9,30 @@ export default Ember.Controller.extend({
   },
   modeling_levels: function() {
     var res = [
-      {name: i18n.t('one_button', "1-button communication"), id: "1"},
-      {name: i18n.t('two_three_buttons', "2-3 -button communication"), id: "2"},
-      {name: i18n.t('three_plus_buttons', "4+ -button communication"), id: "3"},
+      {name: i18n.t('one_button', "1-word communication"), id: "1"},
+      {name: i18n.t('two_three_buttons', "2-3 word communication"), id: "2"},
+      {name: i18n.t('three_plus_buttons', "4+ word communication"), id: "3"},
     ];
     return res;
   }.property(),
+  modeling_lengths: function() {
+    var res = [
+      {name: i18n.t('one_month', "1 month"), id: "30"},
+      {name: i18n.t('two_weeks', "2 weeks"), id: "14"},
+      {name: i18n.t('one_week', "1 week"), id: "7"},
+      {name: i18n.t('two months', "2 months"), id: "60"},
+      {name: i18n.t('three months', "3 months"), id: "90"},
+    ];
+    return res;
+  }.property(),
+  password_mismatch: function() {
+    return (this.get('model.password') || this.get('password2')) && this.get('model.password') != this.get('password2');
+  }.property('model.password', 'password2'),
+  save_disabled: function() {
+    return this.get('status.saving') ||
+        (this.get('resetting_password') && !this.get('model.password') || !this.get('password2')) ||
+        (this.get('resetting_password') && this.get('model.password') != this.get('password2'));
+  }.property('status.saving', 'resetting_password', 'model.password', 'password2'),
   actions: {
     edit: function() {
       this.set('editing', true);
@@ -88,6 +106,9 @@ export default Ember.Controller.extend({
       }, function(err) {
         _this.set('update_status', {error: true});
       });
+    },
+    reset_password: function() {
+      this.set('resetting_password', true);
     }
   }
 });

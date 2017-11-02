@@ -13,6 +13,7 @@ var Word = DS.Model.extend({
     });
   },
   pending: DS.attr('boolean'),
+  pending_revisions: DS.attr('boolean'),
   word: DS.attr('string'),
   locale: DS.attr('string'),
   image: DS.attr('raw'),

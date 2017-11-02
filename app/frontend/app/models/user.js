@@ -18,6 +18,10 @@ var User = DS.Model.extend({
   focus_length: DS.attr('string'),
   starred_activity_ids: DS.attr('raw'),
   words: DS.attr('raw'),
+  old_password: DS.attr('string'),
+  password: DS.attr('string'),
+  email: DS.attr('string'),
+  terms_agree: DS.attr('boolean'),
   word_map: DS.attr('raw'),
   map_current_words: function() {
     var map = session.get('user.full_word_map') || [];
@@ -87,7 +91,30 @@ var User = DS.Model.extend({
     });
     _this.set('pending_words_promise', promise);
     return promise;
-  }
+  },
+  check_user_name: function() {
+    if(!this.get('id')) {
+      var user_name = this.get('user_name');
+      var user_id = this.get('id');
+      this.set('user_name_check', null);
+      if(user_name && user_name.length > 2) {
+        var _this = this;
+        _this.set('user_name_check', {checking: true});
+        this.store.queryRecord('user', {existing_id: user_name}).then(function(u) {
+          if(u && user_name == _this.get('user_name') && u.get('id') != user_id) {
+            _this.set('user_name_check', {exists: true});
+          } else {
+            _this.set('user_name_check', {exists: false});
+          }
+        }, function() {
+          if(user_name == _this.get('user_name')) {
+           _this.set('user_name_check', {exists: false});
+          }
+          return Ember.RSVP.resolve();
+        });
+      }
+    }
+  }.observes('id', 'user_name')
 });
 
 export default User;

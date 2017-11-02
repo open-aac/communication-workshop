@@ -22,6 +22,7 @@ module JsonApi::User
         json['external_account'] = user.settings['external_account']
         json['modeling_level'] = user.settings['modeling_level']
         json['focus_length'] = user.settings['focus_length']
+        json['terms_agree'] = user.settings['terms_agree']
       end
     end
     

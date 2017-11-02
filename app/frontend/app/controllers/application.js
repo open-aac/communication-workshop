@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import session from '../utils/session';
+import modal from '../utils/modal';
 
 export default Ember.Controller.extend({
   load_user: function() {
@@ -12,6 +13,11 @@ export default Ember.Controller.extend({
   clear_search_status: function() {
     this.set('search_status', null);
   }.observes('search_string'),
+  assert_terms_agree: function() {
+    if(this.get('session.user.id') && !this.get('session.user.terms_agree')) {
+      modal.open('terms-agree');
+    }
+  }.observes('session.user.id', 'session.user.terms_agree'),
   actions: {
     logout: function() {
       session.invalidate(true);

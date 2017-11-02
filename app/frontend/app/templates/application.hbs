@@ -12,7 +12,8 @@
       &nbsp;&nbsp;
       <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
     {{else}}
-      {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}
+      {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}} |
+      {{#link-to 'register'}}{{t "Sign Up" key='sign_up'}}{{/link-to}}
     {{/if}}
   </div>
   <form style='display: inline; position: relative; float: right; margin-right: 30px;' {{action 'search' on='submit'}}>
