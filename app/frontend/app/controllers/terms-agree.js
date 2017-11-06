@@ -3,7 +3,21 @@ import session from '../utils/session';
 import modal from '../utils/modal';
 
 export default modal.ModalController.extend({
+  actions: {
+    agree: function() {
+      if(!this.get('agree')) { return; }
+      var user = session.get('user');
+      user.set('terms_agree', true);
+      var _this = this;
+      user.save().then(function() {
+        modal.close();
+      }, function(err) {
+        _this.set('errored', true);
+      });
+    },
+    logout: function() {
+      session.invalidate(true);
+    }
+  }
 });
 
-//             {{input type="checkbox" checked=model.terms_agree}}
-//             By registering or using the product, you are agreeing that you have read and understood the <a href="/terms" target='_blank'>Terms of Use and License Agreement</a>, and are capable of binding to a legal contract.

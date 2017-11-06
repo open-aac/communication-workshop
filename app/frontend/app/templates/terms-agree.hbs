@@ -4,9 +4,16 @@
     <h3>{{t "Accept Terms" key='accept_terms'}}</h3>
   </div>
   <div class="modal-body">
-    DO ITTTTT
+    <label>
+      {{input type="checkbox" checked=agree}}
+      &nbsp;By registering or using the product, you are agreeing that you have read and understood the <a href="/terms" target='_blank'>Terms of Use and License Agreement</a>, and are capable of binding to a legal contract.
+    </label>
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn btn-default" {{action 'close'}}>{{t "Close" key='close'}}</a>
+    <button {{action 'agree'}} class='btn btn-default btn-lg'>{{t "I Agree" key='i_agree'}}</button>
+    <a href="#" class='btn btn-default' {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
+    {{#if errored}}
+      <div class='text-danger'>{{t "There was an unexpected error, please try again." key='error_agreeing'}}</div>
+    {{/if}}
   </div>
 {{/modal-dialog}}
