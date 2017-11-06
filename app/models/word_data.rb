@@ -162,7 +162,7 @@ class WordData < ApplicationRecord
           } unless finished_ids[ex['id']]
         end
       end
-      ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos'].each do |activity|
+      ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos', 'send_homes'].each do |activity|
         (word.data[activity] || []).each do |ex|
           score = 1
           ex_id = ex['id']
@@ -258,7 +258,7 @@ class WordData < ApplicationRecord
         res += ex['text'].downcase.split(/\s/) if ex['text']
       end
     end
-    ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos'].each do |activity|
+    ['learning_projects', 'activity_ideas', 'books', 'topic_starts', 'videos', 'send_homes'].each do |activity|
       (self.data[activity] || []).each do |ex|
         res += ex['related_words'].split(/[,\s]/) if ex['related_words']
         res += ex['supplement'].split(/\s/) if ex['supplement']
@@ -277,7 +277,7 @@ class WordData < ApplicationRecord
         'other_words', 'related_categories', 'references']
   OBJ_PARAMS = ['image', 'usage_examples', 'level_1_modeling_examples', 'level_2_modeling_examples', 
         'level_3_modeling_examples', 'prompts', 'learning_projects', 'activity_ideas', 'books', 
-        'topic_starters', 'videos']
+        'topic_starters', 'videos', 'send_homes']
   
   def process_params(params, user_params)
     self.generate_defaults

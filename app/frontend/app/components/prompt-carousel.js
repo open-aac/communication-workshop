@@ -28,6 +28,8 @@ export default Ember.Component.extend({
       return i18n.t('book_title', "Book title");
     } else if(type === 'topic_starter') {
       return i18n.t('caption', "Caption");
+    } else if(type == 'send_home') {
+      return i18n.t('brief_definition_example', "Brief explanation");
     } else {
       return i18n.t('brief_definition_example', "Brief definition/example");
     }
@@ -52,7 +54,7 @@ export default Ember.Component.extend({
     ];
   }.property(),
   description: function() {
-    return this.get('type') === 'description_with_link';
+    return this.get('type') === 'description_with_link' || this.get('type') == 'send_home';
   }.property('type'),
   include_url: function() {
     return this.get('type') === 'description_with_link' || this.get('type') === 'book' || this.get('type') == 'video';

@@ -6,7 +6,7 @@ var Word = DS.Model.extend({
   didLoad: function() {
     var _this = this;
     _this.set('session', session);
-    ['usage_examples', 'level_1_modeling_examples', 'level_2_modeling_examples', 'level_3_modeling_examples', 'prompts', 'learning_projects', 'activity_ideas', 'books', 'topic_starters', 'videos'].forEach(function(key) {
+    ['usage_examples', 'level_1_modeling_examples', 'level_2_modeling_examples', 'level_3_modeling_examples', 'prompts', 'learning_projects', 'activity_ideas', 'books', 'topic_starters', 'videos', 'send_homes'].forEach(function(key) {
       if(!_this.get(key)) {
         _this.set(key, []);
       }
@@ -32,6 +32,7 @@ var Word = DS.Model.extend({
   books: DS.attr('raw'),
   topic_starters: DS.attr('raw'),
   videos: DS.attr('raw'),
+  send_homes: DS.attr('raw'),
   border_color: DS.attr('string'),
   background_color: DS.attr('string'),
   description: DS.attr('string'),

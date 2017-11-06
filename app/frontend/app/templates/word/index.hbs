@@ -66,6 +66,7 @@
   <li role="presentation" class={{if current_activity.activity_ideas 'active'}}><a href="#" {{action 'set_activity' 'activity_ideas'}}>{{t "Activity Ideas" key='activities'}}</a></li>
   <li role="presentation" class={{if current_activity.books 'active'}}><a href="#" {{action 'set_activity' 'books'}}>{{t "Books" key='books'}}</a></li>
   <li role="presentation" class={{if current_activity.topic_starters 'active'}}><a href="#" {{action 'set_activity' 'topic_starters'}}>{{t "Topic Starters" key='topic_starters'}}</a></li>
+  <li role="presentation" class={{if current_activity.send_homes 'active'}}><a href="#" {{action 'set_activity' 'send_homes'}}>{{t "Send-Homes" key='send_homes'}}</a></li>
   <li role="presentation" class={{if current_activity.prompts 'active'}}><a href="#" {{action 'set_activity' 'prompts'}}>{{t "Prompts" key='prompts'}}</a></li>
   <li role="presentation" class={{if current_activity.videos 'active'}}><a href="#" {{action 'set_activity' 'videos'}}>{{t "Videos" key='videos'}}</a></li>
 </ul>
@@ -517,7 +518,7 @@
     <div class="form-group">
       <label for="books" class="col-sm-3 control-label">
         {{t "Books" key='books'}}
-        <div class='text-muted' style='font-weight: normal;'>{{t "Books that use the word or can be used to help prompt for the word" key='books_explainer'}}</div>
+        <div class='text-muted' style='font-weight: normal;'>{{t "Tarheel Reader Books that use the word or can be used to help prompt for the word" key='books_explainer'}}</div>
       </label>
       <div class="col-sm-5">
         {{prompt-carousel entries=model.books type='book'}}
@@ -531,7 +532,7 @@
     <div class="form-group">
       <label for="topic_starters" class="col-sm-3 control-label">
         {{t "Topic Starters" key='topic_starters'}}
-        <div class='text-muted' style='font-weight: normal;'>{{t "Interesting pictures or photos that can prompt dialog or reactions" key='topic_starts_explainer'}}</div>
+        <div class='text-muted' style='font-weight: normal;'>{{t "Interesting photos or pictures that may prompt dialog or reactions" key='topic_starts_explainer'}}</div>
       </label>
       <div class="col-sm-5">
         {{prompt-carousel entries=model.topic_starters type='topic_starter'}}
@@ -539,6 +540,20 @@
       {{#if revision.changes.topic_starters}}
         <div class='col-sm-4 revision'>
           {{example-carousel entries=revision.changes.topic_starters type='topic_starters' revision_attribute='topic_starters' update_revision_object='update_revision_object'}}
+        </div>
+      {{/if}}
+    </div>
+    <div class="form-group">
+      <label for="send_homes" class="col-sm-3 control-label">
+        {{t "Send-Homes" key='topic_starters'}}
+        <div class='text-muted' style='font-weight: normal;'>{{t "Ideas for exercises or activities that would be good projects to for families to work on at home." key='send_homes_explainer'}}</div>
+      </label>
+      <div class="col-sm-5">
+        {{prompt-carousel entries=model.send_homes type='send_home'}}
+      </div>
+      {{#if revision.changes.send_homes}}
+        <div class='col-sm-4 revision'>
+          {{example-carousel entries=revision.changes.send_homes type='send_homes' revision_attribute='send_homes' update_revision_object='update_revision_object'}}
         </div>
       {{/if}}
     </div>
