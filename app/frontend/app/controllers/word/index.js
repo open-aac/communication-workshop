@@ -269,6 +269,9 @@ export default Ember.Controller.extend({
         this.set('revision.changes.' + attr, null);
       }
     },
+    not_implemented: function() {
+      alert('Coming Soon!');
+    },
     update_revision_object: function(entry, attr) {
       var list = this.get('model.' + attr) || [];
       if(entry.action == 'update') {
