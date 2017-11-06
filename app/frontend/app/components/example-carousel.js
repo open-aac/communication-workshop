@@ -79,9 +79,10 @@ export default Ember.Component.extend({
             this.get('current_entry.type') == 'learning_projects' || this.get('current_entry.type') == 'activity_ideas' || this.get('current_entry.type') == 'send_homes';
   }.property('type', 'current_entry.type'),
   include_url: function() {
-    return this.get('type') === 'learning_projects' || this.get('type') == 'activity_ideas' || this.get('type') === 'books' || this.get('type') == 'videos' ||
+    var url_type = this.get('type') === 'learning_projects' || this.get('type') == 'activity_ideas' || this.get('type') === 'books' || this.get('type') == 'videos' ||
             this.get('current_entry.type') === 'learning_projects' || this.get('current_entry.type') == 'activity_ideas' || this.get('current_entry.type') === 'books' || this.get('current_entry.type') == 'videos';
-  }.property('type', 'current_entry.type'),
+    return url_type && this.get('current_entry.url');
+  }.property('type', 'current_entry.type', 'current_entry.url'),
   book_type: function() {
     return this.get('type') == 'books' || this.get('current_entry.type') == 'books';
   }.property('current_entry.type', 'type'),
