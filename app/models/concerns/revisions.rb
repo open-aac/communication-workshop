@@ -20,6 +20,7 @@ module Revisions
       changes = {}
       rev.each do |key, val|
         if val.is_a?(Array)
+          self.data[key] ||= []
           objs = self.data[key].map(&:to_json)
           obj_ids = self.data[key].map{|o| o['id'] }.compact
           rev_ids = val.map{|o| o['id'] }.compact
@@ -43,7 +44,7 @@ module Revisions
               changes[key] << v
             end
           end
-        elsif val.to_json != self.data[key].to_json
+        elsif val.to_json != (self.data[key] || {}).to_json
           changes[key] = val
         end
       end
