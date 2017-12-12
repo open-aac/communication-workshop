@@ -88148,7 +88148,11 @@ define('frontend/controllers/user', ['exports', 'ember', 'frontend/utils/session
       return (this.get('model.password') || this.get('password2')) && this.get('model.password') != this.get('password2');
     }).property('model.password', 'password2'),
     save_disabled: (function () {
-      return this.get('status.saving') || this.get('resetting_password') && (!this.get('model.password') || !this.get('password2')) || this.get('resetting_password') && this.get('model.password') != this.get('password2');
+      if (this.get('status.saving')) {
+        return true;
+      } else if (this.get('resetting_password')) {
+        return !this.get('model.password') || !this.get('password2') || this.get('model.password') != this.get('password2');
+      }
     }).property('status.saving', 'resetting_password', 'model.password', 'password2'),
     actions: {
       edit: function edit() {
@@ -89845,7 +89849,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+6aa9e2c6"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+d2007b6c"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -89853,7 +89857,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+6aa9e2c6"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+d2007b6c"});
 }
 
 /* jshint ignore:end */
