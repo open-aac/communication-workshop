@@ -7,6 +7,9 @@ module.exports = function(defaults) {
     sourcemaps: {
       enabled: false
     },
+    fingerprint: {
+      enabled: false
+    },
     storeConfigInMeta: false
     // Add options here
   });
