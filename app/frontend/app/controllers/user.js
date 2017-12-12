@@ -29,9 +29,11 @@ export default Ember.Controller.extend({
     return (this.get('model.password') || this.get('password2')) && this.get('model.password') != this.get('password2');
   }.property('model.password', 'password2'),
   save_disabled: function() {
-    return this.get('status.saving') ||
-        (this.get('resetting_password') && (!this.get('model.password') || !this.get('password2'))) ||
-        (this.get('resetting_password') && this.get('model.password') != this.get('password2'));
+    if(this.get('status.saving')) {
+      return true;
+    } else if(this.get('resetting_password')) {
+      return !this.get('model.password') || !this.get('password2') || this.get('model.password') != this.get('password2');
+    }
   }.property('status.saving', 'resetting_password', 'model.password', 'password2'),
   actions: {
     edit: function() {
