@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import i18n from '../utils/i18n';
 
 export default Ember.Component.extend({
   all_categories: function() {

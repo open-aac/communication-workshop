@@ -67,7 +67,7 @@ export default Ember.Component.extend({
         if(res && res.image) {
           _this.sendAction('update_image', res.image, _this.get('ref'));
         }
-      });;
+      });
     }
   }
 });

@@ -17,7 +17,7 @@ export default Ember.Controller.extend({
       {"fill":"#fac","color":"Pink","hint":"social words","types":["preposition"],"border":"#ff1170","style":Ember.String.htmlSafe("border-color: #ff1170; background: #fac;")},
       {"fill":"#ca8","color":"Brown","hint":"adverbs","types":["adverb"],"border":"#835d38","style":Ember.String.htmlSafe("border-color: #835d38; background: #ca8;")},
       {"fill":"#ccc","color":"Gray","hint":"determiners","types":["article","determiner"],"border":"#808080","style":Ember.String.htmlSafe("border-color: #808080; background: #ccc;")}
-    ]
+    ];
   }.property(),
   buttons: function() {
     var map = session.get('user.full_word_map') || [];
@@ -44,7 +44,7 @@ export default Ember.Controller.extend({
     return [fallback];
   }.property('session.user.full_word_map', 'model.id'),
   single_button: function() {
-    return this.get('buttons').length == 1 ? this.get('buttons')[0] : nil;
+    return this.get('buttons').length == 1 ? this.get('buttons')[0] : null;
   }.property('buttons.@each.image_url'),
   image_style: function() {
     var css = "width: 100px; padding: 10px; max-height: 100px; border-width: 3px; border-radius: 5px; border-style: solid;";
@@ -135,7 +135,7 @@ export default Ember.Controller.extend({
                 source_url: item.source_url
               });
             }
-          }, function(err) { debugger});
+          }, function(err) { debugger; });
         }
       }, function(err) {
         _this.set('model.defaults_loaded', null);
@@ -250,7 +250,7 @@ export default Ember.Controller.extend({
       var _this = this;
       session.ajax('/api/v1/words/' + this.get('model.id') + '/' + action + '/' + activity_id, {type: 'POST'}).then(function(res) {
         _this.get('session.user').reload();
-      }, function(err) { debugger });
+      }, function(err) { debugger; });
     },
     cancel: function() {
       this.get('model').rollbackAttributes();

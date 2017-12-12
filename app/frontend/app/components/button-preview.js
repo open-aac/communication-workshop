@@ -10,8 +10,8 @@ export default Ember.Component.extend({
       var total = this.get('total_buttons') || 1;
       var rows = 1;
       var columns = 1;
-      if(total == 1) {
-      } else if(total == 2) {
+      if(total === 1) {
+      } else if(total === 2) {
         columns = 2;
       } else if(total <= 4) {
         rows = 2;

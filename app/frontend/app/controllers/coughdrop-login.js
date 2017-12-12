@@ -7,6 +7,7 @@ var controller = null;
 export default modal.ModalController.extend({
   opening: function() {
     this.set('error', null);
+    controller = this;
   },
   assert_auth: function(auth) {
     var _this = this;
@@ -27,9 +28,6 @@ export default modal.ModalController.extend({
     }, function(err) {
       _this.set('error', true);
     });
-  },
-  opening: function() {
-    controller = this;
   }
 });
 

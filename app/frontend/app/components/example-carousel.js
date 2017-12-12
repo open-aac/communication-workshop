@@ -7,8 +7,8 @@ export default Ember.Component.extend({
     var _this = this;
     var handler = function() {
       var e = _this.get('element');
-      var fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement
-      _this.set('fullscreen', e == fs);
+      var fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      _this.set('fullscreen', e === fs);
     };
     this.set('handler', handler);
     this.set('session', session);
@@ -25,7 +25,7 @@ export default Ember.Component.extend({
   },
   pinned: function() {
     var ids = this.get('session.user.starred_activity_ids');
-    return !!(ids && this.get('current_entry.id') && ids.indexOf(this.get('current_entry.id')) != -1);
+    return !!(ids && this.get('current_entry.id') && ids.indexOf(this.get('current_entry.id')) !== -1);
   }.property('session.user.starred_activity_ids', 'current_entry.id'),
   session: function() {
     return session;
@@ -47,13 +47,13 @@ export default Ember.Component.extend({
       return Ember.String.htmlSafe('glyphicon glyphicon-play-circle');
     } else if(this.get('prompt_type')) {
       return Ember.String.htmlSafe('glyphicon glyphicon-question-sign');
-    } else if(this.get('type') == 'learning_projects' || this.get('current_entry.type') == 'learning_projects') {
+    } else if(this.get('type') === 'learning_projects' || this.get('current_entry.type') === 'learning_projects') {
       return Ember.String.htmlSafe('glyphicon glyphicon-briefcase');
-    } else if(this.get('type') == 'modeling' || this.get('current_entry.type') == 'modeling') {
+    } else if(this.get('type') === 'modeling' || this.get('current_entry.type') === 'modeling') {
       return Ember.String.htmlSafe('glyphicon glyphicon-hand-up');
-    } else if(this.get('type') == 'topic_starters' || this.get('current_entry.type') == 'topic_starters') {
+    } else if(this.get('type') === 'topic_starters' || this.get('current_entry.type') === 'topic_starters') {
       return Ember.String.htmlSafe('glyphicon glyphicon-comment');
-    } else if(this.get('type') == 'send_homes' || this.get('current_entry.type') == 'send_homes') {
+    } else if(this.get('type') === 'send_homes' || this.get('current_entry.type') === 'send_homes') {
       return Ember.String.htmlSafe('glyphicon glyphicon-apple');
     }
   }.property('current_entry', 'current_entry.type', 'type'),
@@ -159,7 +159,6 @@ export default Ember.Component.extend({
     },
     skip: function(activity) {
       Ember.set(activity, 'skipped', true);
-      debugger
       // ajax call, then hit next
       this.send('next');
     },
