@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
   }.property('model.password', 'password2'),
   save_disabled: function() {
     return this.get('status.saving') ||
-        (this.get('resetting_password') && !this.get('model.password') || !this.get('password2')) ||
+        (this.get('resetting_password') && (!this.get('model.password') || !this.get('password2'))) ||
         (this.get('resetting_password') && this.get('model.password') != this.get('password2'));
   }.property('status.saving', 'resetting_password', 'model.password', 'password2'),
   actions: {
