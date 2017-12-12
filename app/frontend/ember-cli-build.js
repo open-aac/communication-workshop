@@ -10,6 +10,9 @@ module.exports = function(defaults) {
     fingerprint: {
       enabled: false
     },
+    minifyJS: {
+      enabled: false
+    },
     storeConfigInMeta: false
     // Add options here
   });
