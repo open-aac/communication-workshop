@@ -57,7 +57,7 @@ export default Ember.Component.extend({
     return this.get('type') === 'description_with_link' || this.get('type') == 'send_home';
   }.property('type'),
   include_url: function() {
-    return this.get('type') === 'description_with_link' || this.get('type') === 'book' || this.get('type') == 'video';
+    return this.get('type') === 'description_with_link' || this.get('type') === 'book' || this.get('type') == 'video' || this.get('type') == 'send_home';
   }.property('type'),
   include_sentence: function() {
     return this.get('type') === 'modeling';
