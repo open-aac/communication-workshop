@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cd ./app/frontend
+ember build --environment=production
+cd ../..
+rake assets:clean
+rm public/assets/*
+rake assets:precompile
+git add app/frontend/dist/.
+git add public/assets/. --all
+git commit -m "deployment compilation"
