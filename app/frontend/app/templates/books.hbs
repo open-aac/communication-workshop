@@ -1,0 +1,8 @@
+<h1>{{t "Books" key='books'}}</h1>
+
+{{#if session.isAuthenticated}}
+  <span style='display: inline-block; width: 300px;'>
+    {{input type='text' class='form-control input-lg' placeholder='Book Title' value=new_book_title enter='new_book'}}
+  </span>
+  <button class='btn btn-lg btn-default' {{action 'new_book'}}>{{t "Start A New Book" key='new_book'}}</button>
+{{/if}}

@@ -8,7 +8,7 @@
 <div style='margin-top: 30px;'>
   <h2>{{t "Book Contents" key='book_contents'}}</h2>
   <div style='float: left; width: 60px;'>
-    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;' disabled={{no_prev}}>Prev</button>
+    <button class='btn btn-default' {{action 'previous'}} style='width: 100%; height: 68px;' disabled={{no_prev}}>Prev</button>
     {{#if model.pages.length}}
       <div style='text-align: right;'>
         {{#if current_page.title_page}}
@@ -81,7 +81,7 @@
     {{/if}}
   </div>
   <div style='float: left; width: 60px;'>
-    <button class='btn btn-default' {{action 'next'}} style='width: 100%;' disabled={{no_next}}>Next</button>
+    <button class='btn btn-default' {{action 'next'}} style='width: 100%; height: 68px;' disabled={{no_next}}>Next</button>
     {{#if editing}}
       <button class='btn btn-default' {{action 'add'}} style='width: 100%;'>Add</button>
     {{/if}}

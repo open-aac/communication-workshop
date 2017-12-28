@@ -20,6 +20,7 @@ Router.map(function() {
   });
   this.route('tallies', {path: '/scratch/tallies'});
   this.route('training', {path: '/scratch/training'});
+  this.route('books', {path: '/books'});
   this.route('book', {path: '/books/:id'});
   this.route('word', {path: '/words/:word/:locale'}, function() {
     this.route('quiz', {path: 'quizzes/:quiz_id'});

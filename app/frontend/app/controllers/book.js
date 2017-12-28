@@ -3,12 +3,19 @@ import modal from '../utils/modal';
 import i18n from '../utils/i18n';
 
 export default Ember.Controller.extend({
+  queryParams: ['title'],
   clear_on_change: function() {
     this.set('current_index', 0);
   }.property('model.pages', 'model.id'),
   current_page: function() {
     var index = this.get('current_index') || 0;
     if(index === 0) {
+      if(this.get('title') && !this.get('model.title')) {
+        var _this = this;
+        Ember.run.later(function() {
+          _this.set('model.title', _this.get('title'));
+        });
+      }
       this.set('model.title_page', true);
       return this.get('model');
     } else {
@@ -60,7 +67,7 @@ export default Ember.Controller.extend({
     },
     cancel: function() {
       if(this.get('model.pending')) {
-        this.transitionToRoute('index');
+        this.transitionToRoute('books');
       } else {
         this.get('model').rollbackAttributes();
         this.set('editing', false);
