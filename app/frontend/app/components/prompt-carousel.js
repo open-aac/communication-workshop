@@ -85,7 +85,7 @@ export default Ember.Component.extend({
           });
         }
       }, function() { });
-    } else if(this.get('type') === 'video') {
+    } else if(this.get('type') === 'video' && entry) {
       var regex = (/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
       var match = entry.url && entry.url.match(regex);
       if(match && match[1]) {
