@@ -104,7 +104,7 @@ export default Ember.Controller.extend({
     return res;
   }.property('model.partner_suggestions', 'session.user.full_word_map'),
   default_values: function() {
-    if(this.get('editing') && !this.get('model.defaults_loaded')) {
+    if(this.get('editing') && !this.get('model.defaults_loaded') != null) {
       var _this = this;
       _this.set('model.defaults_loaded', true);
       session.ajax('/api/v1/words/' + this.get('model.word') + '/defaults', {type: 'GET'}).then(function(res) {
@@ -138,7 +138,7 @@ export default Ember.Controller.extend({
           }, function(err) { debugger; });
         }
       }, function(err) {
-        _this.set('model.defaults_loaded', null);
+        _this.set('model.defaults_loaded', false);
       });
     }
   }.observes('model.defaults_loaded', 'editing', 'model.background_color', 'model.border_color'),
