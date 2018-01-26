@@ -1,6 +1,6 @@
 <div style='margin-bottom: 40px;'>
   <div style='float: left; width: 60px;'>
-    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'>Prev</button>
+    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'><span class='glyphicon glyphicon-arrow-left'></span></button>
     {{#if entries.length}}
       <div style='text-align: right;'>
         {{readable_index}} of {{entries.length}}
@@ -46,7 +46,7 @@
     {{/if}}
   </div>
   <div style='float: left; width: 60px;'>
-    <button class='btn btn-default' {{action 'next'}} style='width: 100%;'>Next</button>
+    <button class='btn btn-default' {{action 'next'}} style='width: 100%;'><span class='glyphicon glyphicon-arrow-right'></span></button>
     <button class='btn btn-default' {{action 'add'}} style='width: 100%;'>Add</button>
   </div>
   <div style='clear: left;'></div>

@@ -1,6 +1,6 @@
 <div style={{if tall 'margin-bottom: 40px;'}} class={{if fullscreen 'box fullscreen' 'box'}}>
   <div class='left'>
-    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'>Prev</button>
+    <button class='btn btn-default' {{action 'previous'}} style='width: 100%;'><span class='glyphicon glyphicon-arrow-left'></span></button>
     <div style='text-align: right; height: 30px;'>
       {{#if entries.length}}
         {{readable_index}} of {{entries.length}}
@@ -121,7 +121,7 @@
     {{/if}}
   </div>
   <div class='right'>
-    <button class='btn btn-default' {{action 'next'}} style='width: 100%;'>Next</button>
+    <button class='btn btn-default' {{action 'next'}} style='width: 100%;'><span class='glyphicon glyphicon-arrow-right'></span></button>
     {{#if update_revision_object}}
       <button class='btn btn-default' {{action 'confirm_revision'}} style='width: 100%;'>
         {{#if update_action}}
