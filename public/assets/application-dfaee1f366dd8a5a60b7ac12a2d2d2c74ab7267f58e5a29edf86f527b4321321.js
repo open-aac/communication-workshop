@@ -87851,7 +87851,7 @@ define('frontend/controllers/index', ['exports', 'ember', 'frontend/utils/modal'
         _this.set('words', { error: true });
       });
     },
-    load_categories: function load_categories() {
+    load_categories: function load_categories(force) {
       var _this = this;
       if (_this.get('categories.length') && force === false) {
         return;
@@ -89881,7 +89881,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+733bfb5c"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+0852e3d7"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -89889,7 +89889,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+733bfb5c"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+0852e3d7"});
 }
 
 /* jshint ignore:end */
