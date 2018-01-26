@@ -2,8 +2,9 @@ import Ember from 'ember';
 import modal from '../utils/modal';
 
 export default Ember.Controller.extend({
-  load_words: function() {
+  load_words: function(force) {
     var _this = this;
+    if(_this.get('words.length') && force === false) { return; }
     _this.set('words', {loading: true});
     this.store.query('word', {sort: 'recommended'}).then(function(res) {
       _this.set('words', res.slice(0, 5));
@@ -13,6 +14,7 @@ export default Ember.Controller.extend({
   },
   load_categories: function() {
     var _this = this;
+    if(_this.get('categories.length') && force === false) { return; }
     _this.set('categories', {loading: true});
     this.store.query('category', {sort: 'recommended'}).then(function(res) {
       _this.set('categories', res.slice(0, 5));
