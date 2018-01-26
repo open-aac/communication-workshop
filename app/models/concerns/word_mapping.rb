@@ -109,6 +109,7 @@ module WordMapping
       if res
         res['_user_name'] = user.settings['user_name']
       end
+      res
     else
       self.settings['word_map']
     end
