@@ -89227,6 +89227,7 @@ define('frontend/routes/word', ['exports', 'ember'], function (exports, _ember) 
     model: function model(params) {
       return this.store.findRecord('word', params.word + ":" + params.locale).then(function (res) {
         if (!res.get('permissions')) {
+          res.rollbackAttributes();
           return res.reload();
         } else {
           return res;
@@ -89874,7 +89875,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+f589b835"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+ddd53222"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -89882,7 +89883,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+f589b835"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+ddd53222"});
 }
 
 /* jshint ignore:end */
