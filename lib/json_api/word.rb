@@ -16,7 +16,7 @@ module JsonApi::Word
     
     strings = ['border_color', 'background_color', 'description']
     objs = ['image']
-    if args[:permissions]
+    if args.keys.include?(:permissions)
       json['permissions'] = word.permissions_for(args[:permissions])
       if word.data
         # other data to include
