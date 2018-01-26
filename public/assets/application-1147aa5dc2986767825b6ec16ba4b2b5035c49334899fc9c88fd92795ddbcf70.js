@@ -88343,7 +88343,7 @@ define('frontend/controllers/word/index', ['exports', 'ember', 'frontend/utils/m
       return res;
     }).property('model.partner_suggestions', 'session.user.full_word_map'),
     default_values: (function () {
-      if (this.get('editing') && !this.get('model.defaults_loaded')) {
+      if (this.get('editing') && !this.get('model.defaults_loaded') != null) {
         var _this = this;
         _this.set('model.defaults_loaded', true);
         _frontendUtilsSession['default'].ajax('/api/v1/words/' + this.get('model.word') + '/defaults', { type: 'GET' }).then(function (res) {
@@ -88381,7 +88381,7 @@ define('frontend/controllers/word/index', ['exports', 'ember', 'frontend/utils/m
             });
           }
         }, function (err) {
-          _this.set('model.defaults_loaded', null);
+          _this.set('model.defaults_loaded', false);
         });
       }
     }).observes('model.defaults_loaded', 'editing', 'model.background_color', 'model.border_color'),
@@ -89872,7 +89872,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+3eb800cf"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+914eac25"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -89880,7 +89880,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+3eb800cf"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+914eac25"});
 }
 
 /* jshint ignore:end */
