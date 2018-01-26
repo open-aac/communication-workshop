@@ -62,6 +62,7 @@
 
 <h2>{{t "Additional Resources" key='additional_resources'}}</h2>
 <ul class="nav nav-pills all_border" style='white-space: initial;'>
+  <li role="presentation" class={{if current_activity.individual 'active'}}><a href="#" {{action 'set_activity' 'individual'}}>{{t "Show All" key='show_all'}}</a></li>
   <li role="presentation" class={{if current_activity.learning_projects 'active'}}><a href="#" {{action 'set_activity' 'learning_projects'}}>{{t "Learning Projects" key='learning_projects'}}</a></li>
   <li role="presentation" class={{if current_activity.activity_ideas 'active'}}><a href="#" {{action 'set_activity' 'activity_ideas'}}>{{t "Activity Ideas" key='activities'}}</a></li>
   <li role="presentation" class={{if current_activity.books 'active'}}><a href="#" {{action 'set_activity' 'books'}}>{{t "Books" key='books'}}</a></li>

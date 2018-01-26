@@ -104,7 +104,7 @@ export default Ember.Controller.extend({
     return res;
   }.property('model.partner_suggestions', 'session.user.full_word_map'),
   default_values: function() {
-    if(this.get('editing') && !this.get('model.defaults_loaded') != null) {
+    if(this.get('editing') && this.get('model.defaults_loaded') != null) {
       var _this = this;
       _this.set('model.defaults_loaded', true);
       session.ajax('/api/v1/words/' + this.get('model.word') + '/defaults', {type: 'GET'}).then(function(res) {
@@ -143,10 +143,23 @@ export default Ember.Controller.extend({
     }
   }.observes('model.defaults_loaded', 'editing', 'model.background_color', 'model.border_color'),
   current_activity: function() {
-    var activity = this.get('activity') || 'learning_projects';
+    var activity = this.get('activity') || 'individual';
+    var list = this.get('model.' + activity);
+    var _this = this;
+    if(activity == 'individual') {
+      list = [];
+      ['learning_projects', 'activity_ideas', 'books', 'topic_starters', 'send_homes', 'prompts', 'videos'].forEach(function(key) {
+        var type = _this.get('model.' + key) || [];
+        type.forEach(function(entry) {
+          entry.type = key;
+        });
+        list = list.concat(type);
+      });
+    }
+
     var res = {
       type: activity,
-      list: this.get('model.' + activity)
+      list: list
     };
     res[activity] = true;
     return res;

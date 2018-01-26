@@ -47,6 +47,8 @@ export default Ember.Component.extend({
       return Ember.String.htmlSafe('glyphicon glyphicon-play-circle');
     } else if(this.get('prompt_type')) {
       return Ember.String.htmlSafe('glyphicon glyphicon-question-sign');
+    } else if(this.get('type') == 'activity_ideas' || this.get('current_entry.type') == 'activity_ideas') {
+      return Ember.String.htmlSafe('glyphicon glyphicon-tower');
     } else if(this.get('type') === 'learning_projects' || this.get('current_entry.type') === 'learning_projects') {
       return Ember.String.htmlSafe('glyphicon glyphicon-briefcase');
     } else if(this.get('type') === 'modeling' || this.get('current_entry.type') === 'modeling') {
