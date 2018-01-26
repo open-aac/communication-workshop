@@ -12,7 +12,7 @@ export default Ember.Controller.extend({
       _this.set('words', {error: true});
     });
   },
-  load_categories: function() {
+  load_categories: function(force) {
     var _this = this;
     if(_this.get('categories.length') && force === false) { return; }
     _this.set('categories', {loading: true});
