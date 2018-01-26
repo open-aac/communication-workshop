@@ -32,7 +32,15 @@ class UserAuth < ApplicationRecord
     match = (self.settings['tokens'] || []).detect{|t |t['key'] == token }
     now = Time.now.iso8601
     cutoff = 3.weeks.ago.iso8601
-    return !!(match && match['expires'] > now && match['used'] > cutoff)
+    if !!(match && match['expires'] > now && match['used'] > cutoff)
+      if match['used'] < 2.days.ago.io8601
+        match['used'] = now
+        self.save
+      end
+      return true
+    else
+      return false
+    end
   end
   
   def generate_token!
