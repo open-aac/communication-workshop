@@ -14,8 +14,8 @@ class WordData < ApplicationRecord
   include Revisions
   include Permissions
 
-  secure_serialize :data
-  serialize :insecure_data
+  secure_serialize :old_data
+#  serialize
   before_save :generate_defaults
   after_save :update_related_categories
 
