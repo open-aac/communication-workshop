@@ -59,7 +59,7 @@ class WordData < ApplicationRecord
       if self.data[param] && self.data[param].is_a?(Array)
         self.data[param].each do |obj|
           if obj.is_a?(Hash)
-            return obj if obj['id'] == parts[1]
+            return obj if obj['id'] == parts[1] || obj['id'] == activity_id
           end
         end
       end
