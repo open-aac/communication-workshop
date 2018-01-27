@@ -9,9 +9,9 @@
     {{#unless update_revision_object}}
       {{#if session.isAuthenticated}}
         <div style='margin-top: 50px;'>
-          <button class={{if current_entry.performed 'btn btn-primary' 'btn btn-default'}} style='width: 100%; height: 60px; margin-bottom: 2px;' {{action 'perform' current_entry}}><span class='glyphicon glyphicon-ok'></span></button>
+          <button class={{if current_entry.performed 'btn btn-primary' 'btn btn-default'}} title="We Tried this Activity" style='width: 100%; height: 60px; margin-bottom: 2px;' {{action 'perform' current_entry}}><span class='glyphicon glyphicon-ok'></span></button>
           {{#if allow_skip}}
-            <button class={{if current_entry.skipped 'btn btn-primary' 'btn btn-default'}} style='width: 100%; height: 60px;' {{action 'skip' current_entry}}><span class='glyphicon glyphicon-remove'></span></button>
+            <button class={{if current_entry.skipped 'btn btn-primary' 'btn btn-default'}} title="Skip this Activity" style='width: 100%; height: 60px;' {{action 'skip' current_entry}}><span class='glyphicon glyphicon-remove'></span></button>
           {{/if}}
         </div>
       {{/if}}
@@ -138,9 +138,9 @@
     {{else if session.isAuthenticated}}
       {{#unless fullscreen}}
         {{#if pinned}}
-          <button class='btn btn-default' style='width: 100%;' {{action 'pin' 'unstar' current_entry}}><span class='glyphicon glyphicon-star'></span></button>
+          <button class='btn btn-default' title="Remove from Favorites" style='width: 100%;' {{action 'pin' 'unstar' current_entry}}><span class='glyphicon glyphicon-star'></span></button>
         {{else}}
-          <button class='btn btn-default' style='width: 100%;' {{action 'pin' 'star' current_entry}}><span class='glyphicon glyphicon-star-empty' style='color: #888;'></span></button>
+          <button class='btn btn-default' title="Mark as Favorite" style='width: 100%;' {{action 'pin' 'star' current_entry}}><span class='glyphicon glyphicon-star-empty' style='color: #888;'></span></button>
         {{/if}}
       {{/unless}}
     {{/if}}
