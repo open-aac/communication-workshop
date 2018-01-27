@@ -106,7 +106,7 @@ class Api::WordsController < ApplicationController
     if res
       render json: res
     else
-      api_eror 400, {error: 'activity tracking failed'}
+      api_error 400, {error: 'activity tracking failed'}
     end
   end
   
