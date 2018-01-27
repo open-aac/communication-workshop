@@ -138,7 +138,10 @@ class User < ApplicationRecord
   end
   
   def star_activity(word, activity, action)
-    ref_id = "#{word.global_id}:#{activity['id']}"
+    ref_id = activity['id']
+    if !ref_id.match(/^#{word.global_id}/)
+      ref_id = "#{word.global_id}:#{activity['id']}"
+    end
     self.settings['starred_activity_ids'] = (self.settings['starred_activity_ids'] || []).select{|id| id != ref_id }
     if action == :star
       self.settings['starred_activity_ids'] << ref_id
