@@ -53,17 +53,18 @@
       {{t "Error loading words" key='error_loading_words'}}
     {{else if words}}
       <div style='max-width: 300px; margin: 0 auto;'>
-      <div class='list-group pills'>
-        {{#each words as |word|}}
-          {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
-            {{#if word.best_image_url}}
-              <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
-            {{/if}}
-            {{word.word}}
-          {{/link-to}}
-        {{/each}}
+        <div class='list-group pills'>
+          {{#each words as |word|}}
+            {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+              {{#if word.best_image_url}}
+                <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+              {{/if}}
+              {{word.word}}
+            {{/link-to}}
+          {{/each}}
+        </div>
       </div>
-      </div>
+      <p>{{#link-to 'words' 'en'}}{{t "see all words" key='all_words'}}{{/link-to}}</p>
     {{else}}
       {{t "No data to show" key='no_data'}}
     {{/if}}
