@@ -38,7 +38,7 @@ class SessionController < ApplicationController
       if user.settings['url']
         redirect_to user.settings['url']
       else
-        redirect_to "/users/#{user.settings['user_name']}"
+        redirect_to "/users/#{user.settings['user_name']}?link=1"
       end
     else
       redirect_to '/'
