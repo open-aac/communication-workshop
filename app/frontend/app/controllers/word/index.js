@@ -201,6 +201,13 @@ export default Ember.Controller.extend({
         }).then(function(res) {
           _this.set('adding', null);
           session.get('user').reload();
+          var add_key = Math.random();
+          _this.set('added', add_key);
+          Ember.run.later(function() {
+            if(_this.get('added') == add_key) {
+              _this.set('added', null);
+            }
+          }, 10000);
         }, function(err) {
           _this.set('adding', {error: true});
         });

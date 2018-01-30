@@ -22,6 +22,9 @@
         <button class='btn btn-default' {{action 'add_word'}}><span class='glyphicon glyphicon-zoom-in'></span> {{t "Focus on This Word" key='focus_on_this_word'}}</button>
       {{/if}}
     {{else if word_status.added}}
+      {{#if added}}
+        <p class='alert alert-success'>{{t "Focus added! Ideas for this word will now show up on your home page." key='word_added_to_home'}}</p>
+      {{/if}}
       {{#if word_status.concludes}}
         {{t "focusing on this word, done" key='concludes'}} {{from_now word_status.concludes}}<br/>
       {{/if}}
