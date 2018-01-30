@@ -89201,6 +89201,9 @@ define('frontend/routes/application', ['exports', 'ember', 'frontend/utils/modal
     actions: {
       willTransition: function willTransition() {
         _frontendUtilsModal['default'].close();
+      },
+      didTransition: function didTransition() {
+        _ember['default'].$(window).scrollTop(0);
       }
     }
   });
@@ -89963,7 +89966,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+87d1b69c"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+64ce1e34"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -89971,7 +89974,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+87d1b69c"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+64ce1e34"});
 }
 
 /* jshint ignore:end */

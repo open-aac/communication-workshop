@@ -10,6 +10,9 @@ export default Ember.Route.extend({
   actions: {
     willTransition: function() {
       modal.close();
+    },
+    didTransition: function() {
+      Ember.$(window).scrollTop(0);
     }
   }
 });
