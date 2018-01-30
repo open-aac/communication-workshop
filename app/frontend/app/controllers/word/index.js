@@ -285,6 +285,10 @@ export default Ember.Controller.extend({
     not_implemented: function() {
       alert('Coming Soon!');
     },
+    suggestions: function() {
+      var _this = this;
+      modal.open('focus-suggestions', {type: 'activities', id: _this.get('model.id')});
+    },
     update_revision_object: function(entry, attr) {
       var list = this.get('model.' + attr) || [];
       if(entry.action == 'update') {

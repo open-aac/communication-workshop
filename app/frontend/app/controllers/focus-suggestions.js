@@ -8,7 +8,11 @@ export default modal.ModalController.extend({
     var _this = this;
     _this.set('suggestions', {loading: true});
     var type = _this.get('model.type');
-    session.ajax('/api/v1/words/suggestions', {type: 'GET'}).then(function(res) {
+    var path = '/api/v1/words/suggestions';
+    if(_this.get('model.id')) {
+      path = path + '?id=' + _this.get('model.id');
+    }
+    session.ajax(path, {type: 'GET'}).then(function(res) {
       _this.set('suggestions', res[type]);
     }, function(err) {
       _this.set('suggestions', {error: true});

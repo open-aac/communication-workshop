@@ -100,7 +100,7 @@ class WordData < ApplicationRecord
     "#{self.word}:#{self.locale}"
   end
   
-  def self.suggestions_for(user, include_linked_users=false)
+  def self.suggestions_for(user, include_linked_users=false, word_id=nil)
     # TODO: bump if at the user's modeling level
     # TODO: major unbump if already used or downvoted/dismissed
     # TODO: add jitter so it's not always the same order every time
@@ -134,7 +134,12 @@ class WordData < ApplicationRecord
     loose_past = past_words.length > 0 ? Regexp.new(past_words.map{|w| "\\b#{w}" }.join('|'), 'i') : /$^/
     words = WordData.find_all_by_global_id(all_ids)
     all_words = []
-    words.each{|word| all_words << [word, histories[word.global_id] || 1.0] }
+    if word_id
+      word = WordData.find_by_path(word_id)
+      all_words << [word, 1.0] if word
+    else
+      words.each{|word| all_words << [word, histories[word.global_id] || 1.0] }
+    end
     all_words.each do |word, history_distance|
       [1,2,3].each do |level|
         (word.data["level_#{level}_modeling_examples"] || []).each do |ex|
@@ -144,10 +149,12 @@ class WordData < ApplicationRecord
           parts = ex['sentence'].downcase.split(/\s/)
           matches = parts & focus_words
           score += matches.length
-          score += ex['text'].scan(strict_re).length.to_f / 3.0
-          score += ex['text'].scan(loose_re).length.to_f / 10.0
-          score += ex['text'].scan(strict_past).length.to_f / 6.0
-          score += ex['text'].scan(loose_past).length.to_f / 10.0
+          if ex['text']
+            score += ex['text'].scan(strict_re).length.to_f / 3.0
+            score += ex['text'].scan(loose_re).length.to_f / 10.0
+            score += ex['text'].scan(strict_past).length.to_f / 6.0
+            score += ex['text'].scan(loose_past).length.to_f / 10.0
+          end
           score *= 2 if starred_ids[ex['id']]
           score *= history_distance
           res['modeling'] << {

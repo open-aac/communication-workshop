@@ -84,7 +84,7 @@ class Api::WordsController < ApplicationController
   
   def suggestions
     return unless exists?(@api_user, 'user_required')
-    hash = WordData.suggestions_for(@api_user)
+    hash = WordData.suggestions_for(@api_user, false, params['id'])
     render json: hash
   end
 
