@@ -254,7 +254,7 @@ class WordData < ApplicationRecord
   
   def possibly_related_words
     res = []
-    ['verbs', 'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_based_words', 'location_based_words', 'other_words'].each do |key|
+    CORE_WORD_PARAMS.each do |key|
       words = self.data[key]
       res += words.split(/,/) if words && words.length > 0
       res += words.split(/,/) if words && words.length > 0
@@ -278,7 +278,8 @@ class WordData < ApplicationRecord
     res
   end
 
-  
+  CORE_WORD_PARAMS = ['verbs', 'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_based_words', 'location_based_words', 'other_words']
+
   STRING_PARAMS = ['border_color', 'background_color', 'description', 'parts_of_speech', 'verbs',
         'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_based_words', 'location_based_words',
         'other_words', 'related_categories', 'references']
