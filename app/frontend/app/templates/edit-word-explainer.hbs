@@ -1,0 +1,16 @@
+{{#modal-dialog action="close" opening='opening' closing='closing'}}
+  <div class="modal-header">
+    <button type="button" class="close" {{action 'close'}}>&times;</button>
+    <h3>{{t "Contributions" key='focus_words'}}</h3>
+  </div>
+  <div class="modal-body">
+    <span class='glyphicon glyphicon-pencil' style='font-size: 50px; float: left; padding: 0 10px 10px 0;'></span>
+    <p>{{t "The Communication Workshop is a community-focused project, where we hope to bring together the best resources and ideas from around the world. We'd love to have you help contribute! All contributors are mentioned by name, with a link back to their own web site if they have one." key='edit_word_explainer'}}</p>
+    <p>{{t "Before you can contribute, you'll first need to register or log in so we can keep track of where all the contributions are coming from." key='login_to_contribute'}}</p>
+  </div>
+  <div class='modal-footer'>
+    {{#link-to 'register' class='btn btn-primary'}}{{t "Sign Up" key='sign_up'}}{{/link-to}}
+    {{#link-to 'login' class='btn btn-default'}}{{t "Log In" key='login'}}{{/link-to}}
+    <button class='btn btn-default' {{action 'close'}}>{{t "Close" key='close'}}</button>
+  </div>
+{{/modal-dialog}}

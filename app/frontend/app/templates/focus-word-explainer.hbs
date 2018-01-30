@@ -1,0 +1,16 @@
+{{#modal-dialog action="close" opening='opening' closing='closing'}}
+  <div class="modal-header">
+    <button type="button" class="close" {{action 'close'}}>&times;</button>
+    <h3>{{t "Focus Words" key='focus_words'}}</h3>
+  </div>
+  <div class="modal-body">
+    <span class='glyphicon glyphicon-zoom-in' style='font-size: 50px; float: left; padding: 0 10px 10px 0;'></span>
+    <p>{{t "The Communication Workshop allows registered users to select one or more focus words, which means words that the communicator or team are currently working on practicing, implementing, modeling, etc. When a user has focus words set, the home page will start to fill up with suggestions and ideas to help use the focus words in different settings." key='focus_word_explainer'}}</p>
+    <p>{{t "Sound fun? Sign up or log in to start using the Communication Workshop more completely! Registration is free!" key='sign_up'}}</p>
+  </div>
+  <div class='modal-footer'>
+    {{#link-to 'register' class='btn btn-primary'}}{{t "Sign Up" key='sign_up'}}{{/link-to}}
+    {{#link-to 'login' class='btn btn-default'}}{{t "Log In" key='login'}}{{/link-to}}
+    <button class='btn btn-default' {{action 'close'}}>{{t "Close" key='close'}}</button>
+  </div>
+{{/modal-dialog}}

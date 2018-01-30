@@ -172,7 +172,7 @@
           </div>
         </div>
       {{/if}}
-    {{else if session.isAuthenticated}}
+    {{else}}
       <button class='btn btn-default' {{action 'edit'}}>{{t "Suggest Word Revisions" key='suggest_word_changes'}}</button>
       {{#if model.revisions}}
         <div style='margin-top: 20px;'>
@@ -187,13 +187,13 @@
     {{/if}}
   </div>
 {{else}}
-  <h2 style='margin-top: 100px;'>
+  <h2 style='margin-top: 20px;'>
     {{#if revision}}
       {{t "Review Word Changes" key='review_word_changes'}}
     {{else if model.permissions.edit}}
       {{t "Edit Word Settings" key='edit_word_settings'}}
     {{else}}
-      {{t "Suggest Word Revisions" key='suggest_word_revisions'}}
+      {{t "Suggested Word Additions and Revisions" key='suggest_word_revisions'}}
     {{/if}}
   </h2>
   {{#if revision}}

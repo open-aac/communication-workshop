@@ -204,6 +204,8 @@ export default Ember.Controller.extend({
         }, function(err) {
           _this.set('adding', {error: true});
         });
+      } else {
+        modal.open('focus-word-explainer');
       }
     },
     remove_word: function() {
@@ -255,9 +257,14 @@ export default Ember.Controller.extend({
       this.set('activity', activity);
     },
     edit: function() {
-      this.set('editing', true);
-      this.set('model.revision_credit', null);
-      this.set('revision', null);
+      if(session.get('user')) {
+        this.set('editing', true);
+        this.set('model.revision_credit', null);
+        this.set('revision', null);
+        Ember.$(window).scrollTop(0);
+      } else {
+        modal.open('edit-word-explainer');
+      }
     },
     pin: function(activity_id, action) {
       var _this = this;
