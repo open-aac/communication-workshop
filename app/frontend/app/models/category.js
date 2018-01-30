@@ -18,7 +18,7 @@ var Category = DS.Model.extend({
   revisions: DS.attr('raw'),
   clear_revision_id: DS.attr('string'),
   revision_credit: DS.attr('string'),
-  approved_user_identifiers: DS.attr('raw'),
+  approved_users: DS.attr('raw'),
   permissions: DS.attr('raw'),
   age_range: DS.attr('raw'),
   level_1_modeling_examples: DS.attr('raw'),

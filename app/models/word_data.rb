@@ -293,7 +293,7 @@ class WordData < ApplicationRecord
       'clear_revision_id' => params['clear_revision_id']
     }
     if user_params['user']
-      rev_params['user_identifier'] = user_params['user'].settings['name'] || user_params['user'].settings['user_name']
+      rev_params['user_identifier'] = user_params['user']
       rev_params['editable'] = self.allows?(user_params['user'], 'delete')
     end
     self.process_revisions(rev_params) do |hash|

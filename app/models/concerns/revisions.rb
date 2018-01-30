@@ -51,8 +51,10 @@ module Revisions
       if changes.keys.length > 0
         pre = self.global_id || (self.data['pre_id'] ||= "p_#{rand(999)}")
         self.data['revisions'] ||= []
+        uid = user_params['user_identifier']
+        user_ref = uid.is_a?(User) ? "#{uid.settings['name'] || uid.settings['user_name']}::#{uid.global_id}" : uid.to_s
         self.data['revisions'] << {
-          'user_identifier' => user_params['user_identifier'], 
+          'user_identifier' => user_ref, 
           'changes' => changes,
           'id' => "#{pre}:#{Time.now.iso8601}_#{rand(9999)}"
         }
@@ -63,7 +65,9 @@ module Revisions
     end
     if user_params['user_identifier']
       self.data['all_user_identifiers'] ||= []
-      self.data['all_user_identifiers'] << user_params['user_identifier']
+      uid = user_params['user_identifier']
+      user_ref = uid.is_a?(User) ? "#{uid.settings['name'] || uid.settings['user_name']}::#{uid.global_id}" : uid.to_s
+      self.data['all_user_identifiers'] << user_ref
       self.data['all_user_identifiers'].uniq!
     end
     true
@@ -77,6 +81,17 @@ module Revisions
   
   def pending_user_identifiers
     self.data['revisions'].map{|r| r['user_identifier'] }.uniq
+  end
+  
+  def approved_users
+    self.data['approved_user_identifiers'].map do |id|
+      if id.match(/::/)
+        name, id = id.split(/::/, 2)
+        {name: name, id: id}
+      else
+        {name: id.to_s}
+      end
+    end
   end
   
   def approve_revisions(user_identifier)

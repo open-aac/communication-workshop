@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get '/auth/coughdrop/:id' => 'session#coughdrop_auth'
   get '/scratch/:page_id' => ember_handler
   get '/users/:user_name' => ember_handler
+  get '/users/links/:user_id' => 'session#user_redirect'
   get '/words/:locale' => ember_handler
   get '/categories/:locale' => ember_handler
   get '/forgot_password' => ember_handler

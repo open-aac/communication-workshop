@@ -20,7 +20,7 @@ var Word = DS.Model.extend({
   revisions: DS.attr('raw'),
   revision_credit: DS.attr('string'),
   clear_revision_id: DS.attr('string'),
-  approved_user_identifiers: DS.attr('raw'),
+  approved_users: DS.attr('raw'),
   permissions: DS.attr('raw'),
   usage_examples: DS.attr('raw'),
   level_1_modeling_examples: DS.attr('raw'),

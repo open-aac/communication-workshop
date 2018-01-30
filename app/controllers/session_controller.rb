@@ -32,6 +32,19 @@ class SessionController < ApplicationController
     end
   end
   
+  def user_redirect
+    user = User.find_by_path(params['user_id'])
+    if user
+      if user.settings['url']
+        redirect_to user.settings['url']
+      else
+        redirect_to "/users/#{user.settings['user_name']}"
+      end
+    else
+      redirect_to '/'
+    end
+  end
+  
   def coughdrop_auth
     if params['id'] == 'check'
       if ENV['COUGHDROP_HOST'] && ENV['COUGHDROP_CLIENT_ID']

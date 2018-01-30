@@ -21,6 +21,7 @@ var User = DS.Model.extend({
   old_password: DS.attr('string'),
   password: DS.attr('string'),
   email: DS.attr('string'),
+  url: DS.attr('string'),
   terms_agree: DS.attr('boolean'),
   word_map: DS.attr('raw'),
   map_current_words: function() {

@@ -24,7 +24,7 @@ module JsonApi::Category
         json[param] = cat.data[param] if cat.data[param]
       end
       json['related_identifiers'] = cat.data['all_user_identifiers']
-      json['approved_user_identifiers'] = cat.data['approved_user_identifiers']
+      json['approved_users'] = cat.approved_users
       json['revisions'] = cat.data['revisions'] || []
       
       if json['permissions'] && json['permissions']['view']

@@ -23,7 +23,7 @@ module JsonApi::Word
         strings = WordData::STRING_PARAMS
         objs = WordData::OBJ_PARAMS
         json['related_identifiers'] = word.data['all_user_identifiers']
-        json['approved_user_identifiers'] = word.data['approved_user_identifiers']
+        json['approved_users'] = word.approved_users
         json['revisions'] = word.data['revisions'] || []
       end
     end
