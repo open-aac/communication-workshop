@@ -104,7 +104,7 @@
       <div class="form-group">
         <label for="focus_length" class="col-sm-3 control-label">{{t "Focus Length" key='focus_length'}}</label>
         <div class="col-sm-6">
-          <p class='form-control-static'>{{t "When adding a new focus word, how long should it stay \"in focus\"" key='how_long_in_focus'}}</p>
+          <p class='form-control-static'><em>{{t "When adding a new focus word, how long should it stay \"in focus\"" key='how_long_in_focus'}}</em></p>
         </div>
         <div class="col-sm-3 col-sm-offset-3">
           {{bound-select select_class="form-control skip_select" select_id="focus_length" content=modeling_lengths selection=model.modeling_level action=(action (mut model.modeling_level)) }}
@@ -123,9 +123,9 @@
             {{#if model.word_data.words}}
               <p class='form-control-static'>
                 {{#if model.external_tracking}}
-                  {{t "The following word list is automatically updated from the user's linked account:" key='linked_account_words'}}<br />
+                  <em>{{t "The following word list is automatically updated from the user's linked account:" key='linked_account_words'}}</em><br />
                 {{else}}
-                  {{t "The following words are marked as available in the user's vocabulary:" key='accessible_words'}}<br />
+                  <em>{{t "The following words are marked as available in the user's vocabulary:" key='accessible_words'}}</em><br />
                 {{/if}}
               </p>
               <div style='max-height: 200px; overflow: auto;'>
