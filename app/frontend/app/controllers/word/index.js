@@ -74,7 +74,7 @@ export default Ember.Controller.extend({
     var map = session.get('user.full_word_map');
     var _this = this;
     var res = [];
-    if(map[_this.get('model.locale')]) {
+    if(map && map[_this.get('model.locale')]) {
       var words = map[_this.get('model.locale')];
       (_this.get('model.related_suggestions') || []).forEach(function(word) {
         if(words[word]) {
@@ -93,7 +93,7 @@ export default Ember.Controller.extend({
     var map = session.get('user.full_word_map');
     var _this = this;
     var res = [];
-    if(map[_this.get('model.locale')]) {
+    if(map && map[_this.get('model.locale')]) {
       var words = map[_this.get('model.locale')];
       (_this.get('model.partner_suggestions') || []).forEach(function(word) {
         if(words[word]) {
