@@ -84,7 +84,7 @@ module Revisions
   end
   
   def approved_users
-    self.data['approved_user_identifiers'].map do |id|
+    (self.data['approved_user_identifiers'] || []).map do |id|
       if id.match(/::/)
         name, id = id.split(/::/, 2)
         {name: name, id: id}
