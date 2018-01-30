@@ -1,3 +1,12 @@
+{{#if edited}}
+  <div class='alert alert-success'>
+  {{#if model.permissions.edit}}
+    <p>{{t "Update Successful" key='update_successful'}}</p>
+  {{else}}
+    <p>{{t "Thank you for your contribution! Your changes will appear once they have been reviewed." key='thank_you_submission_pending'}}</p>
+  {{/if}}
+  </div>
+{{/if}}
 <div>
 {{#if model.image}}
   <div>

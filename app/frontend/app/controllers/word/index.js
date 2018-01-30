@@ -235,6 +235,14 @@ export default Ember.Controller.extend({
       model.save().then(function() {
         _this.set('status', null);
         _this.set('editing', false);
+        var edited_key = Math.random();
+        _this.set('edited', edited_key);
+        Ember.run.later(function() {
+          if(_this.get('edited') == edited_key) {
+            _this.set('edited', null);
+          }
+        }, 30000);
+        Ember.$(window).scrollTop(0);
       }, function(err) {
         _this.set('status', {error: true});
       });
