@@ -11,7 +11,8 @@ gem 'rails', '~> 5.0.3'
 gem 'pg'
 gem 'resque'
 gem 'aws-ses'
-
+gem 'prawn'
+gem 'obf'
 
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
