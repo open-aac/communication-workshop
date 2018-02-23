@@ -26,7 +26,6 @@ export default modal.ModalController.extend({
           } else {
             _this.set('status', {loading: true, percent: (progress.percent || 0.0)});
           }
-          console.log('status', status);
         }
       });
     }, function(err) {

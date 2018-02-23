@@ -179,7 +179,7 @@ module PacketMaker
   def self.word_buttons(word, users)
     buttons = []
     users.each do |user|
-      map = user.word_map
+      map = user.word_map || {}
       override = (map[word.locale] || {})[word.word]
       if override
         code = Digest::MD5.hexdigest("#{override['image_url']}_#{override['border_color']}_#{override['background_color']}")
