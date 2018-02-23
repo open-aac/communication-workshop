@@ -1,4 +1,4 @@
-if Rails.env.development?
+if ENV['RAILS_ENV'] == 'development'
   # TODO: this is a dumb workaround for not understanding how Guard works
   require 'listen/record/symlink_detector'
   module Listen
