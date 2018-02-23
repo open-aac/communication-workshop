@@ -197,6 +197,8 @@ module PacketMaker
     new_page(pdf)
     buttons = self.word_buttons(word, users)
     if buttons.length == 0
+      button = word.data
+      button['image_url'] = button['image'] && button['image']['image_url']
       buttons << word.data
     end
     
@@ -457,6 +459,7 @@ module PacketMaker
     prompts.each do |entry|
       next unless entry['text'] || entry['sentence']
       if row > 1
+        row = 0
         new_page(pdf, "Prompts")
       end
       # draw a bounding box

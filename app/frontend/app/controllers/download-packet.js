@@ -7,7 +7,7 @@ import progress_tracker from '../utils/progress_tracker';
 export default modal.ModalController.extend({
   opening: function() {
     var _this = this;
-    _this.set('status', {loading: true});
+    _this.set('status', {loading: true, percent: 0});
     var key = Math.random();
     _this.set('status_key', key);
 

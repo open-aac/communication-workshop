@@ -7,15 +7,13 @@
     <div style='font-size: 20px;'>
       {{#if status.loading}}
           <p class='text-info'>{{t "Generating Packet..." key='generating_packet'}}</p>
-          {{#if status.percent}}
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-value={{num_percent}} aria-valuemin="0" aria-valuemax="100" style={{num_style}}>
-                <span class="sr-only">
-                  {{t "%{pct}% Complete" key='percent_complete' pct=num_percent}}
-                </span>
-              </div>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-value={{num_percent}} aria-valuemin="0" aria-valuemax="100" style={{num_style}}>
+              <span class="sr-only">
+                {{t "%{pct}% Complete" key='percent_complete' pct=num_percent}}
+              </span>
             </div>
-          {{/if}}
+          </div>
       {{else if status.error}}
         <p class='text-danger'>{{t "There was an unexpected error while generating the packet" key='error_generating_packet'}}</p>
       {{else if status.download_url}}
