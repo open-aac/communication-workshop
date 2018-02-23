@@ -38,6 +38,8 @@ gem 'typhoeus'
 gem 'stripe'
 gem 'go_secure'
 gem 'permissable-coughdrop'
+gem 'resque'
+gem 'boy_band'
 gem 'sanitize'
 gem 'obf'
 

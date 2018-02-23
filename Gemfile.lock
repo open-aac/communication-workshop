@@ -53,6 +53,7 @@ GEM
       mime-types
       xml-simple
     bindex (0.5.0)
+    boy_band (0.1.1)
     builder (3.2.3)
     byebug (9.0.6)
     childprocess (0.7.1)
@@ -299,6 +300,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-ses
+  boy_band
   byebug
   coffee-rails (~> 4.2)
   dotenv

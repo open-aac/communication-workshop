@@ -39,7 +39,7 @@
   </div>
 {{/if}}
 
-<button class='btn btn-default' {{action 'not_implemented'}}><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
+<button class='btn btn-default' {{action 'packet'}}><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
 {{#if session.isAuthenticated}}
   <button class='btn btn-default' {{action 'suggestions'}}><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
   <button class='btn btn-default' {{action 'not_implemented'}} style='display: none;'><span class='glyphicon glyphicon-question-sign'></span> {{t "Start a Quiz" key='start_a_quiz'}}</button>

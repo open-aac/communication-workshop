@@ -4,6 +4,13 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   ember_handler = 'render#default'
   root ember_handler
+
+  protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|
+    u = User.find_by_path(username)
+    u && u.admin? && u.valid_password?(password)
+  end
+  mount protected_resque, :at => "/resque"
+
   get '/login' => ember_handler
   post '/token' => 'session#token'
   get '/terms' => 'render#terms'
@@ -55,6 +62,7 @@ Rails.application.routes.draw do
     post '/words/:id/remove' => 'words#remove'
     post '/words/:id/star/:activity_id' => 'words#star_activity'
     post '/words/:id/unstar/:activity_id' => 'words#unstar_activity'
+    post '/words/packet' => 'words#generate_packet'
     post '/activities/:id/perform' => 'words#perform_activity'
     resources :categories
     resources :books, {constraints: {id: book_id_regex}}
@@ -71,5 +79,6 @@ Rails.application.routes.draw do
     get '/search/books' => 'search#books'
     post '/search/tallies' => 'search#tallies'
     get '/search/tallies' => 'search#tallies'
+    get "progress/:id" => "progress#progress"
   end
 end

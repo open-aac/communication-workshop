@@ -1,6 +1,38 @@
 require 'prawn'
 
 module PacketMaker
+  def self.generate_download(word_paths, user_ids, opts)
+    words = word_paths.map{|w| WordData.find_by_path(w) }.compact
+    users = User.find_all_by_global_id(user_ids)
+    
+    Progress.update_current_progress(0.2, :generating_file)
+    
+    # generate hash based on settings and buttons
+    keys = opts.keys.sort
+    opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
+    buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
+    words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
+    hash = Digest::MD5.hexdigest(opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
+    remote_path = "packets/learn-aac/#{words_string}/#{hash}/packet.pdf"
+    # check for existing download
+    url = Uploader.check_existing_upload(remote_path)
+    return url if url
+    
+    path = nil
+    Progress.as_percent(0.2, 0.8) do
+      path = generate_for(words, users, opts)
+    end
+    
+    Progress.update_current_progress(0.9, :uploading_file)
+    if File.exists?(path)
+      url = Uploader.remote_upload(remote_path, path, 'application/pdf')
+      File.unlink(path)
+      url
+    else
+      nil
+    end
+  end
+  
   RTL_SCRIPTS = %w(Arabic Hebrew Nko Kharoshthi Phoenician Syriac Thaana Tifinagh)
   
   def self.rtl_regex
@@ -24,77 +56,119 @@ module PacketMaker
     font = opts['font'] if opts['font'] && File.exists?(opts['font'])
     font ||= File.expand_path('./TimesNewRoman.ttf', __FILE__)
     pdf.font(font) if File.exists?(font)
-
-    words.each do |word|
-      # TODO: Options to exclude topic areas, or to only include entries with matching ids
-      # (i.e. to print an individual book)
+  
+    words.each_with_index do |word, idx|
+      Progress.as_percent(0.9 * idx.to_f / words.length, 0.9 * (idx + 1).to_f / words.length) do
+        @word = word
+        @page = 0
+        # TODO: Options to exclude topic areas, or to only include entries with matching ids
+        # (i.e. to print an individual book)
     
-      # Header page should show all versions of the icons for matched users
-      add_header(word, users, pdf) if opts[:include_header] != false
-      # Definition page: definition, bulleted usage examples, related core words
-      add_definitions(word, pdf) if opts[:include_definition] != false
+        # Header page should show all versions of the icons for matched users
+        Progress.update_current_progress(0.05, :adding_header)
+        add_header(word, users, pdf) if opts[:include_header] != false
+        # Definition page: definition, bulleted usage examples, related core words
+        Progress.update_current_progress(0.1, :adding_definitions)
+        add_definitions(word, pdf) if opts[:include_definition] != false
 
-      # Modeling page: tiles/cutouts with image phrase, explanation if any
-      add_cards('Modeling Examples', word.data['level_1_modeling_examples'], pdf) if opts[:include_modeling] != false
+        # Modeling page: tiles/cutouts with image phrase, explanation if any
+        examples = (word.data['level_1_modeling_examples'] || []) + (word.data['level_2_modeling_examples'] || []) + (word.data['level_3_modeling_examples'] || [])
+        Progress.update_current_progress(0.2, :adding_modeling_examples)
+        add_cards('Modeling Examples', examples, pdf) if opts[:include_modeling] != false
 
-      # Concise version:
-      if opts[:concise]
-        # Learning projects, activity ideas, topic-starters, send-homes, prompts: multiple per page, cards
-        entries = []
-        if opts[:include_learning_projects] != false
-          entries += []
-        end
-        if opts[:include_activity_ideas] != false
-          entries += []
-        end
-        if opts[:include_topic_starters] != false
-          entries += []
-        end
-        if opts[:include_send_homes] != false
-          entries += []
-        end
-        if opts[:include_prompts] != false
-          entries += []
-        end
-        add_cards('Activities', entries, pdf)
+        # Concise version:
+        if opts[:concise]
+          # Learning projects, activity ideas, topic-starters, send-homes, prompts: multiple per page, cards
+          entries = []
+          if opts[:include_learning_projects] != false
+            entries += []
+          end
+          if opts[:include_activity_ideas] != false
+            entries += []
+          end
+          if opts[:include_topic_starters] != false
+            entries += []
+          end
+          if opts[:include_send_homes] != false
+            entries += []
+          end
+          if opts[:include_prompts] != false
+            entries += []
+          end
+          Progress.update_current_progress(0.5, :adding_cards)
+          add_cards('Activities', entries, pdf)
 
-        # Books: 4 spots per page (with page numbers)
-        add_books(word.data['books'], true, pdf) if opts[:include_books] != false
-          # portrait, 4 per page, foldable (upside-down to match) with page numbers
-          # include The End page with attributions
-      # Verbose version:
-      else
-        # Learning projects: one per page
-        add_activities('Learning Projects', word.data['learning_projects'], pdf) if opts[:include_learning_projects] != false
-        # Activity ideas: one per page
-        add_activities('Activity Ideas', word.data['activity_ideas'], pdf) if opts[:include_activity_ideas] != false
-        # Books: 2 spots per page (with page numbers)
-        add_books(word.data['books'], false, pdf) if opts[:include_books] != false
-          # landscape, 2 per page, all right-side-up, with page numbers
-        # Topic Starters: one per page
-        add_activities('Topic-Starters', word.data['topic_starters'], pdf) if opts[:include_topic_starters] != false
-        # Send-Homes: one per page
-        add_activities('Send-Homes', word.data['send_homes'], pdf) if opts[:include_send_homes] != false
-        # Prompts: two per page
-        add_prompts(word.data['prompts'], pdf) if opts[:include_prompts] != false
-          # portrait, 2 per page
+          # Books: 4 spots per page (with page numbers)
+          Progress.update_current_progress(0.8, :adding_books)
+          add_books(word.data['books'], true, pdf) if opts[:include_books] != false
+            # portrait, 4 per page, foldable (upside-down to match) with page numbers
+            # include The End page with attributions
+        # Verbose version:
+        else
+          # Learning projects: one per page
+          Progress.update_current_progress(0.3, :adding_projects)
+          add_activities('Learning Projects', word.data['learning_projects'], pdf) if opts[:include_learning_projects] != false
+          # Activity ideas: one per page
+          Progress.update_current_progress(0.4, :adding_ideas)
+          add_activities('Activity Ideas', word.data['activity_ideas'], pdf) if opts[:include_activity_ideas] != false
+          # Books: 2 spots per page (with page numbers)
+          Progress.update_current_progress(0.5, :adding_books)
+          add_books(word.data['books'], false, pdf) if opts[:include_books] != false
+            # landscape, 2 per page, all right-side-up, with page numbers
+          # Topic Starters: one per page
+          Progress.update_current_progress(0.6, :adding_starters)
+          add_activities('Topic-Starters', word.data['topic_starters'], pdf) if opts[:include_topic_starters] != false
+          # Send-Homes: one per page
+          Progress.update_current_progress(0.7, :adding_send_homes)
+          add_activities('Send-Homes', word.data['send_homes'], pdf) if opts[:include_send_homes] != false
+          # Prompts: two per page
+          Progress.update_current_progress(0.8, :adding_prompts)
+          add_prompts(word.data['prompts'], pdf) if opts[:include_prompts] != false
+            # portrait, 2 per page
+        end
+        # Videos/Amazon Books: cards, include link
+        Progress.update_current_progress(0.9, :adding_links)
+        add_links(word, pdf) if opts[:include_links]
+        # Attribution and references
+        Progress.update_current_progress(0.95, :adding_attribution)
+        add_attribution(word, pdf)
       end
-      # Videos/Amazon Books: cards, include link
-      add_links(word, pdf) if opts[:include_links]
-      # Attribution and references
-      add_attribution(word, pdf)
     end
     
-    pdf.render_file("./test.pdf")
-    `open ./test.pdf`
+    path = Tempfile.new('packet').path + ".pdf"
+    Progress.update_current_progress(0.95, :rendering_file)
+    pdf.render_file(path)
+    if opts[:local]
+      puts path.to_s
+      `open #{path.to_s}`
+      sleep 5
+    end
+    path
   end
   
-  def self.new_page(pdf, header=nil)
-    pdf.start_new_page unless @first_page
+  def self.new_page(pdf, header=nil, landscape=false)
+    unless @first_page
+      if landscape
+        pdf.start_new_page(:size => [11*72, 8.5*72], :layout => :landscape)
+      else
+        pdf.start_new_page(:size => [8.5*72, 11*72], :layout => :portrait)
+      end
+      
+    end
     @first_page = false
+    @page += 1
     @doc_height = 11*72 - 72
     @doc_width = 8.5*72 - 72
-    raise "header not defined" if header
+    text_height = 12
+    pdf.fill_color 'aaaaaa'
+    pdf.font_size text_height
+    if header
+      draw_text pdf, "#{@word.word}: #{header}", :left => -10, :top => @doc_height + 20, :width => @doc_width, :height => text_height
+    end
+    pdf.fill_color '888888'
+    draw_text pdf, @page.to_s, :left => @doc_width - 20, :top => -5, :width => 40, :height => text_height, :align => :right
+    pdf.fill_color 'aaaaaa'
+    draw_text pdf, "printed at workshop.openaac.org", :left => 0, :top => -5, :width => @doc_width, :height => text_height, :align => :center
   end
   
   def self.text_direction(str)
@@ -102,8 +176,7 @@ module PacketMaker
     [str, direction]
   end
   
-  def self.add_header(word, users, pdf)
-    new_page(pdf)
+  def self.word_buttons(word, users)
     buttons = []
     users.each do |user|
       map = user.word_map
@@ -117,6 +190,12 @@ module PacketMaker
         end
       end
     end
+    buttons
+  end
+  
+  def self.add_header(word, users, pdf)
+    new_page(pdf)
+    buttons = self.word_buttons(word, users)
     if buttons.length == 0
       buttons << word.data
     end
@@ -183,15 +262,8 @@ module PacketMaker
             pdf.fill_and_stroke_rounded_rectangle [0, button_height], button_width, button_height, button_radius
             
             if button['image_url']
-              image_local_path = OBF::Utils.save_image({'url' => button['image_url']}, nil, "\##{fill}")
-              if image_local_path && File.exist?(image_local_path)
-                pdf.fill_color 'eeeeee'
-                pdf.stroke_color '000000'
-                # OBF Utils returns a square image
-                size = [button_width - 10, button_height - text_height - 15].min
-                pdf.image image_local_path, :at => [(button_width - size) / 2, button_height - text_height - 10], :fit => [size, size], position: :right, vposition: :bottom
-                File.unlink image_local_path
-              end
+              size = [button_width - (border_width * 2), button_height - text_height - (border_width * 2) - 10].min
+              draw_image pdf, button['image_url'], :background => "\##{fill}", :left => (button_width - size) / 2, :top => button_height - text_height - 10, :square => size, :position => :right, :vposition => :bottom
             end
             pdf.fill_color '000000'
             pdf.font_size text_height
@@ -199,6 +271,22 @@ module PacketMaker
           end
         end
       end
+    end
+  end
+  
+  def self.draw_image(pdf, url, opts)
+    if url && url.match(/api\/v1\/images/)
+      req = Typhoeus.get(url)
+      if req.code == 302 && req.headers['Location']
+        url = req.headers['Location']
+      end
+    end
+    image_local_path = OBF::Utils.save_image({'url' => url}, nil, opts['background'] || "\#ffffff")
+    if image_local_path && File.exist?(image_local_path)
+      # OBF Utils returns a square image
+      size = opts[:square]
+      pdf.image image_local_path, :at => [opts[:left], opts[:top]], :fit => [size, size], position: (opts[:position] || :center), vposition: (opts[:vposition] || :center)
+      File.unlink image_local_path
     end
   end
   
@@ -277,25 +365,57 @@ module PacketMaker
   end
   
   def self.add_cards(name, entries, pdf)
-    new_page(pdf)
+    new_page(pdf, name)
     row = 0
     col = 0
-    (entries * 5).each do |entry|
+    pdf.stroke_color '666666'
+    box_width = (@doc_width / 2)
+    box_height = (@doc_height / 3) - 20
+    entries.each do |entry|
+      next unless entry['text'] || entry['sentence']
       if col > 1
         row += 1
         col = 0
         if row > 2
-          new_page(pdf)
+          new_page(pdf, name)
           row = 0
         end
       end
       # draw a bounding box
-      x = col * (@doc_width / 2) + 10
-      y = @doc_height - row * (@doc_height / 3) + 10
+      x = col * (box_width + 20) - 10
+      y = @doc_height - row * (box_height + 20) - 10
+      middle = x + 10 + ((box_width - 20) / 2)
       pdf.fill_color 'ffffff'
       pdf.line_width 2
-      pdf.fill_and_stroke_rounded_rectangle [x, y], (@doc_width / 2) - 20, (@doc_height / 3) - 20, 10
+      pdf.fill_and_stroke_rounded_rectangle [x, y], box_width, box_height, 10
       # render the image
+      # render the text
+      if entry['sentence']
+        # entry.text, entry.sentence, entry.image.image_url
+        text_height = 30
+        pdf.fill_color 'aaaaaa'
+        pdf.font_size 13
+        draw_text pdf, "model:", :left => x + 10, :top => y - 10, :width => 40, :height => text_height - 5, :valign => :top
+        pdf.font_size text_height
+        pdf.fill_color '000000'
+        draw_text pdf, entry['sentence'], :left => x + 55, :top => y - 1, :width => box_width - 60, :height => text_height, :valign => :bottom
+        top = y - text_height
+        
+        image = (entry['image'] && entry['image']['image_url']) || 'fallback_image'
+        if entry['text']
+          text_height = 20
+          pdf.font_size text_height
+          pdf.fill_color '666666'
+          height = (box_height - (y - top) - (text_height * 3)) - 10
+          draw_image pdf, image, :left => middle - (height / 2), :top => top - 5, :square => height
+          draw_text pdf, entry['text'], :left => x + 10, :top => y - box_height + (text_height * 3), :width => box_width - 20, :height => text_height * 3, :valign => :top, :align => :center
+        elsif image
+          height = (box_height - (y - top)) - 10
+          draw_image pdf, image, :left => middle - (height / 2), :top => top - 5, :square => height
+        end
+      else
+        draw_text pdf, entry.to_json, :left => x, :top => y, :width => box_width, :height => box_height
+      end
       # advance to the next spot
       col += 1
     end
@@ -305,302 +425,116 @@ module PacketMaker
   end
   
   def self.add_activities(name, entries, pdf)
+    return unless entries.length > 0
+    entries.each do |entry|
+      new_page(pdf, name)
+      top = @doc_height - 20
+      text_height = 50
+      pdf.font_size text_height
+      pdf.fill_color '000000'
+      draw_text pdf, entry['text'] || 'activity', :left => 0, :width => @doc_width, :top => top, :height => text_height, :align => :center, :valign => :top
+      top -= text_height + 30
+      image = (entry['image'] && entry['image']['image_url']) || 'fallback_image'
+      image_size = 400
+      if image
+        draw_image pdf, image, :left => (@doc_width / 2) - (image_size / 2), :top => top, :square => image_size
+      end
+      top -= image_size
+      if entry['description']
+        pdf.font_size 30
+        pdf.fill_color '444444'
+        draw_text pdf, entry['description'], :left => 0, :width => @doc_width, :top => top, :height => top, :align => :center, :valign => :middle
+      end
+    end
   end
   
   def self.add_prompts(prompts, pdf)
+    new_page(pdf, "Prompts")
+    row = 0
+    pdf.stroke_color '666666'
+    box_width = @doc_width
+    box_height = (@doc_height / 2) - 20
+    prompts.each do |entry|
+      next unless entry['text'] || entry['sentence']
+      if row > 1
+        new_page(pdf, "Prompts")
+      end
+      # draw a bounding box
+      x = 0 * (box_width + 20) - 10
+      y = @doc_height - row * (box_height + 20) - 10
+      middle = x + 10 + ((box_width - 20) / 2)
+      pdf.fill_color 'ffffff'
+      pdf.line_width 2
+      pdf.fill_and_stroke_rounded_rectangle [x, y], box_width, box_height, 10
+      # render the image
+      # render the text
+
+      # entry.text, entry.sentence, entry.image.image_url
+      text_height = 30
+      pdf.fill_color 'aaaaaa'
+      pdf.font_size 13
+      draw_text pdf, (entry['prompt_type'] == 'open_ended') ? "prompt:" : "fill in the blank:", :left => x + 10, :top => y - 10, :width => @doc_width, :height => text_height - 5, :valign => :top
+      pdf.font_size text_height
+      pdf.fill_color '000000'
+      top = y - text_height
+      
+      image = (entry['image'] && entry['image']['image_url']) || 'fallback_image'
+      text_height = 20
+      pdf.font_size text_height
+      pdf.fill_color '444444'
+      height = (box_height - (y - top) - (text_height * 3)) - 10
+      draw_image pdf, image, :left => middle - (height / 2), :top => top - 5, :square => height
+      draw_text pdf, entry['text'], :left => x + 10, :top => y - box_height + (text_height * 3), :width => box_width - 20, :height => text_height * 3, :valign => :center, :align => :center
+
+      # advance to the next spot
+      row += 1
+    end
   end
   
   def self.add_links(workd, pdf)
   end
 
   def self.add_attribution(word, pdf)
+    new_page(pdf, "Attribution")
+    top = @doc_height
+    text_height = 30
+    pdf.font_size text_height
+    pdf.fill_color '000000'
+    draw_text pdf, "Authors", :left => 10, :top => top, :height => text_height, :width => @doc_width - 20
+    top -= text_height + 10
+    authors = ["CoughDrop, Inc."]
+    text_height = 20
+    pdf.font_size text_height
+    pdf.fill_color '444444'
+    draw_text pdf, authors.join(', '), :left => 30, :top => top, :height => text_height * 2, :width => @doc_width - 40, :valign => :top
+    
+    top -= (text_height * 2) + 10
+    text_height = 30
+    pdf.font_size text_height
+    pdf.fill_color '000000'
+    draw_text pdf, "Image Attributions", :left => 10, :top => top, :height => text_height, :width => @doc_width - 20
+    top -= text_height + 10
+    images = []
+    word.data.keys.each do |key|
+      if word.data[key].is_a?(Array)
+        word.data[key].each do |hash|
+          if hash['image']
+            images << hash['image']
+          end
+        end
+      elsif word.data[key].is_a?(Hash)
+        if word.data[key]['image']
+          images << word.data[key]['image']
+        end
+      end
+    end
+    authors = images.map do |img|
+      "#{img['license']} by #{img['author']}\n#{Prawn::Text::NBSP*5}#{img['author_url']}"
+    end
+    text_height = 15
+    pdf.fill_color '444444'
+    pdf.font_size text_height
+    draw_text pdf, authors.uniq.join("\n"), :left => 30, :top => top, :height => top, :width => @doc_width - 40, :valign => :top
   end  
 end
 
-
-# 
-# module OBF::PDF
-#   @@footer_text ||= nil
-#   @@footer_url ||= nil
-#   
-#   RTL_SCRIPTS = %w(Arabic Hebrew Nko Kharoshthi Phoenician Syriac Thaana Tifinagh)
-#   
-#   def self.footer_text
-#     @@footer_text
-#   end
-#   
-#   def self.footer_text=(text)
-#     @@footer_text = text
-#   end
-# 
-#   def self.footer_url
-#     @@footer_url
-#   end
-#   
-#   def self.footer_url=(url)
-#     @@footer_url = url
-#   end
-#   
-#   def self.from_obf(obf_json_or_path, dest_path, zipper=nil, opts={})
-#     obj = obf_json_or_path
-#     if obj.is_a?(String)
-#       obj = OBF::Utils.parse_obf(File.read(obf_json_or_path))
-#     else
-#       obj = OBF::Utils.parse_obf(obf_json_or_path)
-#     end
-#     build_pdf(obj, dest_path, zipper, opts)
-#     return dest_path
-#   end
-#   
-#   def self.build_pdf(obj, dest_path, zipper, opts={})
-#     OBF::Utils.as_progress_percent(0, 1.0) do
-#       # parse obf, draw as pdf
-#       pdf = Prawn::Document.new(
-#         :page_layout => :landscape, 
-#         :page_size => [8.5*72, 11*72],
-#         :info => {
-#           :Title => obj['name']
-#         }
-#       )
-#       font = opts['font'] if opts['font'] && File.exists?(opts['font'])
-#       font ||= File.expand_path('../../TimesNewRoman.ttf', __FILE__)
-#       pdf.font(font) if File.exists?(font)
-#     
-#     
-#       if obj['boards']
-#         obj['boards'].each_with_index do |board, idx|
-#           pre = idx.to_f / obj['boards'].length.to_f
-#           post = (idx + 1).to_f / obj['boards'].length.to_f
-#           OBF::Utils.as_progress_percent(pre, post) do
-#             pdf.start_new_page unless idx == 0
-#             build_page(pdf, board, {
-#               'zipper' => zipper, 
-#               'pages' => obj['pages'], 
-#               'headerless' => !!opts['headerless'], 
-#               'font' => font,
-#               'text_on_top' => !!opts['text_on_top'], 
-#               'transparent_background' => !!opts['transparent_background'],
-#               'text_case' => opts['text_case']
-#             })
-#           end
-#         end
-#       else
-#         build_page(pdf, obj, {
-#           'headerless' => !!opts['headerless'], 
-#           'font' => font,
-#           'text_on_top' => !!opts['text_on_top'], 
-#           'transparent_background' => !!opts['transparent_background'],
-#           'text_case' => opts['text_case']
-#         })
-#       end
-#     
-#       pdf.render_file(dest_path)
-#     end
-#   end
-#   
-#   def self.rtl_regex
-#     @res ||= /[#{RTL_SCRIPTS.map{ |script| "\\p{#{script}}" }.join}]/
-#   end
-#   
-#   def self.build_page(pdf, obj, options)
-#     OBF::Utils.as_progress_percent(0, 1.0) do
-#       pdf.font(options['font']) if options['font'] && File.exists?(options['font'])
-#       doc_width = 11*72 - 72
-#       doc_height = 8.5*72 - 72
-#       default_radius = 3
-#       text_height = 20
-#       header_height = 0
-#     
-#       if options['pages']
-#         page_num = options['pages'][obj['id']]
-#         pdf.add_dest("page#{page_num}", pdf.dest_fit)
-#       end
-#       # header
-#       if !options['headerless']
-#         header_height = 100
-#         pdf.bounding_box([0, doc_height], :width => doc_width, :height => 100) do
-#           pdf.line_width = 2
-#           pdf.font_size 16
-#         
-#           pdf.fill_color "eeeeee"
-#           pdf.stroke_color "888888"
-#           pdf.fill_and_stroke_rounded_rectangle [0, 100], 100, 100, default_radius
-#           pdf.fill_color "6D81D1"
-#           pdf.fill_and_stroke_polygon([5, 50], [35, 85], [35, 70], [95, 70], [95, 30], [35, 30], [35, 15])
-#           pdf.fill_color "ffffff"
-#           pdf.formatted_text_box [{:text => "Go Back", :anchor => "page1"}], :at => [10, 90], :width => 80, :height => 80, :align => :center, :valign => :center, :overflow => :shrink_to_fit
-#           pdf.fill_color "ffffff"
-#           pdf.fill_and_stroke_rounded_rectangle [110, 100], (doc_width - 200 - 20), 100, default_radius
-#           pdf.fill_color "DDDB54"
-#           pdf.fill_and_stroke do
-#             pdf.move_to 160, 50
-#             pdf.line_to 190, 70
-#             pdf.curve_to [190, 30], :bounds => [[100, 130], [100, -30]]
-#             pdf.line_to 160, 50
-#           end
-#           pdf.fill_color "444444"
-#           pdf.text_box "Say that sentence out loud for me", :at => [210, 90], :width => (doc_width - 200 - 120), :height => 80, :align => :left, :valign => :center, :overflow => :shrink_to_fit
-#           pdf.fill_color "eeeeee"
-#           pdf.fill_and_stroke_rounded_rectangle [(doc_width - 100), 100], 100, 100, default_radius
-#           pdf.fill_color "aaaaaa"
-#           pdf.fill_and_stroke_polygon([doc_width - 100 + 5, 50], [doc_width - 100 + 35, 85], [doc_width - 100 + 95, 85], [doc_width - 100 + 95, 15], [doc_width - 100 + 35, 15])
-#           pdf.fill_color "ffffff"
-#           pdf.text_box "Erase", :at => [(doc_width - 100 + 10), 90], :width => 80, :height => 80, :align => :center, :valign => :center, :overflow => :shrink_to_fit
-#         end
-#       end
-#     
-#       # board
-#       pdf.font_size 12
-#       padding = 10
-#       grid_height = doc_height - header_height - text_height - (padding * 2)
-#       grid_width = doc_width
-#       if obj['grid'] && obj['grid']['rows'] > 0 && obj['grid']['columns'] > 0
-#         button_height = (grid_height - (padding * (obj['grid']['rows'] - 1))) / obj['grid']['rows'].to_f
-#         button_width = (grid_width - (padding * (obj['grid']['columns'] - 1))) / obj['grid']['columns'].to_f
-#         obj['grid']['order'].each_with_index do |buttons, row|
-#           buttons.each_with_index do |button_id, col|
-#             button = obj['buttons'].detect{|b| b['id'] == button_id }
-#             next if !button || button['hidden'] == true
-#             x = (padding * col) + (col * button_width)
-#             y = text_height + padding - (padding * row) + grid_height - (row * button_height)
-#             pdf.bounding_box([x, y], :width => button_width, :height => button_height) do
-#               fill = "ffffff"
-#               border = "eeeeee"
-#               if button['background_color']
-#                 fill = OBF::Utils.fix_color(button['background_color'], 'hex')
-#               end   
-#               if button['border_color']
-#                 border = OBF::Utils.fix_color(button['border_color'], 'hex')
-#               end         
-#               pdf.fill_color fill
-#               pdf.stroke_color border
-#               pdf.fill_and_stroke_rounded_rectangle [0, button_height], button_width, button_height, default_radius
-#               vertical = options['text_on_top'] ? button_height - text_height : button_height - 5
-# 
-#               text = (button['label'] || button['vocalization']).to_s
-#               direction = text.match(rtl_regex) ? :rtl : :ltr
-#               if options['text_case'] == 'upper'
-#                 text = text.upcase
-#               elsif options['text_case'] == 'lower'
-#                 text = text.downcase
-#               end
-#               
-#               if options['text_only']
-#                 # render text
-#                 pdf.fill_color "000000"
-#                 pdf.text_box text, :at => [0, 0], :width => button_width, :height => button_height, :align => :center, :valign => :center, :overflow => :shrink_to_fit, :direction => direction
-#               else
-#                 # render image
-#                 pdf.bounding_box([5, vertical], :width => button_width - 10, :height => button_height - text_height - 5) do
-#                   image = (obj['images_hash'] || {})[button['image_id']]
-#                   if image
-#                     bg = 'white'
-#                     if options['transparent_background']
-#                       bg = "\##{fill}"
-#                     end
-#                     image_local_path = image && OBF::Utils.save_image(image, options['zipper'], bg)
-#                     if image_local_path && File.exist?(image_local_path)
-#                       pdf.image image_local_path, :fit => [button_width - 10, button_height - text_height - 5], :position => :center, :vposition => :center
-#                       File.unlink image_local_path
-#                     end
-#                   end
-#                 end
-#                 if options['pages'] && button['load_board']
-#                   page = options['pages'][button['load_board']['id']]
-#                   if page
-#                     page_vertical = options['text_on_top'] ? -2 + text_height : button_height + 2
-#                     pdf.fill_color "ffffff"            
-#                     pdf.stroke_color "eeeeee"            
-#                     pdf.fill_and_stroke_rounded_rectangle [button_width - 18, page_vertical], 20, text_height, 5
-#                     pdf.fill_color "000000"
-#                     pdf.formatted_text_box [{:text => page, :anchor => "page#{page}"}], :at => [button_width - 18, page_vertical], :width => 20, :height => text_height, :align => :center, :valign => :center
-#                   end
-#                 end
-#               
-#                 # render text
-#                 pdf.fill_color "000000"
-#                 vertical = options['text_on_top'] ? button_height : text_height
-#                 pdf.text_box text, :at => [0, vertical], :width => button_width, :height => text_height, :align => :center, :valign => :center, :overflow => :shrink_to_fit, :direction => direction
-#               end
-#             end
-#             index = col + (row * obj['grid']['columns'])
-#             OBF::Utils.update_current_progress(index.to_f / (obj['grid']['rows'] * obj['grid']['columns']).to_f)
-#           end
-#         end
-#       end
-#     
-#       # footer
-#       pdf.fill_color "aaaaaa"
-#       if OBF::PDF.footer_text
-#         text = OBF::PDF.footer_text
-#         pdf.formatted_text_box [{:text => text, :link => OBF::PDF.footer_url}], :at => [doc_width - 300, text_height], :width => 200, :height => text_height, :align => :right, :valign => :center, :overflow => :shrink_to_fit
-#       end
-#       pdf.fill_color "000000"
-#       if options['pages']
-#         pdf.formatted_text_box [{:text => options['pages'][obj['id']], :anchor => "page1"}], :at => [doc_width - 100, text_height], :width => 100, :height => text_height, :align => :right, :valign => :center, :overflow => :shrink_to_fit
-#       end
-#     end
-#   end
-#   
-#   def self.from_obz(obz_path, dest_path, opts={})
-#     OBF::Utils.load_zip(obz_path) do |zipper|
-#       manifest = JSON.parse(zipper.read('manifest.json'))
-#       root = manifest['root']
-#       board = OBF::Utils.parse_obf(zipper.read(root))
-#       board['path'] = root
-#       unvisited_boards = [board]
-#       visited_boards = []
-#       while unvisited_boards.length > 0
-#         board = unvisited_boards.shift
-#         visited_boards << board
-#         children = []
-#         board['buttons'].each do |button|
-#           if button['load_board']
-#             children << button['load_board']
-#             all_boards = visited_boards + unvisited_boards
-#             if all_boards.none?{|b| b['id'] == button['load_board']['id'] || b['path'] == button['load_board']['path'] }
-#               path = button['load_board']['path'] || (manifest['paths'] && manifest['paths']['boards'] && manifest['paths']['boards'][button['load_board']['id']])
-#               if path
-#                 b = OBF::Utils.parse_obf(zipper.read(path))
-#                 b['path'] = path
-#                 button['load_board']['id'] = b['id']
-#                 unvisited_boards << b
-#               end
-#             end
-#           end
-#         end
-#       end
-#       
-#       pages = {}
-#       visited_boards.each_with_index do |board, idx|
-#         pages[board['id']] = (idx + 1).to_s
-#       end
-#       
-#       build_pdf({
-#         'name' => 'Communication Board Set',
-#         'boards' => visited_boards,
-#         'pages' => pages
-#       }, dest_path, zipper, opts)
-#     end
-#     # parse obz, draw as pdf
-# 
-#     # TODO: helper files included at the end for emergencies (eg. body parts)
-#     
-#     return dest_path
-#   end
-#   
-#   def self.from_external(content, dest_path)
-#     tmp_path = OBF::Utils.temp_path("stash")
-#     if content['boards']
-#       from_obz(OBF::OBZ.from_external(content, tmp_path), dest_path)
-#     else
-#       from_obf(OBF::OBF.from_external(content, tmp_path), dest_path)
-#     end
-#     File.unlink(tmp_path) if File.exist?(tmp_path)
-#     dest_path
-#   end
-#   
-#   def self.to_png(pdf, dest_path)
-#     OBF::PNG.from_pdf(pdf, dest_path)
-#   end
-# end

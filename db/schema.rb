@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180126221533) do
+ActiveRecord::Schema.define(version: 20180222213651) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,16 @@ ActiveRecord::Schema.define(version: 20180126221533) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["module_id"], name: "index_lessons_on_module_id", using: :btree
+  end
+
+  create_table "progresses", force: :cascade do |t|
+    t.text     "settings"
+    t.string   "nonce"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["nonce"], name: "index_progresses_on_nonce", using: :btree
   end
 
   create_table "settings", force: :cascade do |t|

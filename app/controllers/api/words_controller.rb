@@ -17,6 +17,14 @@ class Api::WordsController < ApplicationController
     render json: JsonApi::Word.paginate(params, words)
   end
   
+  def generate_packet
+    user_ids = []
+    user_ids << @api_user.global_id if @api_user
+    word_ids = (params['word_ids'] || '').split(/::/)
+    progress = Progress.schedule(PacketMaker, :generate_download, word_ids, user_ids, {})
+    render json: JsonApi::Progress.as_json(progress, :wrapper => true)
+  end
+  
   def show
     word = WordData.find_or_initialize_by_path(params['id'])
     return unless exists?(word, params['id'])

@@ -3,7 +3,6 @@ import modal from '../../utils/modal';
 import i18n from '../../utils/i18n';
 import session from '../../utils/session';
 
-
 export default Ember.Controller.extend({
   keyed_colors: function() {
     return [
@@ -303,6 +302,9 @@ export default Ember.Controller.extend({
         this.set('model.' + attr, this.get('revision.changes.' + attr));
         this.set('revision.changes.' + attr, null);
       }
+    },
+    packet: function() {
+      modal.open('download-packet', {words: [this.get('model.id')]});
     },
     not_implemented: function() {
       alert('Coming Soon!');
