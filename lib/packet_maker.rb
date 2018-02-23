@@ -1,6 +1,7 @@
 require 'prawn'
 
 module PacketMaker
+  RENDER_VERSION=1
   def self.generate_download(word_paths, user_ids, opts)
     words = word_paths.map{|w| WordData.find_by_path(w) }.compact
     users = User.find_all_by_global_id(user_ids)
@@ -13,7 +14,7 @@ module PacketMaker
     buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
     words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
     hash = Digest::MD5.hexdigest(opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
-    remote_path = "packets/learn-aac/#{words_string}/#{hash}/packet.pdf"
+    remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
     # check for existing download
     url = Uploader.check_existing_upload(remote_path)
     return url if url
@@ -277,13 +278,14 @@ module PacketMaker
   end
   
   def self.draw_image(pdf, url, opts)
+    puts "draw image with #{opts[:background]}"
     if url && url.match(/api\/v1\/images/)
       req = Typhoeus.get(url)
       if req.code == 302 && req.headers['Location']
         url = req.headers['Location']
       end
     end
-    image_local_path = OBF::Utils.save_image({'url' => url}, nil, opts['background'] || "\#ffffff")
+    image_local_path = OBF::Utils.save_image({'url' => url}, nil, opts[:background] || "\#ffffff")
     if image_local_path && File.exist?(image_local_path)
       # OBF Utils returns a square image
       size = opts[:square]
@@ -516,6 +518,7 @@ module PacketMaker
     pdf.font_size text_height
     pdf.fill_color '000000'
     draw_text pdf, "Image Attributions", :left => 10, :top => top, :height => text_height, :width => @doc_width - 20
+#    raise "include button image attributions"
     top -= text_height + 10
     images = []
     word.data.keys.each do |key|

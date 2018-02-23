@@ -1,4 +1,4 @@
-if ENV['RAILS_ENV'] == 'development'
+if ENV['RAILS_ENV'] != 'production'
   # TODO: this is a dumb workaround for not understanding how Guard works
   require 'listen/record/symlink_detector'
   module Listen
