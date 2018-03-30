@@ -453,6 +453,7 @@ module PacketMaker
   end
   
   def self.add_prompts(prompts, pdf)
+    return if !prompts || prompts.length == 0
     new_page(pdf, "Prompts")
     row = 0
     pdf.stroke_color '666666'
