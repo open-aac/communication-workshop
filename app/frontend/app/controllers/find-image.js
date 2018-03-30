@@ -97,10 +97,10 @@ export default modal.ModalController.extend({
           content_type = 'image/png';
           ext = 'png';
         }
-        var url = location.protocol + "//" + location.host + "/api/v1/images/pixabay/" + hit.id_hash;
         res.push({
-          image_url: url,
+          image_url: hit.largeImageURL || hit.fullHDURL,
           thumbnail_url: hit.previewURL || hit.webformatURL,
+          temporary_url: true,
           width: hit.webformatWidth,
           height: hit.webformatHeight,
           license: 'public domain',
@@ -110,7 +110,6 @@ export default modal.ModalController.extend({
           source_url: hit.pageURL
         });
       });
-      console.log(res);
       return res;
     }, function(xhr, message) {
       return i18n.t('not_available', "Image retrieval failed unexpectedly.");
@@ -159,7 +158,20 @@ export default modal.ModalController.extend({
       this.set('images', null);
     },
     select: function() {
-      modal.close({image: this.get('model.image')});
+      var _this = this;
+      if(_this.get('model.image.temporary_url')) {
+        var image = _this.store.createRecord('image');
+        image.set('url', _this.get('model.image.image_url'));
+        image.save().then(function(img) {
+          _this.set('model.image.image_url', img.get('url'));
+          modal.close({image: _this.get('model.image')});
+        }, function(err) {
+          // TODO: handle errors
+        });
+
+      } else {
+        modal.close({image: _this.get('model.image')});
+      }
     }
   }
 });

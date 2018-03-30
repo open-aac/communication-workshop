@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     get '/words/suggestions' => 'words#suggestions'
     get '/words/:id/defaults' => 'words#defaults'
     resources :words
+    resources :images
     post '/words/:id/add' => 'words#add'
     post '/words/:id/remove' => 'words#remove'
     post '/words/:id/star/:activity_id' => 'words#star_activity'
