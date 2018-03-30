@@ -78,7 +78,7 @@ class Api::SearchController < ApplicationController
     end
     res = Typhoeus.get("https://pixabay.com/api/?key=#{key}&id=#{id}&response_group=high_resolution")
     json = JSON.parse(res.body) rescue nil
-    if !json
+    if !json || true
       render text: "bad response from pixabay"
       return
     end

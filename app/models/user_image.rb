@@ -97,8 +97,11 @@ class UserImage < ApplicationRecord
   
   def self.migrate_json(obj)
     json = obj.to_json
-    while json.match(/https?:\/\/[^\/]+\/api\/v1\/images\/pixabay\/\w+/)
-      url = json.match(/https?:\/\/[^\/]+\/api\/v1\/images\/pixabay\/\w+/)[0]
+    search_pos = 0
+    re = /https?:\/\/[^\/]+\/api\/v1\/images\/pixabay\/\w+/
+    while json.index(re, search_pos)
+      search_pos = json.index(re, search_pos) + 1
+      url = json.match(re)[0]
       new_url = migrate_image(url)
       json = json.sub(url, new_url)
     end
