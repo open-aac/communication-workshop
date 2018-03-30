@@ -3,9 +3,9 @@ class Api::SearchController < ApplicationController
   
   def books
     url = params['url'] || ''
-    if url.match(/https?:\/\/tarheelreader.org\/.+\/.+\/.+\/.+\//)
-      id = url.match(/https?:\/\/tarheelreader.org\/.+\/.+\/.+\/(.+)\//)[1]
-      url = "https://tarheelreader.org/book-as-json/?slug=#{CGI.escape(id)}"
+    if url.match(Book::TARHEEL_REGEX)
+      id = url.match(Book::TARHEEL_REGEX)[1]
+      url = Book.tarheel_json_url(id)
       res = Typhoeus.get(url)
       data = JSON.parse(res.body) rescue nil
       api_error(400, {error: 'not found'}) unless data

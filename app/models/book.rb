@@ -3,6 +3,7 @@ class Book < ApplicationRecord
   include GlobalId
   include Processable
   include Permissions
+  TARHEEL_REGEX = /https?:\/\/tarheelreader.org\/.+\/.+\/.+\/(.+)\//
 
   secure_serialize :data
   before_save :generate_defaults
@@ -76,5 +77,9 @@ class Book < ApplicationRecord
       }
     end
     res.to_json
+  end
+  
+  def self.tarheel_json_url(id)
+    "https://tarheelreader.org/book-as-json/?slug=#{CGI.escape(id)}"
   end
 end

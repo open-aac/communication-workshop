@@ -52,6 +52,7 @@ end
 # - Low-tech and high-tech AAC
 # Module 2
 # - Presuming competence (least-dangerous assumption)
+# - The Importance of Waiting
 # - Modeling (hours to proficiency for a verbal communicator)
 # - Core and fringe vocabulary (and pre-stored phrases)
 # - Motor planning

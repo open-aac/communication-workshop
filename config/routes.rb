@@ -65,6 +65,7 @@ Rails.application.routes.draw do
     post '/words/packet' => 'words#generate_packet'
     post '/activities/:id/perform' => 'words#perform_activity'
     resources :categories
+    get '/books/json/:id' => 'books#book_json', constraints: {id: book_id_regex}
     resources :books, {constraints: {id: book_id_regex}}
     resources :lessons
     get '/events' => 'users#events'
@@ -75,7 +76,6 @@ Rails.application.routes.draw do
       post '/password_reset' => 'users#forgot_password', on: :collection
       post '/password_reset' => 'users#reset_password'
     end
-    get '/books/:id/json' => 'books#book_json', constraints: {id: book_id_regex}
     get '/search/books' => 'search#books'
     post '/search/tallies' => 'search#tallies'
     get '/search/tallies' => 'search#tallies'
