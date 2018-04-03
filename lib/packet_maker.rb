@@ -310,6 +310,8 @@ module PacketMaker
           parts = hex.scan(/\w\w/)[0, 3].map{|h| h.hex }
           if parts[0] == parts[1] && parts[1] == parts[2]
             nil
+          elsif ((parts[0] + parts[1] + parts[2]) / 3) < 60
+            nil
           else
             if ((parts[0] + parts[1] + parts[2]) / 3) > 'aa'.hex
               parts[0] /= 2
