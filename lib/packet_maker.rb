@@ -13,7 +13,7 @@ module PacketMaker
     opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
     buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
     words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
-    hash = Digest::MD5.hexdigest("pckt::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
+    hash = Digest::MD5.hexdigest("wordpack::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
     remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
     # check for existing download
     url = Uploader.check_existing_upload(remote_path)
