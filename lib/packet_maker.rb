@@ -148,18 +148,20 @@ module PacketMaker
   end
   
   def self.new_page(pdf, header=nil, landscape=false)
-    unless @first_page
-      if landscape
-        pdf.start_new_page(:size => [11*72, 8.5*72], :layout => :landscape)
-      else
-        pdf.start_new_page(:size => [8.5*72, 11*72], :layout => :portrait)
-      end
-      
-    end
-    @first_page = false
-    @page += 1
     @doc_height = 11*72 - 72
     @doc_width = 8.5*72 - 72
+    unless @first_page
+      if landscape
+        pdf.start_new_page(:size => [8.5*72, 11*72], :layout => :landscape)
+        @doc_width = 11*72 - 72
+        @doc_height = 8.5*72 - 72
+      else
+        pdf.start_new_page(:size => [8.5*72, 11*72], :layout => :portrait)
+        @doc_height = 11*72 - 72
+        @doc_width = 8.5*72 - 72
+      end
+    end
+    @first_page = false
     text_height = 12
     pdf.fill_color 'aaaaaa'
     pdf.font_size text_height
@@ -167,9 +169,15 @@ module PacketMaker
       draw_text pdf, "#{@word.word}: #{header}", :left => -10, :top => @doc_height + 20, :width => @doc_width, :height => text_height
     end
     pdf.fill_color '888888'
-    draw_text pdf, @page.to_s, :left => @doc_width - 20, :top => -5, :width => 40, :height => text_height, :align => :right
-    pdf.fill_color 'aaaaaa'
-    draw_text pdf, "printed at workshop.openaac.org", :left => 0, :top => -5, :width => @doc_width, :height => text_height, :align => :center
+    if header != false
+      @page += 1
+      draw_text pdf, @page.to_s, :left => @doc_width - 20, :top => -5, :width => 40, :height => text_height, :align => :right
+      pdf.fill_color 'aaaaaa'
+      draw_text pdf, "printed at workshop.openaac.org", :left => 0, :top => -5, :width => @doc_width, :height => text_height, :align => :center
+    else
+      pdf.fill_color 'aaaaaa'
+      draw_text pdf, "printed at workshop.openaac.org", :left => 0, :top => -5, :width => @doc_width, :height => text_height, :align => :left
+    end
   end
   
   def self.text_direction(str)
@@ -278,7 +286,6 @@ module PacketMaker
   end
   
   def self.draw_image(pdf, url, opts)
-    puts "draw image with #{opts[:background]}"
     if url && url.match(/api\/v1\/images/)
       req = Typhoeus.get(url)
       if req.code == 302 && req.headers['Location']
@@ -286,12 +293,38 @@ module PacketMaker
       end
     end
     image_local_path = OBF::Utils.save_image({'url' => url}, nil, opts[:background] || "\#ffffff")
+    res = false
     if image_local_path && File.exist?(image_local_path)
       # OBF Utils returns a square image
       size = opts[:square]
       pdf.image image_local_path, :at => [opts[:left], opts[:top]], :fit => [size, size], position: (opts[:position] || :center), vposition: (opts[:vposition] || :center)
+      res = true
+      if opts[:extract_dominant_color]
+        histogram = `convert #{image_local_path} +dither -colors 5 -define histogram:unique-colors=true -format "%c" histogram:info:`
+        colors = histogram.split(/\n/).map do |line|
+          count = line.split(/:/)[0].strip.to_i
+          hex = line.match(/\#(\w+)\s/)[1]
+          [count, hex]
+        end
+        colors = colors.sort_by(&:first).reverse.map(&:last).map do |hex|
+          parts = hex.scan(/\w\w/)[0, 3].map{|h| h.hex }
+          if parts[0] == parts[1] && parts[1] == parts[2]
+            nil
+          else
+            if ((parts[0] + parts[1] + parts[2]) / 3) > 'aa'.hex
+              parts[0] /= 2
+              parts[1] /= 2
+              parts[2] /= 2
+            end
+            hex = parts.map{|n| n.to_s(16).rjust(2, '0') }.join
+          end
+        end
+        # sort by count, use the first non-gray color
+        res = colors.compact[0] || '888888'
+      end
       File.unlink image_local_path
     end
+    res
   end
   
   def self.draw_text(pdf, str, opts)
@@ -425,7 +458,147 @@ module PacketMaker
     end
   end
   
+  def self.draw_border(pdf, str, color, left, top, width, height)
+    border_type = Digest::MD5.hexdigest(str).hex % 3
+    pdf.stroke_color color
+    pdf.line_width 2
+    if border_type == 0
+      pdf.line_width 4
+      pdf.rounded_rectangle [left, top], width, height, 0
+    elsif border_type == 1
+      twirl = 7
+      pdf.rounded_polygon 3, [left, top], [left, top + twirl], [left - twirl, top + twirl], [left - twirl, top],
+        [left + width, top], [left + width + twirl, top], [left + width + twirl, top + twirl], [left + width, top + twirl],
+        [left + width, top - height], [left + width, top - height - twirl], [left + width + twirl, top - height - twirl], [left + width + twirl, top - height],
+        [left, top - height], [left - twirl, top - height], [left - twirl, top - height - twirl], [left, top - height - twirl], [left, top]
+    else
+      pdf.line_width 3
+      pdf.rounded_polygon 20, [left, top], [left + (width / 2), top + 5],
+        [left + width, top], [left + width + 5, top - (height / 2)],
+        [left + width, top - height], [left + (width / 2), top - height - 5], 
+        [left, top - height], [left - 5, top - (height / 2)]
+    end
+    pdf.stroke
+  end
+  
   def self.add_books(books, mini, pdf)
+    # lookup book by json URL
+    books.each do |book|
+      json = nil
+      if book['book_type'] == 'tarheel'
+        json = Book.tarheel_json(book['url'])
+      elsif book['book_type'] == 'workshop'
+        book_record = Book.find_by_global_id(book['local_id'])
+        json = JSON.parse(book_record.book_json)
+      else
+        # API call to "#{JsonApi::Json.current_host}/api/v1/books/json?url=#{book['url']}"
+      end
+      book_font = File.expand_path('../../public/fonts/ArchitectsDaughter.ttf', __FILE__)
+      if json
+        attributions = []
+        new_page(pdf, false, true)
+        # title, author, image with border
+        image_url = json['image_url'] || json['pages'][0]['image_url']
+        page_pad = 10
+        page_width = (@doc_width / 2) - (page_pad * 6)
+        first_left = page_pad
+        second_left = (@doc_width / 2) + (page_pad * 3)
+        pdf.font_size 15
+        pdf.fill_color '888888'
+        instr = ["#{json['title']}\nAssembly Instructions:"]
+        instr << "This book prints two pages per sheet. This sheet is the cover and can be folded in half with the pictures and text on the outside and added at the end. These instructions should end up on the back of the book."
+        instr << "For the rest of the pages, fold them in half with pictures and text on the inside. Stack the folded pages on top of each other in the order they were printed. You can glue or tape the blank sides together or leave them as-is and just flip twice for each page turn."
+        instr << "Finally, after adding the cover, staple or bind the pages together to complete the book."
+        instr << "Read and enjoy!"
+        draw_text pdf, instr.join("\n\n"), :left => first_left, :top => @doc_height - page_pad, :width => page_width, :height => @doc_height - (page_pad * 2), :valign => :top, :align => :left
+        text_height = 50
+        pdf.font_size text_height
+        pdf.fill_color '000000'
+        top = @doc_height - page_pad
+        draw_text pdf, json['title'], :left => second_left, :top => top, :width => page_width, :height => text_height * 2, :valign => :top, :align => :center
+        top -= text_height * 2 + 10
+        if image_url
+          dom_color = draw_image pdf, image_url, :left => second_left + 10, :top => top - 10, :square => page_width - 20, :extract_dominant_color => true
+          if dom_color
+            draw_border(pdf, image_url, dom_color, second_left, top, page_width, page_width)
+          end
+        end
+        top -= page_width + 20
+        text_height = 20
+        pdf.font_size text_height
+        pdf.fill_color '888888'
+        draw_text pdf, "by #{json['author']}", :left => second_left, :top => top, :width => page_width, :height => text_height * 2, :valign => :top, :align => :center
+        column = 0
+        page_number = 0
+        json['pages'].each do |page|
+          next if page['id'] == 'title_page'
+          page_number += 1
+          # draw page
+          # if image is not defined, use the full space for text
+          new_page(pdf, false, true) if column == 0
+          left = column == 0 ? first_left : second_left
+          top = @doc_height - page_pad
+          if page['image_url']
+            if page['image_attribution_type']
+              attributions << {
+                'type' => page['image_attribution_type'],
+                'author' => page['image_attribution_author'],
+                'url' => page['image_attribution_url']
+              }
+            end
+            if page['image2_url']
+              square = (page_width / 2) - page_pad
+              draw_image pdf, page['image_url'], :left => left, :top => top - (square / 2), :square => square
+              draw_image pdf, page['image2_url'], :left => left + (page_width / 2) + page_pad, :top => top - (square / 2), :square => square
+              top -= square + 20
+              if page['image2_attribution_type']
+                attributions << {
+                  'type' => page['image2_attribution_type'],
+                  'author' => page['image2_attribution_author'],
+                  'url' => page['image2_attribution_url']
+                }
+              end
+            else
+              draw_image pdf, page['image_url'], :left => left, :top => top, :square => page_width
+              top -= page_width + 20
+            end
+          end
+          pdf.font(book_font) do
+            pdf.font_size 30
+            pdf.fill_color '000000'
+            draw_text pdf, page['text'], :left => left, :top => top, :width => page_width, :height => (@doc_height - top), :valign => :middle, :align => :center
+          end
+          pdf.fill_color 'FFFFFF'
+          pdf.stroke_color 'aaaaaa'
+          pdf.line_width 2
+          pdf.circle [left + page_width - 15, 7.5], 20
+          pdf.stroke
+          pdf.font_size 15
+          pdf.fill_color '888888'
+          draw_text pdf, page_number.to_s, :left => left + page_width - 30, :top => 15, :width => 30, :height => 15, :valign => :bottom, :align => :center
+          
+          column = (column + 1) % 2
+        end
+        # attributions on the right side
+        new_page(pdf, false, true) unless column == 1
+        authors = attributions.uniq.map do |attr|
+          "#{attr['type']} by #{attr['author']}\n#{Prawn::Text::NBSP*5}#{attr['url']}"
+        end
+        pdf.font_size 20
+        pdf.fill_color '888888'
+        draw_text pdf, "Attributions:", :left => (@doc_width / 2) + page_pad, :top => @doc_height - page_pad, :width => (@doc_width / 2) - (page_pad * 2), :height => 20, :valign => :top, :align => :left
+        authors = []
+        authors << "Text by #{json['author']}\n#{Prawn::Text::NBSP*5}#{json['book_url']}" if json['book_url']
+        authors << "General Image Attribution\n#{Prawn::Text::NBSP*5}#{json['attribution_url']}" if json['attribution_url']
+        authors += attributions.map do |img|
+          "#{img['license']} by #{img['author']}\n#{Prawn::Text::NBSP*5}#{img['author_url']}"
+        end
+        authors << "\nprinted #{Date.today.to_s}"
+        pdf.font_size 14
+        draw_text pdf, authors.join("\n"), :left => (@doc_width / 2) + page_pad, :top => @doc_height - page_pad - 20, :width => (@doc_width / 2) - (page_pad * 2), :height => @doc_height, :valign => :top, :align => :left
+
+      end
+    end
   end
   
   def self.add_activities(name, entries, pdf)
@@ -538,6 +711,7 @@ module PacketMaker
     authors = images.map do |img|
       "#{img['license']} by #{img['author']}\n#{Prawn::Text::NBSP*5}#{img['author_url']}"
     end
+    authors << "\nprinted #{Date.today.to_s}"
     text_height = 15
     pdf.fill_color '444444'
     pdf.font_size text_height

@@ -3,10 +3,12 @@ class Book < ApplicationRecord
   include GlobalId
   include Processable
   include Permissions
+  include Async
   TARHEEL_REGEX = /https?:\/\/tarheelreader.org\/.+\/.+\/.+\/(.+)\//
 
   secure_serialize :data
   before_save :generate_defaults
+  after_save :add_to_core_words
   
   add_permissions('view', ['*']) { true }
   add_permissions('edit', 'delete', ['*']) {|user| user.id == self.user_id || user.admin? }
@@ -39,15 +41,33 @@ class Book < ApplicationRecord
       self.data[obj_param] = params[obj_param]
     end
     self.user_id = user_params['user'].id if user_params['user']
+    if !params['new_core_words'].blank?
+      words = params['new_core_words'].split(/,/).map(&:strip)
+      self.data['target_core_words'] = ((self.data['target_core_words'] || []) + words).uniq
+      self.data['new_core_words'] = words
+    end
+  end
+  
+  def add_to_core_words(frd=false)
+    if self.data['new_core_words'] && !frd
+      self.schedule(:add_to_core_words, true)
+    elsif frd
+      self.data.delete('new_core_words')
+      self.save
+    end
+  end
+  
+  def book_url
+    "#{JsonApi::Json.current_host}/books/#{self.ref_id}"
   end
   
   def book_json
     book = self.data
     res = {
-      'book_url' => "#{JsonApi::Json.current_host}/books/#{self.ref_id}",
+      'book_url' => self.book_url,
       'author' => book['author'] || 'Unknown Author',
       'title' => book['title'] || 'Unnamed Book',
-      'attribution_url' => "#{JsonApi::Json.current_host}/books/#{self.ref_id}",
+      'attribution_url' => self.book_url,
       'pages' => [
         {
           'id' => 'title_page',
@@ -81,5 +101,23 @@ class Book < ApplicationRecord
   
   def self.tarheel_json_url(id)
     "https://tarheelreader.org/book-as-json/?slug=#{CGI.escape(id)}"
+  end
+  
+  def self.tarheel_json(url)
+    id = url.match(Book::TARHEEL_REGEX)[1]
+    url = self.tarheel_json_url(id)
+    res = Typhoeus.get(url)
+    json = JSON.parse(res.body) rescue nil
+    if json && json['title'] && json['pages']
+      json['book_url'] = "https://tarheelreader.org#{json['link']}"
+      json['attribution_url'] = "https://tarheelreader.org/photo-credits/?id=#{id}"
+      json['pages'].each_with_index do |page, idx|
+        page['id'] ||= idx == 0 ? 'title_page' : "page_#{idx}"
+        page['image_url'] = page['url']
+        page['image_url'] = "https://tarheelreader.org#{page['image_url']}" unless page['image_url'].match(/^http/)
+      end
+    end
+    json['image_url'] = json['pages'][1]['image_url']
+    json
   end
 end

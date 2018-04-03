@@ -14,6 +14,7 @@ export default Ember.Controller.extend({
         var _this = this;
         Ember.run.later(function() {
           _this.set('model.title', _this.get('title'));
+          _this.set('title', undefined);
         });
       }
       this.set('model.title_page', true);

@@ -16,18 +16,7 @@ class Api::BooksController < ApplicationController
       json = book.book_json
     elsif params['url']
       if params['url'].match(Book::TARHEEL_REGEX)
-        id = params['url'].match(Book::TARHEEL_REGEX)[1]
-        url = Book.tarheel_json_url(id)
-        res = Typhoeus.get(url)
-        json = JSON.parse(res.body) rescue nil
-        if json && json['title'] && json['pages']
-          json['book_url'] = params['url']
-          json['attribution_url'] = "https://tarheelreader.org/photo-credits/?id=#{id}"
-          json['pages'].each_with_index do |page, idx|
-            page['id'] ||= "page_#{idx}"
-            page['image_url'] = page['url']
-          end
-        end
+        json = Book.tarheel_json(params['url'])
       else
         # TODO: do a GET request and look for valid JSON or a META tag to point to the json
       end

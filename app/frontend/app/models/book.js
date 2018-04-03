@@ -12,7 +12,8 @@ var Book = DS.Model.extend({
   pages: DS.attr('raw'),
   image: DS.attr('raw'),
   title: DS.attr('string'),
-  author: DS.attr('string')
+  author: DS.attr('string'),
+  new_core_words: DS.attr('string'),
 });
 
 export default Book;
