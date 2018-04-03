@@ -13,7 +13,7 @@ module PacketMaker
     opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
     buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
     words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
-    hash = Digest::MD5.hexdigest("packet::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
+    hash = Digest::MD5.hexdigest("pckt::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
     remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
     # check for existing download
     url = Uploader.check_existing_upload(remote_path)
@@ -465,7 +465,7 @@ module PacketMaker
     if border_type == 0
       pdf.line_width 4
       pdf.stroke_rounded_rectangle [left, top], width, height, 0
-    elsif border_type == 9
+    elsif border_type == 1
       twirl = 7
       pdf.stroke_rounded_polygon 3, [left, top], [left, top + twirl], [left - twirl, top + twirl], [left - twirl, top],
         [left + width, top], [left + width + twirl, top], [left + width + twirl, top + twirl], [left + width, top + twirl],
@@ -565,7 +565,7 @@ module PacketMaker
           pdf.font(book_font) do
             pdf.font_size 30
             pdf.fill_color '000000'
-            draw_text pdf, page['text'], :left => left, :top => top, :width => page_width, :height => (@doc_height - top), :valign => :middle, :align => :center
+            draw_text pdf, page['text'], :left => left, :top => top, :width => page_width, :height => @doc_height - top - page_pad - 20, :valign => :middle, :align => :center
           end
           pdf.fill_color 'FFFFFF'
           pdf.stroke_color 'aaaaaa'
