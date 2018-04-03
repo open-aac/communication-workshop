@@ -492,7 +492,7 @@ module PacketMaker
       else
         # API call to "#{JsonApi::Json.current_host}/api/v1/books/json?url=#{book['url']}"
       end
-      book_font = File.expand_path('../../public/fonts/ArchitectsDaughter.ttf', __FILE__)
+      book_font = File.expand_path('../../public/fonts/Poppins-Medium.ttf', __FILE__)
       if json
         attributions = []
         new_page(pdf, false, true)
@@ -537,7 +537,9 @@ module PacketMaker
           new_page(pdf, false, true) if column == 0
           left = column == 0 ? first_left : second_left
           top = @doc_height - page_pad
+          text_align = :left
           if page['image_url']
+            text_align = :center
             if page['image_attribution_type']
               attributions << {
                 'type' => page['image_attribution_type'],
@@ -565,7 +567,7 @@ module PacketMaker
           pdf.font(book_font) do
             pdf.font_size 30
             pdf.fill_color '000000'
-            draw_text pdf, page['text'], :left => left, :top => top, :width => page_width, :height => @doc_height - top - page_pad - 20, :valign => :middle, :align => :center
+            draw_text pdf, page['text'], :left => left, :top => top, :width => page_width, :height => top - page_pad - 20, :valign => :middle, :align => text_align
           end
           pdf.fill_color 'FFFFFF'
           pdf.stroke_color 'aaaaaa'
