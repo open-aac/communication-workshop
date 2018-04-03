@@ -13,7 +13,7 @@ module PacketMaker
     opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
     buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
     words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
-    hash = Digest::MD5.hexdigest(opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
+    hash = Digest::MD5.hexdigest("packet::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
     remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
     # check for existing download
     url = Uploader.check_existing_upload(remote_path)
@@ -464,21 +464,20 @@ module PacketMaker
     pdf.line_width 2
     if border_type == 0
       pdf.line_width 4
-      pdf.rounded_rectangle [left, top], width, height, 0
-    elsif border_type == 1
+      pdf.stroke_rounded_rectangle [left, top], width, height, 0
+    elsif border_type == 1 || true
       twirl = 7
-      pdf.rounded_polygon 3, [left, top], [left, top + twirl], [left - twirl, top + twirl], [left - twirl, top],
+      pdf.stroke_rounded_polygon 3, [left, top], [left, top + twirl], [left - twirl, top + twirl], [left - twirl, top],
         [left + width, top], [left + width + twirl, top], [left + width + twirl, top + twirl], [left + width, top + twirl],
         [left + width, top - height], [left + width, top - height - twirl], [left + width + twirl, top - height - twirl], [left + width + twirl, top - height],
-        [left, top - height], [left - twirl, top - height], [left - twirl, top - height - twirl], [left, top - height - twirl], [left, top]
+        [left, top - height], [left - twirl, top - height], [left - twirl, top - height - twirl], [left, top - height - twirl], [left, top + twirl]
     else
       pdf.line_width 3
-      pdf.rounded_polygon 20, [left, top], [left + (width / 2), top + 5],
+      pdf.stroke_rounded_polygon 20, [left, top], [left + (width / 2), top + 5],
         [left + width, top], [left + width + 5, top - (height / 2)],
         [left + width, top - height], [left + (width / 2), top - height - 5], 
         [left, top - height], [left - 5, top - (height / 2)]
     end
-    pdf.stroke
   end
   
   def self.add_books(books, mini, pdf)
