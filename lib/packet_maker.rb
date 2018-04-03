@@ -465,7 +465,7 @@ module PacketMaker
     if border_type == 0
       pdf.line_width 4
       pdf.stroke_rounded_rectangle [left, top], width, height, 0
-    elsif border_type == 1 || true
+    elsif border_type == 9
       twirl = 7
       pdf.stroke_rounded_polygon 3, [left, top], [left, top + twirl], [left - twirl, top + twirl], [left - twirl, top],
         [left + width, top], [left + width + twirl, top], [left + width + twirl, top + twirl], [left + width, top + twirl],
