@@ -87407,7 +87407,7 @@ define('frontend/controllers/book', ['exports', 'ember', 'frontend/utils/modal',
       } else {
         return (this.get('model.pages') || [])[index - 1];
       }
-    }).property('model.pages', 'model.pages.length', 'current_index'),
+    }).property('model.permissions', 'model.pages', 'model.pages.length', 'current_index'),
     readable_index: (function () {
       return this.get('current_index') || 0;
     }).property('current_index'),
@@ -88944,7 +88944,7 @@ define('frontend/models/book', ['exports', 'ember', 'ember-data'], function (exp
   var Book = _emberData['default'].Model.extend({
     didLoad: function didLoad() {
       var _this = this;
-      if (!this.get('pages')) {
+      if (!this.get('pages') && this.get('pending')) {
         this.set('pages', []);
       }
     },
@@ -89287,12 +89287,15 @@ define('frontend/routes/application', ['exports', 'ember', 'frontend/utils/modal
 define('frontend/routes/book', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Route.extend({
     model: function model(params) {
-      return this.store.findRecord('book', params.id);
+      return this.store.findRecord('book', params.id).then(function (res) {
+        if (!res.get('permissions')) {
+          return res.reload();
+        } else {
+          return res;
+        }
+      });
     },
     setupController: function setupController(controller, model) {
-      if (!model.get('permissions')) {
-        model.reload();
-      }
       controller.set('status', null);
       controller.set('model', model);
       if (model.get('pending')) {
@@ -90130,7 +90133,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+abb2cd70"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+cd9bb1d8"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -90138,7 +90141,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+abb2cd70"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+cd9bb1d8"});
 }
 
 /* jshint ignore:end */
