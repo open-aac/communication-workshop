@@ -5,6 +5,9 @@ export default Ember.Route.extend({
     return this.store.findRecord('book', params.id);
   },
   setupController: function(controller, model) {
+    if(!model.get('permissions')) {
+      model.reload();
+    }
     controller.set('status', null);
     controller.set('model', model);
     if(model.get('pending')) { controller.set('editing', true); }
