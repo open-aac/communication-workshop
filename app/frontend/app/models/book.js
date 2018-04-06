@@ -4,7 +4,7 @@ import DS from 'ember-data';
 var Book = DS.Model.extend({
   didLoad: function() {
     var _this = this;
-    if(!this.get('pages')) {
+    if(!this.get('pages') && this.get('pending')) {
       this.set('pages', []);
     }
   },

@@ -22,7 +22,7 @@ export default Ember.Controller.extend({
     } else {
       return (this.get('model.pages') || [])[index - 1];
     }
-  }.property('model.pages', 'model.pages.length', 'current_index'),
+  }.property('model.permissions', 'model.pages', 'model.pages.length', 'current_index'),
   readable_index: function() {
     return (this.get('current_index') || 0);
   }.property('current_index'),

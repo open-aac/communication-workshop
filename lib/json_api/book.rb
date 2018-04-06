@@ -10,8 +10,10 @@ module JsonApi::Book
     json['id'] = book.ref_id
     json['locale'] = book.locale
     json['pending'] = !book.id
-    json['title'] = book.data['title']
-    json['author'] = book.data['author']
+    if book.data
+      json['title'] = book.data['title']
+      json['author'] = book.data['author']
+    end
     
     if args[:permissions] && book.data
       json['permissions'] = book.permissions_for(args[:permissions])
