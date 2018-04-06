@@ -40,6 +40,11 @@ class Api::BooksController < ApplicationController
     book = Book.find_or_initialize_by_path(params['id'])
     return unless exists?(book, params['id'])
     return unless allowed?(book, 'edit')
+    unless book.allows?(@api_user, 'link')
+      if params['book']
+        params['book'].delete('new_core_words')
+      end
+    end
     if book.process(params['book'], {'user' => @api_user})
       render json: JsonApi::Book.as_json(book, wrapper: true, permissions: @api_user)
     else

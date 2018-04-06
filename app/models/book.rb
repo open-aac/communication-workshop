@@ -13,6 +13,7 @@ class Book < ApplicationRecord
   add_permissions('view', ['*']) { true }
   add_permissions('edit', 'delete', ['*']) {|user| user.id == self.user_id || user.admin? }
   add_permissions('edit', 'delete', ['*']) {|user| !self.id }
+  add_permissions('link') {|user| user.admin? }
 
   def generate_defaults
     self.data ||= {}
@@ -52,6 +53,13 @@ class Book < ApplicationRecord
     if self.data['new_core_words'] && !frd
       self.schedule(:add_to_core_words, true)
     elsif frd
+      new_words = self.data['new_core_words']
+      new_words.each do |wrd|
+        word = WordData.find_by(word: wrd, locale: self.locale || 'en')
+        word.data['books'] = word.data['books']
+        word.data['books'].each do |book|
+        end
+      end
       self.data.delete('new_core_words')
       self.save
     end

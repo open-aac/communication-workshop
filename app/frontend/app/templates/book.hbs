@@ -75,15 +75,17 @@
         {{/if}}
       {{else}}
         {{#if editing}}
-          <div style='width: 100%;'>
-            <label>
-              {{input type='checkbox' checked=current_page.add_core_words}}
-              {{t "Add this book for some core words" key='add_to_core_words'}}
-            </label>
-            {{#if current_page.add_core_words}}
-              {{input type='text' value=current_page.new_core_words class='form-control' placeholder="core, words, to, add, for"}}
-            {{/if}}
-          </div>
+          {{#if model.permissions.link}}
+            <div style='width: 100%;'>
+              <label>
+                {{input type='checkbox' checked=current_page.add_core_words}}
+                {{t "Add this book for some core words" key='add_to_core_words'}}
+              </label>
+              {{#if current_page.add_core_words}}
+                {{input type='text' value=current_page.new_core_words class='form-control' placeholder="core, words, to, add, for"}}
+              {{/if}}
+            </div>
+          {{/if}}
         {{/if}}
       {{/unless}}
     {{else}}

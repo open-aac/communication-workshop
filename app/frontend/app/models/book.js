@@ -9,6 +9,7 @@ var Book = DS.Model.extend({
     }
   },
   pending: DS.attr('boolean'),
+  permissions: DS.attr('raw'),
   pages: DS.attr('raw'),
   image: DS.attr('raw'),
   title: DS.attr('string'),

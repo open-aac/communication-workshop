@@ -10,9 +10,11 @@ module JsonApi::Book
     json['id'] = book.ref_id
     json['locale'] = book.locale
     json['pending'] = !book.id
+    json['title'] = book.data['title']
+    json['author'] = book.data['author']
     
     if args[:permissions] && book.data
-#      json['permissions'] = badge.permissions_for(args[:permissions])
+      json['permissions'] = book.permissions_for(args[:permissions])
       # other data to include
       Book::STRING_PARAMS.each do |param|
         json[param] = book.data[param].to_s if book.data[param]

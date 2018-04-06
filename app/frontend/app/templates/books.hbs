@@ -1,4 +1,24 @@
 <h1>{{t "Books" key='books'}}</h1>
+{{#if books.loading}}
+  {{t "Loading Books..." key='loading_books'}}
+{{else if books.error}}
+  {{t "Error Loading Books" key='error_loading_books'}}
+{{else if books}}
+  <div style='width: 600px;'>
+    <div class='list-group'>
+    {{#each books as |book|}}
+      {{#link-to 'book' book.id class='list-group-item'}}
+        <strong>{{book.title}}</strong>
+        {{#if book.author}}
+          <span class='text-muted'>{{t "by" key='by'}} {{book.author}}</span>
+        {{/if}}
+      {{/link-to}}
+    {{/each}}
+    </div>
+  </div>
+{{else}}
+  {{t "No Data Available" key='no_data_available'}}
+{{/if}}
 
 {{#if session.isAuthenticated}}
   <span style='display: inline-block; width: 300px;'>
