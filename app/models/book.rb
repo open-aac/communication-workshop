@@ -49,16 +49,28 @@ class Book < ApplicationRecord
     end
   end
   
+  def full_text
+    "#{self.data['title']} #{self.data['pages'].map{|p| p['text'] }.join(' ')}"
+  end
+  
   def add_to_core_words(frd=false)
     if self.data['new_core_words'] && !frd
       self.schedule(:add_to_core_words, true)
     elsif frd
       new_words = self.data['new_core_words']
       new_words.each do |wrd|
+        word_book_id = "#{wrd.global_id}:#{self.ref_id}"
         word = WordData.find_by(word: wrd, locale: self.locale || 'en')
-        word.data['books'] = word.data['books']
-        word.data['books'].each do |book|
-        end
+        word.data['books'] = word.data['books'].select{|b| b['id'] != word_book_id }
+        word.data['books'] << {
+          'url' => self.book_url,
+          'book_type' => 'communication_workshop',
+          'supplement' => self.full_text,
+          'text' => self.data['title'],
+          'image' => self.data['pages'][0]['image'],
+          'id' => word_book_id
+        }
+        word.save
       end
       self.data.delete('new_core_words')
       self.save
