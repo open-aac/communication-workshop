@@ -3,7 +3,7 @@ class Api::BooksController < ApplicationController
   def index
     # start with books that include current target words, if any
     # otherwise sort by stars, then title
-    books = Book.all.order('random_id')
+    books = Book.where(approved: true).all.order('random_id')
     render json: JsonApi::Book.paginate(params, books)
   end
   
