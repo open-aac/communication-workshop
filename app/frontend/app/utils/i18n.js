@@ -16,6 +16,9 @@ Ember.templateHelpers.locale = function(str) {
   return res;
 };
 
+Ember.templateHelpers.list = function(list, type) {
+  return list.join(', ');
+};
 Ember.templateHelpers.t = function(str, options) {
   // TODO: options values are NOT bound, so this doesn't work for our purposes
   // prolly needs to be rewritten as a custom view or something

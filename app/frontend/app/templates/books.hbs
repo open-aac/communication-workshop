@@ -12,6 +12,12 @@
         {{#if book.author}}
           <span class='text-muted'>{{t "by" key='by'}} {{book.author}}</span>
         {{/if}}
+        <div class='text-muted' style='margin-left: 20px;'>
+          {{book.total_pages}} {{t "pages" key='pages'}}
+          {{#if book.related_words}}
+            <span style='margin-left: 10px;'>{{t "core: " key='core'}} {{list book.related_words}}</span>
+          {{/if}}
+        </div>
       {{/link-to}}
     {{/each}}
     </div>

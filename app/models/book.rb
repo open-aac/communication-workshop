@@ -18,7 +18,22 @@ class Book < ApplicationRecord
   def generate_defaults
     self.data ||= {}
     self.random_id ||= (rand(9999999999) + Time.now.to_i)
+    self.locale ||= 'en'
+    self.data['related_words'] = related_page_words
+
     true
+  end
+  
+  def related_page_words
+    tallies = {}
+    self.data ||= {}
+    (self.data['pages'] || []).each do |page|
+      (page['related_words'] || '').split(/,|\n/).each do |word|
+        tallies[word] ||= 0
+        tallies[word] += 1
+      end
+    end
+    tallies.to_a.sort_by(&:last).reverse[0, 5].map(&:first).map(&:strip)
   end
   
   def self.find_or_initialize_by_path(str)
@@ -29,7 +44,7 @@ class Book < ApplicationRecord
     end
     res
   end
-
+  
   STRING_PARAMS = ['title', 'author', 'source_url']
   OBJ_PARAMS = ['pages', 'image']
   
@@ -96,7 +111,8 @@ class Book < ApplicationRecord
           'image_content_type' => '',
           'image_attribution_type' => (book['image'] || {})['license'],
           'image_attribution_url' => (book['image'] || {})['license_url'],
-          'image_attribution_author' => (book['image'] || {})['author']
+          'image_attribution_author' => (book['image'] || {})['author'],
+          'related_words' => self.data['related_words']
         }
       ] 
     }
@@ -114,6 +130,7 @@ class Book < ApplicationRecord
         'image2_attribution_type' => (page['image2'] || {})['license'],
         'image2_attribution_url' => (page['image2'] || {})['license_url'],
         'image2_attribution_author' => (page['image2'] || {})['author'],
+        'related_words' => page['related_words'].split(/,|\n/).map(&:strip)
       }
     end
     res.to_json

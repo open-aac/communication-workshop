@@ -8,11 +8,13 @@ module JsonApi::Book
   def self.build_json(book, args={})
     json = {}
     json['id'] = book.ref_id
-    json['locale'] = book.locale
+    json['locale'] = book.locale || 'en'
     json['pending'] = !book.id
     if book.data
       json['title'] = book.data['title']
       json['author'] = book.data['author']
+      json['related_words'] = book.data['related_words'] || book.related_page_words
+      json['total_pages'] = book.data['pages'].length
     end
     
     if args[:permissions] && book.data
@@ -23,6 +25,9 @@ module JsonApi::Book
       end
       Book::OBJ_PARAMS.each do |param|
         json[param] = book.data[param] if book.data[param]
+      end
+      json['pages'].each do |page|
+        page['related_words'] = page['related_words'].split(/,|\n/).map(&:strip) if page['related_words']
       end
     end
     json

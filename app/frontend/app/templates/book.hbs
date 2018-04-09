@@ -88,6 +88,16 @@
           {{/if}}
         {{/if}}
       {{/unless}}
+      {{#unless editing}}
+        {{#if current_page.related_words}}
+          <div class='text-muted' style='text-align: right;'>
+            {{t "core words: " key='core_words'}}
+            {{#each current_page.related_words as |wrd|}}
+              {{#link-to 'word.index' wrd model.locale}}{{wrd}}{{/link-to}}
+            {{/each}}
+          </div>
+        {{/if}}
+      {{/unless}}
     {{else}}
       <div style='width: 100%; height: 120px; border: 1px solid #ccc; text-align: center; padding-top: 2px;'>
         {{t "No Pages Added" key='no_pages_yet'}}
