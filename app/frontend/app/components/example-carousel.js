@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import i18n from '../utils/i18n';
 import session from '../utils/session';
+import modal from '../utils/modal';
 
 export default Ember.Component.extend({
   didInsertElement: function() {
@@ -164,6 +165,12 @@ export default Ember.Component.extend({
       Ember.set(activity, 'skipped', true);
       // ajax call, then hit next
       this.send('next');
+    },
+    launch_book: function() {
+      if(this.get('fullscreen')) {
+        this.send('full_screen');
+      }
+      modal.open('book-reader', {book: this.get('current_entry')});
     },
     full_screen: function() {
       var e = this.get('element') || {};

@@ -1,0 +1,110 @@
+<div id='player' style='width: 100%; height: 100%;'>
+  <div style='width: 50%; overflow: hidden; float: left; height: 50px; padding: 10px; color: #888;'>
+    powered by Communication Workshop
+  </div>
+  <div style='width: 50%; overflow: hidden; float: left; height: 50px; text-align: right;'>
+    <button id='fullscreen' style='outline: none; width: 150px; height: 50px; background: #fff; border: 1px solid #444; border-radius: 5px;'>
+      Enter Full Screen
+    </button>
+    <button id='close' style='outline: none; width: 100px; height: 50px; background: #fff; border: 1px solid #444; border-radius: 5px;'>
+      Close
+    </button>
+  </div>
+  <iframe id='book_contents' style='width: 100%; border: 0; height: calc(100vh - 50px);'></iframe>
+</div>
+<script>
+  document.body.style.overflow = 'hidden';
+  var query = location.href.split(/\?/)[1] || '';
+  var parts = query.split(/\&/) || [];
+  var params = {};
+  for(var idx = 0; idx < parts.length; idx++) {
+    var pieces = parts[idx].split(/=/);
+    var key = decodeURIComponent(pieces.shift());
+    var val = decodeURIComponent(pieces.join('='));
+    params[key] = val;
+  }
+  var url = 'https://tarheelreader.org/2017/11/24/funny-people/';
+  if(params.id) {
+    url = "https://workshop.openaac.org/api/v1/books/json?id=" + params.id;
+  } else if(params.url) {
+    url = params.url;
+  }
+  document.getElementById('book_contents').src = "https://tools.openaac.org/tarheel/launch";
+  window.addEventListener('message', function(event) {
+    if(event.data && event.data.aac_shim) {
+      if(event.data.action == 'status') {
+        event.source.postMessage({
+          code: url,
+          aac_shim: true,
+          status: 'ready',
+          callback_id: event.data.callback_id
+        }, '*');
+      } else if(event.data.action == 'speak_text') {
+        var u = new window.SpeechSynthesisUtterance();
+        u.text = event.data.text;
+        window.speechSynthesis.speak(u);
+      }
+    }
+    console.log('event', event);
+  });
+  
+  var in_full_screen = false;
+  var elem = document.getElementById('player');
+  var update_fs = function() {
+    if(in_full_screen) {
+      document.getElementById('fullscreen').innerText = 'Exit Full Screen';
+      document.getElementById('close').style.display = 'none';
+    } else {
+      document.getElementById('fullscreen').innerText = 'Enter Full Screen';
+      document.getElementById('close').style.display = 'inline';
+    }
+  };
+  var handler = function() {
+    var fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    in_full_screen = elem === fs;
+    update_fs();
+  };
+  document.addEventListener('fullscreenchange', handler);
+  document.addEventListener('webkitfullscreenchange', handler);
+  document.addEventListener('onmozfullscreenchange', handler);
+  document.MSFullscreenChange = handler;
+      
+  document.getElementById('close').addEventListener('click', function(event) {
+    event.preventDefault();
+    window.parent.postMessage('close-modal', '*');
+  });
+  document.getElementById('fullscreen').addEventListener('click', function(event) {
+    event.preventDefault();
+    var e = elem;
+    if(in_full_screen) {
+      if(document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if(document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if(document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if(document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+      in_full_screen = false;
+      update_fs();
+    } else {
+      var fs = e.requestFullscreen || e.webkitRequestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen;
+      if(e) {
+        if(e.requestFullscreen) {
+          e.requestFullscreen();
+        } else if(e.webkitRequestFullscreen) {
+          e.webkitRequestFullscreen();
+        } else if(e.mozRequestFullScreen) {
+          e.mozRequestFullScreen();
+        } else if(e.msRequestFullscreen) {
+          e.msRequestFullscreen();
+        }
+        in_full_screen = true;
+        update_fs();
+      }
+    }
+      
+  });
+
+</script>

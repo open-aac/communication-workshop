@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import modal from '../utils/modal';
 
 export default Ember.Component.extend({
   didInsertElement: function() {
@@ -7,8 +8,16 @@ export default Ember.Component.extend({
       this.set('already_opened', true);
       this.sendAction('opening');
     }
-    var height = Ember.$(window).height() - 50;
-    Ember.$(this.get('element')).find(".modal-content").css('maxHeight', height).css('overflow', 'auto');
+    var _this = this;
+    var resize = function() {
+      _this.stretch();
+    };
+    window.addEventListener('resize', resize);
+    this.set('resize', resize);
+  },
+  willDestroyElement: function() {
+    window.removeEventListener('resize', this.get('resize'));
+    this.set('resize', null);
   },
   stretch: function() {
     if(this.get('stretch_ratio')) {
@@ -34,6 +43,8 @@ export default Ember.Component.extend({
     } else {
       Ember.$(this.get('element')).find(".modal-dialog").css('width', '');
     }
+    var height = Ember.$(window).height() - 50;
+    Ember.$(this.get('element')).find(".modal-content").css('maxHeight', height).css('overflow', 'auto');
   }.observes('stretch_ratio', 'desired_width'),
   willDestroy: function() {
     if(!this.get('already_closed')) {
@@ -60,4 +71,8 @@ export default Ember.Component.extend({
 });
 
 
-
+window.addEventListener('message', function(event) {
+  if(event.data == 'close-modal') {
+    modal.close();
+  }
+});

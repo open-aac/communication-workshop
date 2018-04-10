@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get '/categories/:locale' => ember_handler
   get '/forgot_password' => ember_handler
   get '/users/:user_name/password_reset/:code' => ember_handler
+  get '/books/launch' => 'render#book'
   get '/books' => ember_handler
 
   protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|

@@ -40,6 +40,15 @@ export default Ember.Controller.extend({
       return null;
     }
   }.property('editing'),
+  button_style: function() {
+    var res = "width: 100%;"
+    if(this.get('editing')) {
+      res = res + " height: 68px;"
+    } else {
+      res = res + " height: 200px;"
+    }
+    return Ember.String.htmlSafe(res);
+  }.property('editing'),
   no_prev: function() {
     return (this.get('current_index') || 0) === 0;
   }.property('current_index'),
@@ -73,6 +82,9 @@ export default Ember.Controller.extend({
         this.get('model').rollbackAttributes();
         this.set('editing', false);
       }
+    },
+    launch: function() {
+      modal.open('book-reader', {book: this.get('model')});
     },
     previous: function() {
       var idx = this.get('current_index') || 0;
