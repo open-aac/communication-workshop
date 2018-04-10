@@ -87487,8 +87487,8 @@ define('frontend/controllers/book', ['exports', 'ember', 'frontend/utils/modal',
       return !this.get('current_page.extra_image');
     }).property('current_page.extra_image'),
     editable: (function () {
-      return this.get('model.pending') || this.get('editing') || true;
-    }).property('model.pending'),
+      return this.get('model.pending') || this.get('editing') || this.get('model.permissions.edit');
+    }).property('model.pending', 'editing', 'model.permissions.edit'),
     actions: {
       edit: function edit() {
         this.set('editing', true);
@@ -90237,7 +90237,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+229d5231"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+b04120cf"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -90245,7 +90245,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+229d5231"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+b04120cf"});
 }
 
 /* jshint ignore:end */
