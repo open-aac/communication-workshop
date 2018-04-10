@@ -537,7 +537,7 @@ module PacketMaker
       if book['book_type'] == 'tarheel'
         json = Book.tarheel_json(book['url'])
       elsif book['book_type'] == 'communication_workshop'
-        book_record = Book.find_by_global_id(book['local_id'])
+        book_record = Book.find_by_path(book['local_id'])
         json = JSON.parse(book_record.book_json)
       else
         # API call to "#{JsonApi::Json.current_host}/api/v1/books/json?url=#{book['url']}"
