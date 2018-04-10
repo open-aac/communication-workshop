@@ -29,6 +29,7 @@
   } else if(params.url) {
     url = params.url;
   }
+
   document.getElementById('book_contents').src = "https://tools.openaac.org/tarheel/launch";
   window.addEventListener('message', function(event) {
     if(event.data && event.data.aac_shim) {

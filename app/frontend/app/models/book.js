@@ -16,6 +16,9 @@ var Book = DS.Model.extend({
   related_words: DS.attr('raw'),
   total_pages: DS.attr('number'),
   title: DS.attr('string'),
+  book_type: function() {
+    return "communication_workshop";
+  }.property(),
   author: DS.attr('string'),
   new_core_words: DS.attr('string'),
 });
