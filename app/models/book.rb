@@ -28,12 +28,12 @@ class Book < ApplicationRecord
     tallies = {}
     self.data ||= {}
     (self.data['pages'] || []).each do |page|
-      (page['related_words'] || '').split(/,|\n/).each do |word|
+      (page['related_words'] || '').split(/,|\n/).map(&:strip).each do |word|
         tallies[word] ||= 0
         tallies[word] += 1
       end
     end
-    tallies.to_a.sort_by(&:last).reverse[0, 5].map(&:first).map(&:strip)
+    tallies.to_a.sort_by(&:last).reverse[0, 5].map(&:first)
   end
   
   def self.find_or_initialize_by_path(str)
