@@ -172,6 +172,12 @@ export default Ember.Component.extend({
       }
       modal.open('book-reader', {book: this.get('current_entry')});
     },
+    launch_video: function() {
+      if(this.get('fullscreen')) {
+        this.send('full_screen');
+      }
+      modal.open('video-player', {video: this.get('current_entry')});
+    },
     full_screen: function() {
       var e = this.get('element') || {};
       if(this.get('fullscreen')) {

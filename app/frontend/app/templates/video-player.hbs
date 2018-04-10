@@ -1,0 +1,9 @@
+{{#modal-dialog action="close" opening='opening' closing='closing' full_stretch=true}}
+  <div class="modal-body">
+    <iframe src={{launch_url}} frameborder=0 style='width: 100%; height: calc(85vh - 65px);'></iframe>
+  </div>
+  <div class="modal-footer">
+    <button class='btn btn-default' {{action 'close'}}>{{t "Close" key='close'}}</button>
+    <a href={{model.video.url}} class='btn btn-default' target='_blank'>{{t "Source" key='source'}}</a>
+  </div>
+{{/modal-dialog}}

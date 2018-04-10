@@ -1,6 +1,7 @@
 <div id='player' style='width: 100%; height: 100%;'>
-  <div id='powered' style='visibility: hidden; width: 50%; overflow: hidden; float: left; height: 50px; padding: 10px; color: #888;'>
-    powered by Communication Workshop
+  <div style='width: 50%; overflow: hidden; float: left; height: 50px; padding: 10px; color: #888;'>
+    <a target='_blank' id='source' href="#">source</a>
+    <span id='powered' style='visibility: hxidden; margin-left: 10px;'>powered by Communication Workshop</span>
   </div>
   <div style='width: 50%; overflow: hidden; float: left; height: 50px; text-align: right;'>
     <button id='fullscreen' style='outline: none; width: 150px; height: 50px; background: #fff; border: 1px solid #444; border-radius: 5px;'>
@@ -24,13 +25,16 @@
     params[key] = val;
   }
   var url = 'https://tarheelreader.org/2017/11/24/funny-people/';
+  var source_url = url;
   if(params.id) {
     url = "https://workshop.openaac.org/api/v1/books/json?id=" + params.id;
+    source_url = "/books/" + params.id;
   } else if(params.url) {
     url = params.url;
   }
 
   document.getElementById('book_contents').src = "https://tools.openaac.org/tarheel/launch";
+  document.getElementById('source').setAttribute('href', source_url);
   window.addEventListener('message', function(event) {
     if(event.data && event.data.aac_shim) {
       if(event.data.action == 'status') {

@@ -82,7 +82,7 @@
               <span class={{entry_class}} style='position: absolute; font-size: 50px; left: 20px; top: 20px; color: #fff; text-shadow: 2px 2px 5px #444, -2px -2px 5px #444, -2px 2px 5px #444, 2px -2px 5px #444; '></span>
             </a>
           {{else if video_type}}
-            <a href={{current_entry.url}} class='dim_until_hover' target='_blank' style='position: relative; display: block;'>
+            <a href={{current_entry.url}} {{action 'launch_video'}} class='dim_until_hover' target='_blank' style='position: relative; display: block;'>
               {{image-with-attribution stretch=true image=current_entry.image tall=tall border=false url=current_entry.url fullscreen=fullscreen}}
               <span class={{entry_class}} style='position: absolute; font-size: 80px; left: calc(50% - 40px); top: calc(50% - 40px); color: #fff; text-shadow: 2px 2px 5px #444, -2px -2px 5px #444, -2px 2px 5px #444, 2px -2px 5px #444; '></span>
             </a>
