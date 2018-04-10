@@ -2,26 +2,41 @@ require 'prawn'
 
 module PacketMaker
   RENDER_VERSION=1
-  def self.generate_download(word_paths, user_ids, opts)
-    words = word_paths.map{|w| WordData.find_by_path(w) }.compact
-    users = User.find_all_by_global_id(user_ids)
-    
+  def self.generate_download(opts)
     Progress.update_current_progress(0.2, :generating_file)
+    opts = opts.with_indifferent_access
+
+    words = nil
+    users = nil
+    book = nil
+    if opts[:words]
+      words = opts[:words].map{|w| WordData.find_by_path(w) }.compact
+      users = User.find_all_by_global_id(opts[:user_ids])
+
+      # generate hash based on settings and buttons
+      keys = opts.keys.sort
+      opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
+      buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
+      words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
+      hash = Digest::MD5.hexdigest("wordpack::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
+      remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
+    elsif opts[:book_id]
+      book = Book.find_by_path(opts[:book_id])
+      remote_path = "packets/learn-aac/books/#{book.global_id}/#{book.updated_at.iso8601}/v#{RENDER_VERSION}/book.pdf"
+    end
     
-    # generate hash based on settings and buttons
-    keys = opts.keys.sort
-    opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
-    buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
-    words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
-    hash = Digest::MD5.hexdigest("wordpack::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
-    remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
+    
     # check for existing download
     url = Uploader.check_existing_upload(remote_path)
     return url if url
     
     path = nil
     Progress.as_percent(0.2, 0.8) do
-      path = generate_for(words, users, opts)
+      if opts[:words]
+        path = generate_for(words, users, opts)
+      elsif opts[:book_id]
+        path = generate_book(book, opts)
+      end
     end
     
     Progress.update_current_progress(0.9, :uploading_file)
@@ -39,105 +54,29 @@ module PacketMaker
   def self.rtl_regex
     @res ||= /[#{RTL_SCRIPTS.map{ |script| "\\p{#{script}}" }.join}]/
   end
-
-  # Confirmation dialog for printed packet should estimate number of pages
-  # Check if there's already a pdf for the packaet
-  # Generate a pdf for the packet
-  # Upload the pdf to a shared space (with a human-readable filename, folder can be messy)
   
-  def self.generate_for(words, users, opts)
+  def self.generate_doc(title, layout, opts, &block)
     pdf = Prawn::Document.new(
-      :page_layout => :portrait, 
+      :page_layout => layout, 
       :page_size => [8.5*72, 11*72],
       :info => {
-        :Title => 'Word Packet'
+        :Title => title
       }
     )
+    if layout == :landscape
+      @doc_width = 11*72 - 72
+      @doc_height = 8.5*72 - 72
+    else
+      @doc_width = 8.5*72 - 72
+      @doc_height = 11*72 - 72
+    end
     @first_page = true
     font = opts['font'] if opts['font'] && File.exists?(opts['font'])
     font ||= File.expand_path('./TimesNewRoman.ttf', __FILE__)
     pdf.font(font) if File.exists?(font)
-  
-    words.each_with_index do |word, idx|
-      Progress.as_percent(0.9 * idx.to_f / words.length, 0.9 * (idx + 1).to_f / words.length) do
-        @word = word
-        @page = 0
-        # TODO: Options to exclude topic areas, or to only include entries with matching ids
-        # (i.e. to print an individual book)
-    
-        # Header page should show all versions of the icons for matched users
-        Progress.update_current_progress(0.05, :adding_header)
-        add_header(word, users, pdf) if opts[:include_header] != false
-        # Definition page: definition, bulleted usage examples, related core words
-        Progress.update_current_progress(0.1, :adding_definitions)
-        add_definitions(word, pdf) if opts[:include_definition] != false
-
-        # Modeling page: tiles/cutouts with image phrase, explanation if any
-        examples = (word.data['level_1_modeling_examples'] || []) + (word.data['level_2_modeling_examples'] || []) + (word.data['level_3_modeling_examples'] || [])
-        Progress.update_current_progress(0.2, :adding_modeling_examples)
-        add_cards('Modeling Examples', examples, pdf) if opts[:include_modeling] != false
-
-        # Concise version:
-        if opts[:concise]
-          # Learning projects, activity ideas, topic-starters, send-homes, prompts: multiple per page, cards
-          entries = []
-          if opts[:include_learning_projects] != false
-            entries += []
-          end
-          if opts[:include_activity_ideas] != false
-            entries += []
-          end
-          if opts[:include_topic_starters] != false
-            entries += []
-          end
-          if opts[:include_send_homes] != false
-            entries += []
-          end
-          if opts[:include_prompts] != false
-            entries += []
-          end
-          Progress.update_current_progress(0.5, :adding_cards)
-          add_cards('Activities', entries, pdf)
-
-          # Books: 4 spots per page (with page numbers)
-          Progress.update_current_progress(0.8, :adding_books)
-          add_books(word.data['books'], true, pdf) if opts[:include_books] != false
-            # portrait, 4 per page, foldable (upside-down to match) with page numbers
-            # include The End page with attributions
-        # Verbose version:
-        else
-          # Learning projects: one per page
-          Progress.update_current_progress(0.3, :adding_projects)
-          add_activities('Learning Projects', word.data['learning_projects'], pdf) if opts[:include_learning_projects] != false
-          # Activity ideas: one per page
-          Progress.update_current_progress(0.4, :adding_ideas)
-          add_activities('Activity Ideas', word.data['activity_ideas'], pdf) if opts[:include_activity_ideas] != false
-          # Books: 2 spots per page (with page numbers)
-          Progress.update_current_progress(0.5, :adding_books)
-          add_books(word.data['books'], false, pdf) if opts[:include_books] != false
-            # landscape, 2 per page, all right-side-up, with page numbers
-          # Topic Starters: one per page
-          Progress.update_current_progress(0.6, :adding_starters)
-          add_activities('Topic-Starters', word.data['topic_starters'], pdf) if opts[:include_topic_starters] != false
-          # Send-Homes: one per page
-          Progress.update_current_progress(0.7, :adding_send_homes)
-          add_activities('Send-Homes', word.data['send_homes'], pdf) if opts[:include_send_homes] != false
-          # Prompts: two per page
-          Progress.update_current_progress(0.8, :adding_prompts)
-          add_prompts(word.data['prompts'], pdf) if opts[:include_prompts] != false
-            # portrait, 2 per page
-        end
-        # Videos/Amazon Books: cards, include link
-        Progress.update_current_progress(0.9, :adding_links)
-        add_links(word, pdf) if opts[:include_links]
-        # Attribution and references
-        Progress.update_current_progress(0.95, :adding_attribution)
-        add_attribution(word, pdf)
-      end
-    end
+    block.call(pdf)
     
     path = Tempfile.new('packet').path + ".pdf"
-    Progress.update_current_progress(0.95, :rendering_file)
     pdf.render_file(path)
     if opts[:local]
       puts path.to_s
@@ -147,9 +86,105 @@ module PacketMaker
     path
   end
   
+  def self.generate_book(book, opts)
+    generate_doc("Printed Book", :landscape, opts) do |pdf|
+      add_books([{
+        'book_type' => 'communication_workshop',
+        'local_id' => book.global_id,
+        'url' => book.book_url
+      }], !!opts[:concise], pdf)
+    end
+  end
+
+  # Confirmation dialog for printed packet should estimate number of pages
+  # Check if there's already a pdf for the packaet
+  # Generate a pdf for the packet
+  # Upload the pdf to a shared space (with a human-readable filename, folder can be messy)
+  
+  def self.generate_for(words, users, opts)
+    generate_doc("Word Packet", :portrait, opts) do |pdf|
+      words.each_with_index do |word, idx|
+        Progress.as_percent(0.9 * idx.to_f / words.length, 0.9 * (idx + 1).to_f / words.length) do
+          @word = word
+          @page = 0
+          # TODO: Options to exclude topic areas, or to only include entries with matching ids
+          # (i.e. to print an individual book)
+    
+          # Header page should show all versions of the icons for matched users
+          Progress.update_current_progress(0.05, :adding_header)
+          add_header(word, users, pdf) if opts[:include_header] != false
+          # Definition page: definition, bulleted usage examples, related core words
+          Progress.update_current_progress(0.1, :adding_definitions)
+          add_definitions(word, pdf) if opts[:include_definition] != false
+
+          # Modeling page: tiles/cutouts with image phrase, explanation if any
+          examples = (word.data['level_1_modeling_examples'] || []) + (word.data['level_2_modeling_examples'] || []) + (word.data['level_3_modeling_examples'] || [])
+          Progress.update_current_progress(0.2, :adding_modeling_examples)
+          add_cards('Modeling Examples', examples, pdf) if opts[:include_modeling] != false
+
+          # Concise version:
+          if opts[:concise]
+            # Learning projects, activity ideas, topic-starters, send-homes, prompts: multiple per page, cards
+            entries = []
+            if opts[:include_learning_projects] != false
+              entries += []
+            end
+            if opts[:include_activity_ideas] != false
+              entries += []
+            end
+            if opts[:include_topic_starters] != false
+              entries += []
+            end
+            if opts[:include_send_homes] != false
+              entries += []
+            end
+            if opts[:include_prompts] != false
+              entries += []
+            end
+            Progress.update_current_progress(0.5, :adding_cards)
+            add_cards('Activities', entries, pdf)
+
+            # Books: 4 spots per page (with page numbers)
+            Progress.update_current_progress(0.8, :adding_books)
+            add_books(word.data['books'], true, pdf) if opts[:include_books] != false
+              # portrait, 4 per page, foldable (upside-down to match) with page numbers
+              # include The End page with attributions
+          # Verbose version:
+          else
+            # Learning projects: one per page
+            Progress.update_current_progress(0.3, :adding_projects)
+            add_activities('Learning Projects', word.data['learning_projects'], pdf) if opts[:include_learning_projects] != false
+            # Activity ideas: one per page
+            Progress.update_current_progress(0.4, :adding_ideas)
+            add_activities('Activity Ideas', word.data['activity_ideas'], pdf) if opts[:include_activity_ideas] != false
+            # Books: 2 spots per page (with page numbers)
+            Progress.update_current_progress(0.5, :adding_books)
+            add_books(word.data['books'], false, pdf) if opts[:include_books] != false
+              # landscape, 2 per page, all right-side-up, with page numbers
+            # Topic Starters: one per page
+            Progress.update_current_progress(0.6, :adding_starters)
+            add_activities('Topic-Starters', word.data['topic_starters'], pdf) if opts[:include_topic_starters] != false
+            # Send-Homes: one per page
+            Progress.update_current_progress(0.7, :adding_send_homes)
+            add_activities('Send-Homes', word.data['send_homes'], pdf) if opts[:include_send_homes] != false
+            # Prompts: two per page
+            Progress.update_current_progress(0.8, :adding_prompts)
+            add_prompts(word.data['prompts'], pdf) if opts[:include_prompts] != false
+              # portrait, 2 per page
+          end
+          # Videos/Amazon Books: cards, include link
+          Progress.update_current_progress(0.9, :adding_links)
+          add_links(word, pdf) if opts[:include_links]
+          # Attribution and references
+          Progress.update_current_progress(0.95, :adding_attribution)
+          add_attribution(word, pdf)
+        end
+      end
+      Progress.update_current_progress(0.95, :rendering_file)
+    end    
+  end
+  
   def self.new_page(pdf, header=nil, landscape=false)
-    @doc_height = 11*72 - 72
-    @doc_width = 8.5*72 - 72
     unless @first_page
       if landscape
         pdf.start_new_page(:size => [8.5*72, 11*72], :layout => :landscape)
@@ -488,7 +523,7 @@ module PacketMaker
       json = nil
       if book['book_type'] == 'tarheel'
         json = Book.tarheel_json(book['url'])
-      elsif book['book_type'] == 'workshop'
+      elsif book['book_type'] == 'communication_workshop'
         book_record = Book.find_by_global_id(book['local_id'])
         json = JSON.parse(book_record.book_json)
       else

@@ -68,7 +68,9 @@ Rails.application.routes.draw do
     post '/activities/:id/perform' => 'words#perform_activity'
     resources :categories
     get '/books/json' => 'books#book_json'
-    resources :books, {constraints: {id: book_id_regex}}
+    resources :books, {constraints: {id: book_id_regex}} do
+      post '/print' => 'books#print'
+    end
     resources :lessons
     get '/events' => 'users#events'
     resources :users do

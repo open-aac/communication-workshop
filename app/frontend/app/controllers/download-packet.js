@@ -10,12 +10,18 @@ export default modal.ModalController.extend({
     _this.set('status', {loading: true, percent: 0});
     var key = Math.random();
     _this.set('status_key', key);
+    var url = '/api/v1/words/packet';
+    var opts = {
+      word_ids: (this.get('model.words') || []).join('::')
+    };
+    if(this.get('model.book_id')) {
+      url = '/api/v1/books/' + this.get('model.book_id') + '/print';
+      opts = {};
+    }
 
-    session.ajax('/api/v1/words/packet', {
+    session.ajax(url, {
       type: 'POST',
-      data: {
-        word_ids: this.get('model.words').join('::')
-      }
+      data: opts
     }).then(function(res) {
       progress_tracker.track(res.progress, function(progress) {
         if(_this.get('status_key') == key) {

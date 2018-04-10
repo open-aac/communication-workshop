@@ -21,7 +21,7 @@ class Api::WordsController < ApplicationController
     user_ids = []
     user_ids << @api_user.global_id if @api_user
     word_ids = (params['word_ids'] || '').split(/::/)
-    progress = Progress.schedule(PacketMaker, :generate_download, word_ids, user_ids, {})
+    progress = Progress.schedule(PacketMaker, :generate_download, {:words => word_ids, :user_ids => user_ids})
     render json: JsonApi::Progress.as_json(progress, :wrapper => true)
   end
   

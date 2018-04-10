@@ -112,6 +112,9 @@ export default Ember.Controller.extend({
       this.get('model.pages').pushObject({});
       this.set('current_index', this.get('model.pages').length);
     },
+    print: function() {
+      modal.open('download-packet', {book_id: this.get('model.id')});
+    },
     update_image_1: function(image) {
       var entry = this.get('current_page');
       if(entry) {

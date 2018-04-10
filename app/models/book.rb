@@ -83,6 +83,7 @@ class Book < ApplicationRecord
           'supplement' => self.full_text,
           'text' => self.data['title'],
           'image' => self.data['pages'][0]['image'],
+          'local_id' => self.global_id,
           'id' => word_book_id
         }
         word.save

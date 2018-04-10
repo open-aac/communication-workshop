@@ -28,6 +28,14 @@ class Api::BooksController < ApplicationController
       api_error(400, {error: 'id or valid url parameter required'})
     end
   end
+
+  def print
+    book = Book.find_by_path(params['book_id'])
+    return unless exists?(book, params['book_id'])
+    return unless allowed?(book, 'view')
+    progress = Progress.schedule(PacketMaker, :generate_download, {:book_id => book.global_id})
+    render json: JsonApi::Progress.as_json(progress, :wrapper => true)
+  end
   
   def show
     book = Book.find_or_initialize_by_path(params['id'])
