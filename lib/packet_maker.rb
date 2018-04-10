@@ -1,7 +1,7 @@
 require 'prawn'
 
 module PacketMaker
-  RENDER_VERSION=1
+  RENDER_VERSION=2
   def self.generate_download(opts)
     Progress.update_current_progress(0.2, :generating_file)
     opts = opts.with_indifferent_access
@@ -603,7 +603,7 @@ module PacketMaker
               square = (page_width / 2) - page_pad
               draw_image pdf, page['image_url'], :left => left, :top => top - (square / 2), :square => square
               draw_image pdf, page['image2_url'], :left => left + (page_width / 2) + page_pad, :top => top - (square / 2), :square => square
-              top -= square + 20
+              top -= page_width + 20
               if page['image2_attribution_type']
                 attributions << {
                   'type' => page['image2_attribution_type'],

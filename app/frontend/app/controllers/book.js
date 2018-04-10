@@ -59,8 +59,8 @@ export default Ember.Controller.extend({
     return !this.get('current_page.extra_image');
   }.property('current_page.extra_image'),
   editable: function() {
-    return this.get('model.pending') || this.get('editing') || true;
-  }.property('model.pending'),
+    return this.get('model.pending') || this.get('editing') || this.get('model.permissions.edit');
+  }.property('model.pending', 'editing', 'model.permissions.edit'),
   actions: {
     edit: function() {
       this.set('editing', true);
