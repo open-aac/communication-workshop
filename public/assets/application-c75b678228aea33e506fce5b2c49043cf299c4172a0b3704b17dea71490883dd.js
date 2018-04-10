@@ -89136,13 +89136,13 @@ define('frontend/models/event', ['exports', 'ember', 'ember-data'], function (ex
 });
 define('frontend/models/image', ['exports', 'ember', 'ember-data'], function (exports, _ember, _emberData) {
 
-  var Image = _emberData['default'].Model.extend({
+  var ImageModel = _emberData['default'].Model.extend({
     didLoad: function didLoad() {},
     user_id: _emberData['default'].attr('string'),
     url: _emberData['default'].attr('string')
   });
 
-  exports['default'] = Image;
+  exports['default'] = ImageModel;
 });
 define('frontend/models/user', ['exports', 'ember', 'ember-data', 'frontend/utils/session'], function (exports, _ember, _emberData, _frontendUtilsSession) {
 
@@ -90237,7 +90237,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+7277fdd5"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+229d5231"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -90245,7 +90245,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+7277fdd5"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+229d5231"});
 }
 
 /* jshint ignore:end */
