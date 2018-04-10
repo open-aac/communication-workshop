@@ -8,7 +8,7 @@ export default modal.ModalController.extend({
   launch_url: function() {
     var res = "/books/launch";
     if(this.get('model.book.book_type') == 'communication_workshop') {
-      res = res + "?id=" + this.get('model.book.id');
+      res = res + "?id=" + (this.get('model.book.local_id') || this.get('model.book.id'));
     } else  {
       res = res + "?url=" + this.get('model.book.url');
     }

@@ -74,16 +74,16 @@ class Book < ApplicationRecord
     elsif frd
       new_words = self.data['new_core_words']
       new_words.each do |wrd|
-        word_book_id = "#{wrd.global_id}:#{self.ref_id}"
         word = WordData.find_by(word: wrd, locale: self.locale || 'en')
+        word_book_id = "#{word.global_id}:#{self.ref_id}"
         word.data['books'] = word.data['books'].select{|b| b['id'] != word_book_id }
         word.data['books'] << {
           'url' => self.book_url,
           'book_type' => 'communication_workshop',
           'supplement' => self.full_text,
           'text' => self.data['title'],
-          'image' => self.data['pages'][0]['image'],
-          'local_id' => self.global_id,
+          'image' => self.data['image'] || self.data['pages'][0]['image'],
+          'local_id' => self.ref_id,
           'id' => word_book_id
         }
         word.save

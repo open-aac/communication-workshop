@@ -93,10 +93,10 @@
         {{/if}}
       {{/unless}}
       {{#unless editing}}
-        {{#if current_page.related_words}}
+        {{#if current_page.target_words}}
           <div class='text-muted' style='text-align: right;'>
             {{t "core words: " key='core_words'}}
-            {{#each current_page.related_words as |wrd|}}
+            {{#each current_page.target_words as |wrd|}}
               {{#link-to 'word.index' wrd model.locale}}{{wrd}}{{/link-to}}
             {{/each}}
           </div>

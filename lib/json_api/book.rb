@@ -27,7 +27,7 @@ module JsonApi::Book
         json[param] = book.data[param] if book.data[param]
       end
       json['pages'].each do |page|
-        page['related_words'] = page['related_words'].split(/,|\n/).map(&:strip) if page['related_words']
+        page['target_words'] = page['related_words'].split(/,|\n/).map(&:strip) if page['related_words']
       end
     end
     json

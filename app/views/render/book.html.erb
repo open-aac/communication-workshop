@@ -1,5 +1,5 @@
 <div id='player' style='width: 100%; height: 100%;'>
-  <div style='width: 50%; overflow: hidden; float: left; height: 50px; padding: 10px; color: #888;'>
+  <div id='powered' style='visibility: hidden; width: 50%; overflow: hidden; float: left; height: 50px; padding: 10px; color: #888;'>
     powered by Communication Workshop
   </div>
   <div style='width: 50%; overflow: hidden; float: left; height: 50px; text-align: right;'>
@@ -55,9 +55,11 @@
     if(in_full_screen) {
       document.getElementById('fullscreen').innerText = 'Exit Full Screen';
       document.getElementById('close').style.display = 'none';
+      document.getElementById('powered').style.visibility = 'visible';
     } else {
       document.getElementById('fullscreen').innerText = 'Enter Full Screen';
       document.getElementById('close').style.display = 'inline';
+      document.getElementById('powered').style.visibility = 'hidden';
     }
   };
   var handler = function() {
