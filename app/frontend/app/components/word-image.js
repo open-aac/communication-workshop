@@ -7,7 +7,7 @@ export default Ember.Component.extend({
     var _this = this;
     var handler = function() {
       var e = _this.get('element');
-      var fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement
+      var fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
       _this.set('fullscreen', e == fs);
     };
     this.set('handler', handler);

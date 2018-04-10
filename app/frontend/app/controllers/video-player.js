@@ -10,7 +10,7 @@ export default modal.ModalController.extend({
     var youtube_match = url && url.match(youtube_regex);
     var youtube_id = youtube_match && youtube_match[1];
     if(youtube_id) {
-      url = "https://www.youtube.com/embed/" + youtube_id + "?rel=0&autoplay=1&controls=1"
+      url = "https://www.youtube.com/embed/" + youtube_id + "?rel=0&autoplay=1&controls=1";
     }
     return url;
   }.property('model.video.id', 'model.video.url')

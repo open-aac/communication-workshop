@@ -41,11 +41,11 @@ export default Ember.Controller.extend({
     }
   }.property('editing'),
   button_style: function() {
-    var res = "width: 100%;"
+    var res = "width: 100%;";
     if(this.get('editing')) {
-      res = res + " height: 68px;"
+      res = res + " height: 68px;";
     } else {
-      res = res + " height: 200px;"
+      res = res + " height: 200px;";
     }
     return Ember.String.htmlSafe(res);
   }.property('editing'),

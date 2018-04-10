@@ -54,7 +54,7 @@ export default Ember.Controller.extend({
         var map = {};
         (_this.get('model.pending_word_map') || []).forEach(function(button) {
           button.locale = button.locale || 'en';
-          map[button.locale] = map[button.locale] || {}
+          map[button.locale] = map[button.locale] || {};
           map[button.locale][button.label] = button;
         });
         _this.set('model.word_map', {en: map});

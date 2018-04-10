@@ -18,7 +18,7 @@ module PacketMaker
       opts_string = keys.map{|k| "#{k.to_s}-#{opts[k].to_s}" }.join(':')
       buttons = words.map{|w| self.word_buttons(w, users).sort_by{|b| b['code'] || 'default' } }.flatten
       words_string = words.map{|w| "#{w.word}_#{w.locale}" }.sort.join('/')
-      hash = Digest::MD5.hexdigest("wordpack::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:created_at).join(','))
+      hash = Digest::MD5.hexdigest("wordpack::" + opts_string + "::" + buttons.to_json + "::" + words.map(&:updated_at).join(','))
       remote_path = "packets/learn-aac/#{words_string}/#{hash}/v#{RENDER_VERSION}/packet.pdf"
     elsif opts[:book_id]
       book = Book.find_by_path(opts[:book_id])
@@ -343,17 +343,21 @@ module PacketMaker
         end
         colors = colors.sort_by(&:first).reverse.map(&:last).map do |hex|
           parts = hex.scan(/\w\w/)[0, 3].map{|h| h.hex }
+
+          if ((parts[0] + parts[1] + parts[2]) / 3) < 60
+            parts[0] *= 2
+            parts[1] *= 2
+            parts[2] *= 2
+          elsif ((parts[0] + parts[1] + parts[2]) / 3) > 'aa'.hex
+            parts[0] /= 2
+            parts[1] /= 2
+            parts[2] /= 2
+          end
+
           if parts[0] == parts[1] && parts[1] == parts[2]
-            nil
-          elsif ((parts[0] + parts[1] + parts[2]) / 3) < 60
-            nil
+            next nil
           else
-            if ((parts[0] + parts[1] + parts[2]) / 3) > 'aa'.hex
-              parts[0] /= 2
-              parts[1] /= 2
-              parts[2] /= 2
-            end
-            hex = parts.map{|n| n.to_s(16).rjust(2, '0') }.join
+            next parts.map{|n| n.to_s(16).rjust(2, '0') }.join
           end
         end
         # sort by count, use the first non-gray color
@@ -517,6 +521,15 @@ module PacketMaker
     end
   end
   
+  def self.vertical_divider(pdf, solid=false)
+    pdf.dash(1.5) unless solid
+    pdf.line_width 0.5
+    pdf.stroke_color 'aaaaaa'
+    pdf.line [@doc_width / 2, 0], [@doc_width / 2, @doc_height]
+    pdf.stroke
+    pdf.undash
+  end
+  
   def self.add_books(books, mini, pdf)
     # lookup book by json URL
     books.each do |book|
@@ -533,6 +546,7 @@ module PacketMaker
       if json
         attributions = []
         new_page(pdf, false, true)
+        vertical_divider(pdf, true)
         # title, author, image with border
         image_url = json['image_url'] || json['pages'][0]['image_url']
         page_pad = 10
@@ -541,7 +555,7 @@ module PacketMaker
         second_left = (@doc_width / 2) + (page_pad * 3)
         pdf.font_size 15
         pdf.fill_color '888888'
-        instr = ["#{json['title']}\nAssembly Instructions:"]
+        instr = ["#{json['title']}\nBACK COVER\n\nAssembly Instructions:"]
         instr << "This book prints two pages per sheet. This sheet is the cover and can be folded in half with the pictures and text on the outside and added at the end. These instructions should end up on the back of the book."
         instr << "For the rest of the pages, fold them in half with pictures and text on the inside. Stack the folded pages on top of each other in the order they were printed. You can glue or tape the blank sides together or leave them as-is and just flip twice for each page turn."
         instr << "Finally, after adding the cover, staple or bind the pages together to complete the book."
@@ -572,6 +586,7 @@ module PacketMaker
           # draw page
           # if image is not defined, use the full space for text
           new_page(pdf, false, true) if column == 0
+          vertical_divider(pdf)
           left = column == 0 ? first_left : second_left
           top = @doc_height - page_pad
           text_align = :left
@@ -619,6 +634,7 @@ module PacketMaker
         end
         # attributions on the right side
         new_page(pdf, false, true) unless column == 1
+        vertical_divider(pdf)
         authors = attributions.uniq.map do |attr|
           "#{attr['type']} by #{attr['author']}\n#{Prawn::Text::NBSP*5}#{attr['url']}"
         end
