@@ -219,50 +219,75 @@ class User < ApplicationRecord
   end
   
   def related_words(include_linked_users=true)
-    current = self.current_words
+    self.class.recommended_words(self, include_linked_users)
+
+  end
+  
+  def self.recommended_words(user=nil, include_linked_users=true)
+    extra_weights = {}
+    WordData::EN_ORDERED_WORDS.each_with_index{|wrd, idx| extra_weights[wrd] = (WordData::EN_ORDERED_WORDS.length - idx).to_f / (WordData::EN_ORDERED_WORDS.length) * 5.0 }
     current_hash = {}
-    available_hash = {}
-    (self.settings['words'] || []).each{|w| available_hash[w] = true }
-    current.each{|w| current_hash[w['word']] = true }
-    past = self.past_words
-    link_weights = {}
-    valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
-    valid.each do |word|
-      word.linked_words.each do |link, tally|
-        link_weights[word.locale] ||= {}
-        link_weights[word.locale][link] ||= 0
-        link_weights[word.locale][link] += tally
-        link_weights[word.locale][link] += tally if current_hash[link]
-      end
-    end
-    
     res = []
-    link_weights.each do |locale, weights|
-      matches = WordData.where(:has_content => true, :locale => locale, :word => weights.to_a.map(&:first))
-      map = {}
-      matches.each{|w| map[w.word] = w }
-      weights.to_a.each do |str, weight|
-        res << [map[str], weight] if map[str] && !current_hash[str]
+    available_hash = {}
+
+    if user
+      current = user.current_words
+      (user.settings['words'] || []).each{|w| available_hash[w] = true }
+      current.each{|w| current_hash[w['word']] = true }
+      past = user.past_words
+      link_weights = {}
+      valid = WordData.find_all_by_global_id(current.map{|w| w['internal_id'] } + past.map{|w| w['internal_id'] })
+      valid.each do |word|
+        word.linked_words.each do |link, tally|
+          link_weights[word.locale] ||= {}
+          link_weights[word.locale][link] ||= 0
+          link_weights[word.locale][link] += tally
+          link_weights[word.locale][link] += tally if current_hash[link]
+        end
+      end
+    
+      link_weights.each do |locale, weights|
+        matches = WordData.where(:has_content => true, :locale => locale, :word => weights.to_a.map(&:first))
+        map = {}
+        matches.each{|w| map[w.word] = w }
+        weights.to_a.each do |str, weight|
+          res << [map[str], weight] if map[str] && !current_hash[str]
+        end
       end
     end
-    res = res.sort_by{|word, weight| [-1 * weight, word.word] }.map(&:first)
 
     if res.length < 25
       ptr = WordData.count
-      WordData.where(:has_content => true, :word => self.settings['words']).order('word').each do |word|
-        if res.length < 25
-          res << word unless res.include?(word) || current_hash[word.word]
+      # fall back to whatever words are in their word settings
+      if user
+        WordData.where(:has_content => true, :word => user.settings['words']).order('word').each do |word|
+          res << [word, 1.0] unless current_hash[word.word]
         end
       end
-      WordData.where(:has_content => true).order('random_id').limit(50).offset(rand(ptr / 4)).each do |word|
-        if res.length < 25
-          res << word unless res.include?(word) || current_hash[word.word]
+      if res.length < 25
+        WordData.where(:has_content => true, :word => WordData::EN_ORDERED_WORDS).each do |word|
+          res << [word, 1.0] unless current_hash[word.word]
+        end
+      end
+      # fall back even more to any words at all
+      if res.length < 25
+        WordData.where(:has_content => true).order('random_id').limit(50).offset(rand(ptr / 4)).each do |word|
+          if res.length < 25
+            res << [word, 1.0] unless current_hash[word.word]
+          end
         end
       end
     end
+    res.each do |arr|
+      if extra_weights[arr[0].word]
+        arr[1] += extra_weights[arr[0].word] 
+      end
+    end
+    res = res.sort_by{|word, weight| [-1 * weight, word.word] }.map(&:first).uniq
+
     list = []
     res.each_with_index{|w, idx| list << [w, idx] }
-    res = list.sort_by{|w, idx| [available_hash[w.word] ? 0 : 1, idx] }.map(&:first)
+    res = list.sort_by{|w, idx| [user && available_hash[w.word] ? 0 : 1, idx] }.map(&:first)
     res
   end
 

@@ -6,8 +6,12 @@ class Api::WordsController < ApplicationController
     words = WordData.where(:has_content => true, :locale => (params['locale'] || 'en'))
     if params['q']
       words = words.where(:word => params['q'].downcase)
-    elsif params['sort'] == 'recommended' && @api_user
-      words = @api_user.related_words
+    elsif params['sort'] == 'recommended' 
+      if @api_user
+        words = @api_user.related_words
+      else
+        words = User.recommended_words
+      end
     elsif params['sort'] == 'alpha'
       words = words.order('word')
     else

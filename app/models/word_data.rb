@@ -314,4 +314,7 @@ class WordData < ApplicationRecord
       end
     end
   end
+  
+  # based on survey results, https://docs.google.com/spreadsheets/d/1VU_PXdl4zmEAmgFKp5O5GdlA0c8NOekoCCogOtO42W4/edit#gid=962667888
+  EN_ORDERED_WORDS = ["go", "want", "more", "stop", "like", "help", "turn", "i", "play", "you", "not", "eat", "in", "look", "do", "no", "get", "that", "it", "put", "open", "on", "yes", "all done", "out", "finished", "drink", "different", "what", "off", "make", "up", "me", "done", "hi", "have", "who", "where", "read", "mine", "down", "all", "need", "feel", "don’t", "bye", "big", "this", "slow", "see", "same", "my", "happy", "fast", "eat drink", "come", "close", "all-done", "again", "wait", "they", "little", "listen", "your", "went", "watch", "walk", "tell", "show", "she", "question", "outt", "move", "mad", "he", "good", "give", "finish", "don’t like", "can", "bring", "break", "work", "some", "here"]
 end
