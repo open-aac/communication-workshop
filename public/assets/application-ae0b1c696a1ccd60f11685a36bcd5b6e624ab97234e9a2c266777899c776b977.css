@@ -13,41 +13,103 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
 
 /* line 5, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 #header {
-  position: absolute;
+  position: fixed;
   top: 0;
   width: 100%;
-  height: 40px;
+  height: 50px;
   background: #444;
   color: #fff;
-  padding: 5px;
+  padding: 0;
+  z-index: 2;
+  box-shadow: 0 2px 10px #000;
 }
-/* line 13, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 15, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#header form.navbar-form {
+  padding-top: 2px;
+}
+/* line 18, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#header nav {
+  border: 0;
+  background: #444;
+  padding: 0;
+}
+/* line 23, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 #header #title a {
   color: #fff;
+  font-weight: bold;
 }
-/* line 16, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 27, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 #header a {
   color: #d9edf7;
 }
+/* line 30, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#header .results {
+  position: absolute;
+  bottom: -45px;
+  left: 10px;
+  width: 160px;
+  height: 35px;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #000;
+  text-align: center;
+  color: #888;
+  border-radius: 3px;
+  z-index: 3;
+}
 
-/* line 21, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
-.container {
-  margin-top: 40px;
+/* line 46, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 50px;
+  bottom: 0;
+  background: #eee;
+  padding: 20px 0;
+  box-shadow: 2px 0 10px #000;
+}
+/* line 54, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#sidebar li {
+  margin-top: 0;
+}
+/* line 57, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#sidebar li > a {
+  border-radius: 0;
+  font-size: 16px;
+  border-top: 1px solid #ddd;
+}
+/* line 61, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#sidebar li > a.active {
+  background: #337ab7;
+  color: #fff;
+}
+/* line 66, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#sidebar li:first-child > a {
+  border-top: 0;
+}
+/* line 69, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+#sidebar li:last-child > a {
+  /* border-bottom: 1px solid #ddd; */
+}
+
+/* line 74, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+.main-container {
+  margin-top: 55px;
   min-height: calc(100vh - 120px);
 }
 
-/* line 26, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 79, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .fit_image {
   object-fit: contain;
   object-position: center;
 }
 
-/* line 31, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 84, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .pad_color_box {
   padding-left: 40px;
 }
 
-/* line 35, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 88, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .color_box {
   display: inline-block;
   border: 1px solid #000;
@@ -59,21 +121,21 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   margin-right: 5px;
 }
 
-/* line 46, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 99, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .modal-footer {
   text-align: left;
 }
 
-/* line 50, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 103, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .modal-header {
   padding: 0 20px;
 }
-/* line 52, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 105, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .modal-header .close {
   font-size: 50px;
 }
 
-/* line 57, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 110, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .image_result {
   border: 1px solid #ccc;
   display: inline-block;
@@ -82,48 +144,48 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   padding: 2px;
   margin: 3px;
 }
-/* line 58, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 111, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .image_result img {
   width: 100%;
 }
 
-/* line 69, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 122, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .nav-pills.all_border li a {
   border: 1px solid #337ab7;
   margin-right: 2px;
 }
 
-/* line 75, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 128, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .categories .label {
   font-weight: normal;
   font-size: 16px;
   padding: 10px 15px;
   margin-right: 3px;
 }
-/* line 81, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 134, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .categories .comma {
   display: none;
 }
 
-/* line 85, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 138, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .revision {
   background: #f7e667;
   border-radius: 5px;
   min-height: 45px;
   margin-bottom: 3px;
 }
-/* line 90, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 143, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .revision .accept_revision {
   position: absolute;
   top: 5px;
   right: 5px;
 }
 
-/* line 96, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 149, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .list-group.pills {
   margin-top: 20px;
 }
-/* line 98, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 151, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .list-group.pills .list-group-item {
   margin-bottom: 15px;
   border-radius: 20px;
@@ -132,19 +194,19 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   text-align: center;
   font-size: 20px;
 }
-/* line 105, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 158, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .list-group.pills .list-group-item:hover {
   background: #337ab7;
   border-color: #225895;
   color: #fff;
 }
 
-/* line 112, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 165, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .categories {
   margin: 20px 0 40px;
   display: block;
 }
-/* line 115, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 168, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .categories .pill {
   margin: 10px 2px 10px 0;
   border-radius: 20px;
@@ -154,7 +216,7 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   font-size: 20px;
   padding: 10px 20px;
 }
-/* line 124, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 177, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .categories .pill:hover {
   background: #337ab7;
   border-color: #225895;
@@ -162,25 +224,25 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   text-decoration: none;
 }
 
-/* line 133, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 186, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box .left, .box .right {
   float: left;
   width: 60px;
 }
-/* line 136, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 189, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box .middle {
   float: left;
   width: calc(100% - 130px);
   margin: 0 5px;
   height: 100%;
 }
-/* line 142, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 195, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box .entry {
   border: 1px solid #ccc;
   padding: 5px;
   height: 100%;
 }
-/* line 147, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 200, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box .blank_entry {
   width: 100%;
   height: 80px;
@@ -188,76 +250,76 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   text-align: center;
   padding-top: 2px;
 }
-/* line 154, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 207, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box .entry_description {
   font-size: 12px;
   color: #888;
 }
-/* line 158, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 211, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.fullscreen {
   width: 100vw;
   height: 100vh;
   padding: 10px;
 }
-/* line 162, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 215, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.fullscreen .left, .box.fullscreen .right {
   width: 120px;
   font-size: 20px;
 }
-/* line 165, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 218, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.fullscreen .left button.btn, .box.fullscreen .right button.btn {
   font-size: 25px;
   height: 70px;
 }
-/* line 170, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 223, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.fullscreen .middle {
   width: calc(100% - 250px);
   font-size: 40px;
 }
 
-/* line 176, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 229, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.image {
   position: relative;
   padding-right: 40px;
   display: inline-block;
 }
-/* line 180, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 233, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.image button {
   top: 0px;
   right: 0px;
   position: absolute;
 }
-/* line 185, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 238, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.image.fullscreen {
   padding-right: 90px;
   overflow: hidden;
 }
-/* line 188, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 241, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.image.fullscreen .sub {
   margin-top: 10vh;
   margin-left: 10vw;
   text-align: center;
 }
-/* line 193, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 246, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .box.image.fullscreen button {
   font-size: 50px;
   top: 10px;
   right: 10px;
 }
 
-/* line 201, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 254, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .rule_code {
   font-family: Courier;
 }
 
-/* line 205, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 258, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .face_button {
   font-size: 12px;
   line-height: 12px;
   width: 100%;
   white-space: normal;
 }
-/* line 210, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 263, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .face_button .face {
   display: block;
   margin: 0 auto 5px;
@@ -266,26 +328,42 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   background-image: url(/images/faces.png);
   background-size: auto 30px;
 }
-/* line 217, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 270, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .face_button .face.happy {
   background-position-x: -30px;
 }
-/* line 220, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 273, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .face_button .face.neutral {
   background-position-x: -59px;
 }
-/* line 223, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 276, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .face_button .face.sad {
   background-position-x: -89px;
 }
 
-/* line 229, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 282, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .dim_until_hover .glyphicon {
   opacity: 0.7;
 }
-/* line 232, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+/* line 285, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
 .dim_until_hover:hover .glyphicon {
   opacity: 1.0;
+}
+
+@media (max-width: 767px) {
+  /* line 292, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+  #header form.navbar-form {
+    padding-top: 15px;
+  }
+  /* line 294, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+  #header form.navbar-form .form-group {
+    display: inline-block;
+    width: 300px;
+  }
+  /* line 299, /Users/whitmer/Workspace/learn_aac/app/assets/stylesheets/learn_aac.scss */
+  #header .results {
+    position: initial;
+  }
 }
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
