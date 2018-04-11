@@ -131,7 +131,7 @@ class Book < ApplicationRecord
         'image2_attribution_type' => (page['image2'] || {})['license'],
         'image2_attribution_url' => (page['image2'] || {})['license_url'],
         'image2_attribution_author' => (page['image2'] || {})['author'],
-        'related_words' => page['related_words'].split(/,|\n/).map(&:strip)
+        'related_words' => (page['related_words'] || '').split(/,|\n/).map(&:strip)
       }
     end
     res.to_json

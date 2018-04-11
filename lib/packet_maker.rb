@@ -522,7 +522,7 @@ module PacketMaker
   end
   
   def self.vertical_divider(pdf, solid=false)
-    pdf.dash(1.5) unless solid
+    pdf.dash(2, :space => 4) unless solid
     pdf.line_width 0.5
     pdf.stroke_color 'aaaaaa'
     pdf.line [@doc_width / 2, 0], [@doc_width / 2, @doc_height]
@@ -635,9 +635,6 @@ module PacketMaker
         # attributions on the right side
         new_page(pdf, false, true) unless column == 1
         vertical_divider(pdf)
-        authors = attributions.uniq.map do |attr|
-          "#{attr['type']} by #{attr['author']}\n#{Prawn::Text::NBSP*5}#{attr['url']}"
-        end
         pdf.font_size 20
         pdf.fill_color '888888'
         draw_text pdf, "Attributions:", :left => (@doc_width / 2) + page_pad, :top => @doc_height - page_pad, :width => (@doc_width / 2) - (page_pad * 2), :height => 20, :valign => :top, :align => :left
@@ -645,11 +642,11 @@ module PacketMaker
         authors << "Text by #{json['author']}\n#{Prawn::Text::NBSP*5}#{json['book_url']}" if json['book_url']
         authors << "General Image Attribution\n#{Prawn::Text::NBSP*5}#{json['attribution_url']}" if json['attribution_url']
         authors += attributions.map do |img|
-          "#{img['license']} by #{img['author']}\n#{Prawn::Text::NBSP*5}#{img['author_url']}"
+          "#{img['type']} by #{img['author']}\n#{Prawn::Text::NBSP*5}#{img['url']}"
         end
         authors << "\nprinted #{Date.today.to_s}"
-        pdf.font_size 14
-        draw_text pdf, authors.join("\n"), :left => (@doc_width / 2) + page_pad, :top => @doc_height - page_pad - 20, :width => (@doc_width / 2) - (page_pad * 2), :height => @doc_height, :valign => :top, :align => :left
+        pdf.font_size 12
+        draw_text pdf, authors.join("\n"), :left => (@doc_width / 2) + page_pad, :top => @doc_height - page_pad - 30, :width => (@doc_width / 2) - (page_pad * 2), :height => @doc_height - page_pad - 30, :valign => :top, :align => :left
 
       end
     end
