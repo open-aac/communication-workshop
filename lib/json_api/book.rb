@@ -17,7 +17,7 @@ module JsonApi::Book
       json['total_pages'] = book.data['pages'].length
     end
     
-    if args[:permissions] && book.data
+    if args.has_key?(:permissions) && book.data
       json['permissions'] = book.permissions_for(args[:permissions])
       # other data to include
       Book::STRING_PARAMS.each do |param|

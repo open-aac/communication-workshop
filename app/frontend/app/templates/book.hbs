@@ -134,3 +134,47 @@
     {{/if}}
   </div>
 </div>
+{{#unless editing}}
+  <div style='margin-top: 30px;'>
+    <h2>{{t "Attributions" key='attributions'}}</h2>
+    <ul class='list-unstyled'>
+      <li>
+        {{t "Text written by" key='text_written_by'}}
+        {{model.author}}
+      </li>
+      {{#each model.pages as |page|}}
+        {{#if page.image}}
+          <li>
+            {{#if page.image.thumbnail_url}}
+              <img src={{page.image.thumbnail_url}} style='height: 30px;' />
+            {{else}}
+              {{t "image" key='image'}}
+            {{/if}}
+            {{page.image.license}} {{t "by" key='by'}}
+            {{#if page.image.author_url}}
+              <a href={{page.image.author_url}} target='_blank'>{{page.image.author}}</a>
+            {{else}}
+              {{page.image.author}}
+            {{/if}}
+          </li>
+        {{/if}}
+        {{#if page.image2}}
+          <li>
+            {{#if page.image2.thumbnail_url}}
+              <img src={{page.image2.thumbnail_url}} style='height: 30px;' />
+            {{else}}
+              {{t "image" key='image'}}
+            {{/if}}
+            {{page.image2.license}} {{t "by" key='by'}}
+            {{#if page.image2.author_url}}
+              <a href={{page.image2.author_url}} target='_blank'>{{page.image2.author}}</a>
+            {{else}}
+              {{page.image2.author}}
+            {{/if}}
+          </li>
+        {{/if}}
+
+      {{/each}}
+    </ul>
+  </div>
+{{/unless}}
