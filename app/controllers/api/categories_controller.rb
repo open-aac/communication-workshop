@@ -8,7 +8,8 @@ class Api::CategoriesController < ApplicationController
     elsif params['sort'] == 'alpha'
       categories = categories.order('category')
     else
-      categories = categories.order('random_id').limit(50).to_a.sort_by{|w| rand }
+      cutoff = rand(9999999999)
+      categories = categories.order("CASE WHEN random_id > #{cutoff} THEN random_id ELSE random_id + 9999999999 END").limit(50).to_a.sort_by{|w| rand }
     end
     render json: JsonApi::Category.paginate(params, categories)
   end

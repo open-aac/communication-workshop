@@ -145,8 +145,8 @@
       {{#each model.pages as |page|}}
         {{#if page.image}}
           <li>
-            {{#if page.image.thumbnail_url}}
-              <img src={{page.image.thumbnail_url}} style='height: 30px;' />
+            {{#if page.image.image_url}}
+              <img src={{page.image.image_url}} style='height: 30px;' />
             {{else}}
               {{t "image" key='image'}}
             {{/if}}
@@ -160,8 +160,8 @@
         {{/if}}
         {{#if page.image2}}
           <li>
-            {{#if page.image2.thumbnail_url}}
-              <img src={{page.image2.thumbnail_url}} style='height: 30px;' />
+            {{#if page.image2.image_url}}
+              <img src={{page.image2.image_url}} style='height: 30px;' />
             {{else}}
               {{t "image" key='image'}}
             {{/if}}

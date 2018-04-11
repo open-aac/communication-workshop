@@ -1,44 +1,76 @@
 <header id='header'>
-  <span style='padding-right: 20px; font-weight: bold; padding-left: 10px; font-size: 20px;' id='title'>
-    {{#link-to 'index'}}
-      <span class='glyphicon glyphicon-comment' style='font-size: 25px; vertical-align: bottom;'></span>
-      {{t "Communication Workshop" key='aac_workshop'}}
-    {{/link-to}}
-  </span>
-  <div style='float: right; padding: 5px;'>
-    {{#if session.isAuthenticated}}
-      {{#link-to 'user' session.user_name}}
-        {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}
-      {{/link-to}}
-      &nbsp;&nbsp;
-      <a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a>
-    {{else}}
-      {{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}} |
-      {{#link-to 'register'}}{{t "Sign Up" key='sign_up'}}{{/link-to}}
-    {{/if}}
-  </div>
-  <form style='display: inline; position: relative; float: right; margin-right: 30px;' {{action 'search' on='submit'}}>
-    <span style='display: inline-block; width: 150px;'>
-      {{input type='text' class='form-control input-sm' value=search_string placeholder='find a core word'}}
-    </span>
-    <button type='submit' class='btn btn-default btn-sm' style='margin-top: -1px;'>{{t "Go" key='go'}}</button>
-    {{#if search_status}}
-      <div style='position: absolute; bottom: -45px; left: 10px; width: 160px; height: 35px; padding: 5px; background: #fff; border: 1px solid #000; text-align: center; color: #888; border-radius: 3px;'>
-        {{#if search_status.none}}
-          {{t "no match found" key='no_match_found'}}
-        {{else}}
-          {{t "error performing search" key='error_retrieving_results'}}
-        {{/if}}
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span id='title' style='display: inline-block; margin-top: -5px;'>
+          {{#link-to 'index' class='navbar-brand'}}
+            <span class='glyphicon glyphicon-comment' style='font-size: 30px; vertical-align: middle;'></span>
+            {{t "Communication Workshop" key='aac_workshop'}}
+          {{/link-to}}
+        </span>
       </div>
-    {{/if}}
-  </form>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          {{#if session.isAuthenticated}}
+            <li>{{#link-to 'user' session.user_name}}
+              {{#if session.name}}{{session.name}}{{else}}{{session.user_name}}{{/if}}
+            {{/link-to}}</li>
+          {{else}}
+            <li>{{#link-to 'login'}}{{t "Log In" key='log_in'}}{{/link-to}}</li>
+            <li>{{#link-to 'register'}}{{t "Sign Up" key='sign_up'}}{{/link-to}}</li>
+          {{/if}}
+          <li class='visible-xs'>{{#link-to 'index'}}{{t "Dashboard" key='dashboard'}}{{/link-to}}</li>
+          <li class='visible-xs'>{{#link-to 'books'}}{{t "Books" key='books'}}{{/link-to}}</li>
+          {{#if session.isAuthenticated}}
+            <li><a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a></li>
+          {{/if}}
+        </ul>
+        <form class="navbar-form navbar-right" {{action 'search' on='submit'}} style='position: relative;'>
+          <div class="form-group">
+            {{input type='text' class='form-control input-sm' value=search_string placeholder='find a core word'}}
+          </div>
+          <button type="submit" class="btn btn-default btn-sm">{{t "Go" key='go'}}</button>
+          {{#if search_status}}
+            <span class='results'>
+              {{#if search_status.none}}
+                {{t "no match found" key='no_match_found'}}
+              {{else}}
+                {{t "error performing search" key='error_retrieving_results'}}
+              {{/if}}
+            </span>
+          {{/if}}
+        </form>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
 </header>
-<div class='container'>
-{{outlet}}
+<div class='container-fluid main-container'>
+  <div class='row'>
+    <div class='col-sm-3 col-md-2 hidden-xs' id='sidebar'>
+      <ul class='nav nav-pills nav-stacked'>
+        <li>{{#link-to 'index'}}{{t "Dashboard" key='dashboard'}}{{/link-to}}</li>
+        <li>{{#link-to 'books'}}{{t "Books" key='books'}}{{/link-to}}</li>
+        <li>{{#link-to 'words' 'en'}}{{t "Words" key='words'}}{{/link-to}}</li>
+      </ul>
+      <div style='position: absolute; bottom: 5px; left: 0; width: 100%; padding: 5px; color: #999; font-size: 12px;' class='text-muted'>{{t "The Communication Workshop is open-licensed and material is free to be reused or re-shared with attribution." key='open_licensed_content'}}</div>
+
+    </div>
+    <div class='col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-3'>
+      {{outlet}}
+    </div>
+  </div>
 </div>
 {{outlet 'modal'}}
-<footer style='margin: 50px 50px 10px; color: #888; text-align: right;'>
-  <div style='float: left;'>{{t "The Communication Workshop is open-licensed and material is free to be reused or re-shared with attribution" key='open_licensed_content'}}</div>
+<footer class='col-sm-offset-3' style='margin: 50px 50px 10px; color: #888; text-align: right;'>
   <span style='margin-right: 10px;'>powered by <a href='https://www.openaac.org' target='_blank'>OpenAAC</a></span>
   <a href="/terms">Terms</a> |
   <a href="/privacy">Privacy</a>
