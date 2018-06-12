@@ -55,6 +55,7 @@ Rails.application.routes.draw do
   book_id_regex = /\d+-[\w-]+/
 
   scope 'api/v1', module: 'api' do
+    post '/external' => 'users#external_activities'
     get '/images/pixabay/:id' => 'search#pixabay_redirect'
     get '/words/suggestions' => 'words#suggestions'
     get '/words/:id/defaults' => 'words#defaults'

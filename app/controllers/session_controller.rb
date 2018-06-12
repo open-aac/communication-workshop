@@ -71,6 +71,7 @@ class SessionController < ApplicationController
         
         local_user = User.assert_user!({
           remote_user_name: token['user_name'],
+          remote_anonymized_user_id: token['anonymized_user_id'],
           remote_name: user['name'],
           email: user['email'],
           access_token: token['access_token'],

@@ -10,6 +10,7 @@ class User < ApplicationRecord
 
   secure_serialize :settings
   before_save :generate_defaults
+  after_destroy :destroy_data
   
   def generate_defaults
     self.settings ||= {}
@@ -22,6 +23,10 @@ class User < ApplicationRecord
     !!self.settings['admin']
   end
   
+  def destroy_data
+    UserData.where(user_id: self.id).destroy_all
+  end
+
   def generate_password(str)
     self.settings ||= {}
     self.settings['password'] = GoSecure.generate_password(str)
@@ -155,6 +160,10 @@ class User < ApplicationRecord
     # TODO: some way to link users to words/activities so that it's easier to count
     # the stars for each activity
     {:success => true, :starred => action == :star}
+  end
+
+  def skip_activity(word, activity)
+    WordLink.find_or_create_by(:word_id => word.id, :link_id => self.id, :link_type => 'User', :link_purpose => 'skip')
   end
 
   def current_words(include_linked_users=true)
@@ -387,14 +396,17 @@ class User < ApplicationRecord
     if match
       if details['remove']
         data.data['activities'] -= [match]
+        WordLink.where(:word_id => word.id, :link_id => self.id, :link_type => 'User', :link_purpose => 'completion').destroy_all
       else
         match.merge!(res)
         res.merge!(match)
         res['updated'] = true
+        WordLink.find_or_create_by(:word_id => word.id, :link_id => self.id, :link_type => 'User', :link_purpose => 'completion')
       end
     else
       data.data['activities'] << res
     end
+    # TODO: connect the word and the user via WordLink as a usage link
     data.save
     res
   end
@@ -467,6 +479,11 @@ class User < ApplicationRecord
     ua = UserAlias.find_or_create_by(:identifier => opts[:remote_user_name], :source => opts[:source])
     ua.settings[:access_token] = opts[:access_token]
     ua.settings[:metadata] = opts[:metadata]
+    anon = nil
+    if opts[:remote_anonymized_user_id]
+     anon = UserAlias.find_or_create_by(:identifier => opts[:remote_anonymized_user_id], :source => "#{opts[:source]}-anon")
+     opts[:current_user] ||= anon.user
+    end
     user = ua.user
     if !ua.user
       if opts[:current_user]
@@ -475,10 +492,12 @@ class User < ApplicationRecord
         user.settings['name'] ||= opts[:remote_name]
         user.settings['external_tracking'] = true
         user.settings['external_account'] = opts[:source]
+        user.settings['remote_anonymized_user_id'] = opts[:remote_anonymized_user_id]
       else
         user = User.new
         user.settings = {
           user_name: "#{opts[:source]}::#{opts[:remote_user_name]}",
+          remote_anonymized_user_id: opts[:remote_anonymized_user_id],
           email: opts[:email],
           name: opts[:remote_name],
           external_tracking: true,
@@ -489,7 +508,67 @@ class User < ApplicationRecord
     end
     ua.user = user
     ua.save
+    if opts[:remote_anonymized_user_id]
+      if anon.user && anon.user != user && anon.user.placeholder?
+        user.settings['starred_activity_ids'] ||= []
+        user.settings['starred_activity_ids'] = ((user.settings['starred_activity_ids'] || []) + (anon.user.settings['starred_activity_ids'] || [])).uniq 
+        anon_data = UserData.find_by(:user_id => anon.user.id)
+        if anon_data
+          user_data = UserData.find_or_create_by(:user_id => user.id)
+          user_data.data['activities'] || =[]
+          user_data.data['activities'] += anon_data.data['activities']
+          user_data.data['actviities'].sort_by!{|a| a['tracked'] || '' }
+        end
+        anon.user
+        anon.user.destroy
+
+        # TODO: transfer extra info from the old user to the new user
+        # and delete the old user if it was a placeholder user
+      end
+      anon.user = user
+      anon.save
+    end
     user
+  end
+
+  def placeholder?
+    !self.settings['user_name']
+  end
+
+  def self.process_external_activities(anonymized_user_id, source, updates)
+    ua = UserAlias.find_or_create_by(identifier: anonymized_user_id, source: source)
+    user = ua && ua.user
+    return false unless user && updates && updates.length > 0
+    updates.each do |update|
+      word = WordData.find_by(word: update['word'], locale: update['locale'])
+      activity = word.find_activity(update['activity_id'])
+
+      if word && activity
+        # If no user defined, make a placeholder one with no private info
+        if !user
+          user = User.new
+          user.settings = {
+            remote_anonymized_user_id: opts[:remote_anonymized_user_id],
+            external_tracking: true,
+            external_account: opts[:source]
+          }
+          user.save
+          ua.user = user
+          ua.save
+        end
+
+        if update['activity'] == 'dismiss'
+          user.skip_activity(word, activity)
+        elsif update['activity'] == 'attempt'
+          user.star_activity(word, activity, :star)
+        elsif update['activity'] == 'complete'
+          user.track_activity(word, activity, {
+            'success_level' => update['score']
+          })
+        end
+      end
+    end
+    true
   end
   
   def usage_stats

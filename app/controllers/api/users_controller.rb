@@ -39,6 +39,19 @@ class Api::UsersController < ApplicationController
       render json: JsonApi::User.as_json(user, wrapper: true, permissions: @api_user)
     end
   end
+
+  def external_activities
+    user_id = params['user_id']
+    updates = params['updates']
+    if !ENV['COUGHDROP_CLIENT_ID'] || !ENV['COUGHDROP_CLIENT_SECRET']
+      api_error(400, {error: 'coughdrop integration not defined'})
+    elsif ENV['COUGHDROP_CLIENT_ID'] == params['integration_id'] && ENV['COUGHDROP_CLIENT_SECRET'] == params['integration_secret']
+      User.schedule(:process_external_activities, params['user_id'], 'coughdrop-anon', params['updates'])
+      render json: {accepted: true}
+    else
+      api_error(400, {error: 'invalid credentials'})
+    end
+  end
   
   def create
     user = User.process_new(params['user'])
