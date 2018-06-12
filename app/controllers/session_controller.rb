@@ -44,11 +44,11 @@ class SessionController < ApplicationController
       redirect_to '/'
     end
   end
-  
+
   def coughdrop_auth
     if params['id'] == 'check'
       if ENV['COUGHDROP_HOST'] && ENV['COUGHDROP_CLIENT_ID']
-        redirect_to "#{ENV['COUGHDROP_HOST']}/oauth2/token?client_id=#{ENV['COUGHDROP_CLIENT_ID']}&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+        redirect_to "#{ENV['COUGHDROP_HOST']}/oauth2/token?client_id=#{ENV['COUGHDROP_CLIENT_ID']}&scope=read_profile:basic_supervision&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
       else
         render text: "CoughDrop not configured"
       end
