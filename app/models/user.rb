@@ -515,7 +515,7 @@ class User < ApplicationRecord
         anon_data = UserData.find_by(:user_id => anon.user.id)
         if anon_data
           user_data = UserData.find_or_create_by(:user_id => user.id)
-          user_data.data['activities'] || =[]
+          user_data.data['activities'] ||= []
           user_data.data['activities'] += anon_data.data['activities']
           user_data.data['actviities'].sort_by!{|a| a['tracked'] || '' }
         end
