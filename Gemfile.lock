@@ -81,7 +81,8 @@ GEM
     formatador (0.2.5)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
-    go_secure (0.1)
+    go_secure (0.65)
+      oj
     guard (2.14.1)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -152,6 +153,7 @@ GEM
       prawn
       rubyzip
       typhoeus
+    oj (3.6.0)
     pdf-core (0.7.0)
     permissable-coughdrop (0.3.2)
     pg (0.21.0)
