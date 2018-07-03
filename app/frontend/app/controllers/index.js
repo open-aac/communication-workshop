@@ -31,6 +31,16 @@ export default Ember.Controller.extend({
       _this.set('events', {error: true});
     });
   },
+  load_missing_words: function() {
+    var _this = this;
+    if(_this.get('missing_words.length') && force === false) { return; }
+    _this.set('missing_words', {loading: true});
+    _this.store.query('word', {sort: 'missing'}).then(function(res) {
+      _this.set('missing_words', res.slice(0, 5));
+    }, function() {
+      _this.set('missing_words', {error: true});
+    })
+  },
   actions: {
     suggestions: function(type) {
       var _this = this;

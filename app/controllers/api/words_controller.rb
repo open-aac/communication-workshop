@@ -14,6 +14,8 @@ class Api::WordsController < ApplicationController
       end
     elsif params['sort'] == 'alpha'
       words = words.order('word')
+    elsif params['sort'] == 'missing'
+      words = words.where(has_baseline_content: false).order('random_id').limit(100).to_a.sort_by{|w| rand }
     else
       cutoff = rand(9999999999)
       words = words.order("CASE WHEN random_id > #{cutoff} THEN random_id ELSE random_id + 9999999999 END").limit(50).to_a.sort_by{|w| rand }

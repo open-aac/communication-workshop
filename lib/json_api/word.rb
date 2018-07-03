@@ -10,6 +10,7 @@ module JsonApi::Word
     json['id'] = word.display_id
     json['word'] = word.word
     json['locale'] = word.locale
+    json['has_baseline_content'] = !!word.has_baseline_content
     json['pending'] = !word.id
     word.data ||= {}
     json['pending_revisions'] = (word.data['revisions'] || []).length > 0

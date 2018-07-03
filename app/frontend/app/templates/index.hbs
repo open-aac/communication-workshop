@@ -50,6 +50,27 @@
         <button class='btn btn-primary btn-lg' {{action 'suggestions' 'modeling'}}>{{t "Modeling Ideas" key='modeling_ideas'}}</button>
         <button class='btn btn-primary btn-lg' {{action 'suggestions' 'activities'}}>{{t "Activity Ideas" key='activity_ideas'}}</button>
       </div>
+
+      {{#if missing_words}}
+        {{#unless missing_words.error}}
+          {{unless missing_words.loading}}
+            <div style='margin-top: 30px;'>
+              <h4>{{t "Contribute Your Ideas!" key='contribute'}}</h4>
+              <p>{{t "We need your help building out this collection of great core word resources! Below are some of the words that could use some more material." key='contribute_ideas'}}</p>
+              <div class='list-group pills'>
+                {{#each missing_words as |word|}}
+                  {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+                    {{#if word.best_image_url}}
+                      <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+                    {{/if}}
+                    {{word.word}}
+                  {{/link-to}}
+                {{/each}}
+              </div>
+            </div>
+          {{/unless}}
+        {{/unless}}
+      {{/if}}
     </div>
   {{/if}}
 
