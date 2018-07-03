@@ -57,7 +57,7 @@
             <div style='margin-top: 30px;'>
               <h4>{{t "Contribute Your Ideas!" key='contribute'}}</h4>
               <p>{{t "We need your help building out this collection of great core word resources! Below are some of the words that could use some more material." key='contribute_ideas'}}</p>
-              <div class='list-group pills'>
+              <div class='list-group pills' style='max-width: 250px;'>
                 {{#each missing_words as |word|}}
                   {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
                     {{#if word.best_image_url}}
