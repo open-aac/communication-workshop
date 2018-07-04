@@ -103,7 +103,7 @@ export default Ember.Controller.extend({
     return res;
   }.property('model.partner_suggestions', 'session.user.full_word_map'),
   default_values: function() {
-    if(this.get('editing') && this.get('model.defaults_loaded') != null) {
+    if(this.get('editing') && this.get('model.defaults_loaded') == null) {
       var _this = this;
       _this.set('model.defaults_loaded', true);
       session.ajax('/api/v1/words/' + this.get('model.word') + '/defaults', {type: 'GET'}).then(function(res) {

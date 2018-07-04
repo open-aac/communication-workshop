@@ -6,5 +6,6 @@ export default Ember.Route.extend({
     controller.set('editing', null);
     controller.set('edited', null);
     controller.set('model', model);
+    controller.set('model.defaults_loaded', null);
   }
 });
