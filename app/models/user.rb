@@ -229,7 +229,6 @@ class User < ApplicationRecord
   
   def related_words(include_linked_users=true)
     self.class.recommended_words(self, include_linked_users)
-
   end
   
   def self.recommended_words(user=nil, include_linked_users=true)
@@ -297,7 +296,7 @@ class User < ApplicationRecord
     list = []
     res.each_with_index{|w, idx| list << [w, idx] }
     res = list.sort_by{|w, idx| [user && available_hash[w.word] ? 0 : 1, idx] }.map(&:first)
-    res
+    res.select{|w| w.has_baseline_content }
   end
 
   def related_categories(include_linked_users=true)
