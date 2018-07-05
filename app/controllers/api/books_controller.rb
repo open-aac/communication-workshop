@@ -15,7 +15,7 @@ class Api::BooksController < ApplicationController
       return unless allowed?(book, 'view')
       json = book.book_json
     elsif params['url']
-      json = Book.find_json(params['url'])
+      json = AccessibleBooks.find_json(params['url'])
     end
     if json
       json['image_url'] ||= ((json['pages'] || [])[0] || {})['image_url']

@@ -13,6 +13,7 @@ gem 'resque'
 gem 'aws-ses'
 gem 'prawn'
 gem 'obf'
+gem 'accessible-books'
 
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'

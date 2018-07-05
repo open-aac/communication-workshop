@@ -3,11 +3,8 @@ class Api::SearchController < ApplicationController
   
   def books
     url = params['url'] || ''
-    if url.match(Book::TARHEEL_REGEX)
-      id = url.match(Book::TARHEEL_REGEX)[1]
-      url = Book.tarheel_json_url(id)
-      res = Typhoeus.get(url)
-      data = JSON.parse(res.body) rescue nil
+    if AccessibleBooks.tarheel_id(url)
+      data = AccessibleBooks.find_json(url)
       api_error(400, {error: 'not found'}) unless data
       json = {
         title: data['title'],
@@ -15,7 +12,7 @@ class Api::SearchController < ApplicationController
         url: "https://tarheelreader.org#{data['link']}",
         id: "tarheel:#{id}",
         contents: data['pages'].map{|p| p['text'] }.join(' '),
-        image_url: "https://tarheelreader.org#{data['pages'][1]['url']}",
+        image_url: data['image_url'],
         attribution: "https://tarheelreader.org/photo-credits/?id=#{data['ID']}",
         book_type: 'tarheel'
       }
@@ -24,14 +21,15 @@ class Api::SearchController < ApplicationController
       asin = url.match(/\/([A-Z0-9]{10})($|\/)/)[1]
       # https://smile.amazon.com/Friend-Sad-Elephant-Piggie-Book/dp/1423102975/ref=sr_1_1?ie=UTF8&qid=1501260366&sr=8-1&keywords=my+friend+is+sad
     else
-      data = Book.find_json(url)
+      data = AccessibleBooks.find_json(url)
       api_error(400, {error: 'invalid book'}) unless data && data['title'] && data['pages']
       json = {
         title: data['title'],
         author: data['author'],
         url: data['book_url'],
         id: 'book:#{url}',
-        image_url: data['pages'][0]['image_url'],
+        contents: data['pages'].map{|p| p['text'] }.join(' '),
+        image_url: data['image_url'],
         attribution: data['attribution_url'],
         book_type: 'custom'
       }

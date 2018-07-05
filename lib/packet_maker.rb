@@ -535,12 +535,12 @@ module PacketMaker
     books.each do |book|
       json = nil
       if book['book_type'] == 'tarheel'
-        json = Book.tarheel_json(book['url'])
+        json = AccessibleBooks.tarheel_json(book['url'])
       elsif book['book_type'] == 'communication_workshop'
         book_record = Book.find_by_path(book['local_id'])
         json = JSON.parse(book_record.book_json)
       else
-        # API call to "#{JsonApi::Json.current_host}/api/v1/books/json?url=#{book['url']}"
+        json = AccessibleBooks.find_json(book['url'])
       end
       book_font = File.expand_path('../../public/fonts/Poppins-Medium.ttf', __FILE__)
       if json

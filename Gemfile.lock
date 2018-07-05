@@ -9,6 +9,10 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (3.0.0)
+    accessible-books (0.1.0)
+      json
+      nokogiri
+      typhoeus
     actioncable (5.0.4)
       actionpack (= 5.0.4)
       nio4r (>= 1.2, < 3.0)
@@ -301,6 +305,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  accessible-books
   aws-ses
   boy_band
   byebug
