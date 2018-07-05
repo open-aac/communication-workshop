@@ -39,12 +39,17 @@
   </div>
 {{/if}}
 
+{{#if model.has_content}}
+  {{#unless model.has_baseline_content}}
+    <p>{{t "This word could use your help! One or more areas could use some more ideas, please contribute to help us grow the library and help communicators and their teams all over the world!" key='needs_contribution}}</p>
+  {{/unless}}
+{{/if}}
 <button class='btn btn-default' {{action 'packet'}}><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
 {{#if session.isAuthenticated}}
   <button class='btn btn-default' {{action 'suggestions'}}><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
   <button class='btn btn-default' {{action 'not_implemented'}} style='display: none;'><span class='glyphicon glyphicon-question-sign'></span> {{t "Start a Quiz" key='start_a_quiz'}}</button>
 {{/if}}
-<button class='btn btn-default' {{action 'edit'}}><span class='glyphicon glyphicon-pencil'></span> {{t "Contribute Some Ideas" key='contribute_some_ideas'}}</button>
+<button class={{if model.has_baseline_content 'btn btn-default' 'btn btn-primary'}} {{action 'edit'}}><span class='glyphicon glyphicon-pencil'></span> {{t "Contribute Some Ideas" key='contribute_some_ideas'}}</button>
 
 {{#unless editing}}
   <h2>{{t "Examples of When to Use" key='usage_examples'}}</h2>

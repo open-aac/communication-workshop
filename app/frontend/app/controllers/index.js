@@ -36,7 +36,7 @@ export default Ember.Controller.extend({
     if(_this.get('missing_words.length') && force === false) { return; }
     _this.set('missing_words', {loading: true});
     _this.store.query('word', {sort: 'missing'}).then(function(res) {
-      _this.set('missing_words', res.slice(0, 5));
+      _this.set('missing_words', res.slice(0, 3));
     }, function() {
       _this.set('missing_words', {error: true});
     });
