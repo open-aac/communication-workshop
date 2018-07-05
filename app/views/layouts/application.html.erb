@@ -2,40 +2,38 @@
 <html <%= "itemscope itemtype='http://schema.org/Article'" if @meta_record %>>
 <head>
   <% if @meta_record %>
-    <title><%= @meta_record.title %></title>
-    <meta name="description" content="<%= @meta_record.summary %>" />
+    <title><%= @meta_record.resource_title %></title>
+    <meta name="description" content="<%= @meta_record.resource_summary %>" />
 
     <!-- Google Authorship and Publisher Markup -->
     <link rel="author" href="https://plus.google.com/104060537625991393356/posts"/>
     <link rel="publisher" href="https://plus.google.com/104060537625991393356"/>
 
     <!-- Schema.org markup for Google+ -->
-    <meta itemprop="name" content="<%= @meta_record.title %>">
-    <meta itemprop="description" content="<%= @meta_record.summary %>">
-    <meta itemprop="image" content="<%= @meta_record.large_image || @meta_record.image %>">
+    <meta itemprop="name" content="<%= @meta_record.resource_title %>">
+    <meta itemprop="description" content="<%= @meta_record.resource_summary %>">
+    <meta itemprop="image" content="<%= @meta_record.resource_image %>">
 
     <!-- Twitter Card data -->
-    <% if @meta_record.large_image %>
-      <meta name="twitter:card" content="summary_large_image">
-      <meta name="twitter:image" content="<%= @meta_record.large_image %>">
-    <% else %>
-      <meta name="twitter:card" content="summary">
-      <meta name="twitter:image" content="<%= @meta_record.image %>">
-    <% end %>
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="<%= @meta_record.resource_image %>">
     <meta name="twitter:site" content="@CoughDropAAC">
-    <meta name="twitter:title" content="<%= @meta_record.title %>">
-    <meta name="twitter:description" content="<%= @meta_record.summary %>">
+    <meta name="twitter:title" content="<%= @meta_record.resource_title %>">
+    <meta name="twitter:description" content="<%= @meta_record.resource_summary %>">
     <meta name="twitter:creator" content="">
 
     <!-- Open Graph data -->
-    <meta property="og:title" content="<%= @meta_record.title %>" />
+    <meta property="og:title" content="<%= @meta_record.resource_title %>" />
     <meta property="og:type" content="article" />
-    <meta property="og:url" content="<%= @meta_record.link %>" />
-    <meta property="og:image" content="<%= @meta_record.large_image || @meta_record.image %>" />
-    <meta property="og:description" content="<%= @meta_record.summary %>" />
-    <meta property="og:site_name" content="CoughDrop" />
-    <meta property="article:published_time" content="<%= @meta_record.created %>" />
-    <meta property="article:modified_time" content="<%= @meta_record.updated %>" />
+    <meta property="og:url" content="<%= @meta_record.resource_link %>" />
+    <meta property="og:image" content="<%= @meta_record.resource_image %>" />
+    <meta property="og:description" content="<%= @meta_record.resource_summary %>" />
+    <meta property="og:site_name" content="Communication Workshop" />
+    <meta property="article:published_time" content="<%= @meta_record.created_at %>" />
+    <meta property="article:modified_time" content="<%= @meta_record.updated_at %>" />
+    <% if @meta_record.is_a?(Book) %>
+      <meta property="book:url" content="<%= @meta_record.json_link %>" />
+    <% end %>
     <!-- TODO 
     <meta property="article:section" content="Article Section" />
     <meta property="article:tag" content="Article Tag" />

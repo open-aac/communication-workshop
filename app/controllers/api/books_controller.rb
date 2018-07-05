@@ -15,11 +15,7 @@ class Api::BooksController < ApplicationController
       return unless allowed?(book, 'view')
       json = book.book_json
     elsif params['url']
-      if params['url'].match(Book::TARHEEL_REGEX)
-        json = Book.tarheel_json(params['url'])
-      else
-        # TODO: do a GET request and look for valid JSON or a META tag to point to the json
-      end
+      json = Book.find_json(params['url'])
     end
     if json
       json['image_url'] ||= ((json['pages'] || [])[0] || {})['image_url']

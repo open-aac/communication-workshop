@@ -24,11 +24,7 @@ class Api::SearchController < ApplicationController
       asin = url.match(/\/([A-Z0-9]{10})($|\/)/)[1]
       # https://smile.amazon.com/Friend-Sad-Elephant-Piggie-Book/dp/1423102975/ref=sr_1_1?ie=UTF8&qid=1501260366&sr=8-1&keywords=my+friend+is+sad
     else
-      if url.match(/dropbox\.com/) && url.match(/\?dl=0$/)
-        url = url.sub(/\?dl=0$/, '?dl=1')
-      end
-      res = Typhoeus.get(url)
-      data = JSON.parse(res.body) rescue nil
+      data = Book.find_json(url)
       api_error(400, {error: 'invalid book'}) unless data && data['title'] && data['pages']
       json = {
         title: data['title'],

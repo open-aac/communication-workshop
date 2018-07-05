@@ -15,6 +15,51 @@ class Book < ApplicationRecord
   add_permissions('edit', 'delete', ['*']) {|user| !self.id }
   add_permissions('link') {|user| user.admin? }
 
+  def resource_summary
+    "Online accessible book: #{self.data['title'] || "Unnamed Book"}"
+  end
+
+  def resource_title
+    self.data['title'] || "Unnamed Book"
+  end
+
+  def resource_author
+    self.data['author'] || "Unknown Author"
+  end
+
+  def resource_link
+    "#{JsonApi::Json.current_host}/books/#{ref_id}"
+  end
+
+  def resource_image
+    (self.data['image'] || {})['image_url'] || ""
+  end
+
+  def json_link
+    "#{JsonApi::Json.current_host}/api/v1/books/json?id=#{ref_id}"
+  end
+
+  def self.find_json(url)
+    if url.match(/dropbox\.com/) && url.match(/\?dl=0$/)
+      url = url.sub(/\?dl=0$/, '?dl=1')
+    end
+    json = nil
+    if url.match(Book::TARHEEL_REGEX)
+      json = Book.tarheel_json(url)
+    else
+      req = Typhoeus.get(url, followlocation: true)
+      json = JSON.parse(req.body) rescue nil
+      if !json
+        elem = Nokogiri(req.body).css("head meta[property='book:url']")[0]
+        if elem && elem['content']
+          req = Typhoeus.get(elem['content'])
+          json = JSON.parse(req.body) rescue nil
+        end
+      end
+    end
+    json
+  end
+
   def generate_defaults
     self.data ||= {}
     self.random_id ||= (rand(9999999999) + Time.now.to_i)
@@ -56,7 +101,7 @@ class Book < ApplicationRecord
     OBJ_PARAMS.each do |obj_param|
       self.data[obj_param] = params[obj_param]
     end
-    self.user_id = user_params['user'].id if user_params['user']
+    self.user_id ||= user_params['user'].id if user_params['user']
     if !params['new_core_words'].blank?
       words = params['new_core_words'].split(/,/).map(&:strip)
       self.data['target_core_words'] = ((self.data['target_core_words'] || []) + words).uniq

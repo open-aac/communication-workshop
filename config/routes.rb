@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   scope '/categories/:category/:locale' do
     get '/' => ember_handler
   end
-  scope '/books/:id' do
+  scope '/books/:book_id' do
     get '/' => ember_handler
   end
   
