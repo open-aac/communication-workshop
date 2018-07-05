@@ -41,9 +41,10 @@
 
 {{#if model.has_content}}
   {{#unless model.has_baseline_content}}
-    <p>{{t "This word could use your help! One or more areas could use some more ideas, please contribute to help us grow the library and help communicators and their teams all over the world!" key='needs_contribution}}</p>
+    <p>{{t "This word could use your help! One or more areas could use some more ideas, please contribute to help us grow the library and help communicators and their teams all over the world!" key='needs_contribution'}}</p>
   {{/unless}}
 {{/if}}
+
 <button class='btn btn-default' {{action 'packet'}}><span class='glyphicon glyphicon-print'></span> {{t "Printed Packet" key='printed_packer'}}</button>
 {{#if session.isAuthenticated}}
   <button class='btn btn-default' {{action 'suggestions'}}><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
