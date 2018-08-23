@@ -87,7 +87,7 @@ class Progress < ApplicationRecord
       progress.settings['percent'] = full_percent_tally_addition
       progress.settings['percent_tallies'].pop
       progress.settings['percents_before'].pop
-      progress.settings['current_multiplier'] /= percent
+      progress.settings['current_multiplier'] = progress.settings['current_multiplier'].to_f / percent.to_f
       progress.save
     else
       block.call
