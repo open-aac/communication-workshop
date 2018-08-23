@@ -41,7 +41,10 @@
 
 {{#if model.has_content}}
   {{#unless model.has_baseline_content}}
-    <p>{{t "<b>This word could use your help!</b> One or more areas could use some more ideas, please contribute to help us grow the library and help communicators and their teams all over the world!" key='needs_contribution'}}</p>
+    <p>
+      <span class='glyphicon glyphicon-exclamation-sign'></span>
+      {{t "This word could use your help! One or more areas could use some more ideas, please contribute to help us grow the library and help communicators and their teams all over the world!" key='needs_contribution'}}
+    </p>
   {{/unless}}
 {{/if}}
 
