@@ -90134,6 +90134,9 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
         }
         return _ember['default'].RSVP.resolve({ browserToken: session.get('browserToken') });
       }, function (data) {
+        if (data && data.responseJSON) {
+          data = data.responseJSON;
+        }
         if (!session.get('online')) {
           return;
         }
@@ -90259,7 +90262,7 @@ define('frontend/utils/session', ['exports', 'ember'], function (exports, _ember
 /* jshint ignore:start */
 
 define('frontend/config/environment', ['ember'], function(Ember) {
-  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+bd66e034"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
+  var exports = {'default': {"modulePrefix":"frontend","environment":"production","rootURL":"/","locationType":"auto","EmberENV":{"FEATURES":{},"EXTEND_PROTOTYPES":{"Date":false}},"APP":{"name":"frontend","version":"0.0.0+70245e41"},"exportApplicationGlobal":false}};Object.defineProperty(exports, '__esModule', {value: true});return exports;
 });
 
 /* jshint ignore:end */
@@ -90267,7 +90270,7 @@ define('frontend/config/environment', ['ember'], function(Ember) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+bd66e034"});
+  require("frontend/app")["default"].create({"name":"frontend","version":"0.0.0+70245e41"});
 }
 
 /* jshint ignore:end */
