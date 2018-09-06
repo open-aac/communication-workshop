@@ -115,6 +115,12 @@ var session = Ember.Object.extend({
       if(!session.get('online')) {
         return;
       }
+      if(data && data.error && data.invalid_token) {
+        session.set('invalid_token', true);
+        if(allow_invalidate) {
+          session.invalidate(true);
+        }
+      }
       if(data && data.fakeXHR && data.fakeXHR.browserToken) {
         session.set('browserToken', data.fakeXHR.browserToken);
       }
