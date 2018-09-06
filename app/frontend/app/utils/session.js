@@ -112,6 +112,7 @@ var session = Ember.Object.extend({
       }
       return Ember.RSVP.resolve({browserToken: session.get('browserToken')});
     }, function(data) {
+      if(data && data.responseJSON) { data = data.responseJSON; }
       if(!session.get('online')) {
         return;
       }
