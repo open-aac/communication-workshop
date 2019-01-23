@@ -1,24 +1,18 @@
-# README
+# Communication Workshop
+An open-licensed repository of activites and resources to help
+AAC users develop communication.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Installation
 
-Things you may want to cover:
+```
+bundle install
+cd app/frontend
+npm install
+bower install
+```
 
-* Ruby version
+For processes, check out Procfile
 
-* System dependencies
+## License
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+AGPL
