@@ -24,14 +24,26 @@ export default Component.extend({
   update_filtered_list: function() {
     var _this = this;
     (this.get('entries') || []).forEach(function(entry) {
-      var list = entry.phrases.split(/,/);
-      var result = [];
+      var strings = [entry.phrases || ""];
+      var pre_filtered = entry.level_1_phrases || entry.level_2_phrases || entry.level_3_phrases;
       var filter = _this.get('current_level.level');
+      if(filter == 'all') {
+        strings.push(entry.level_1_phrases || "");
+        strings.push(entry.level_2_phrases || "");
+        strings.push(entry.level_3_phrases || "");
+      } else if(entry['level_' + filter + '_phrases']) {
+        strings = [entry['level_' + filter + '_phrases']];
+      }
+
+      var list = strings.join(',').split(/,/);
+      var result = [];
       list.forEach(function(phrase) {
         phrase = phrase.replace(/^\s+/, '').replace(/\s$/, '');
         if(phrase.length > 0) {
           var pieces = phrase.split(/\s+/);
-          if(filter === 1 && pieces.length <= 3) {
+          if(pre_filtered) {
+            result.push(phrase);
+          } else if(filter === 1 && pieces.length <= 3) {
             result.push(phrase);
           } else if(filter === 2 && pieces.length <= 5 && pieces.length > 1) {
             result.push(phrase);
@@ -42,7 +54,7 @@ export default Component.extend({
           }
         }
       });
-      emberSet(entry, 'filtered_phrases', result.join(', '));
+      emberSet(entry, 'filtered_phrases', result);
     });
   }.observes('entries', 'current_level.level'),
   current_level: function() {

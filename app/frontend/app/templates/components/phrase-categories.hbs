@@ -1,7 +1,7 @@
 {{#if edit}}
   <div class='row'>
     {{#each entries as |cat|}}
-      <div class='col-sm-5'>
+      <div class='col-sm-11' style='margin-bottom: 5px;'>
         <div class='input-group'>
           {{input class='form-control' type='text' value=cat.category placeholder="Category"}}
           {{#if unused_categories}}
@@ -16,11 +16,20 @@
           {{/if}}
         </div>
       </div>
-      <div class='col-sm-6' style='margin-bottom: 5px;'>
-        {{textarea class='form-control' rows='3' value=cat.phrases placeholder="list, of, phrases"}}
-      </div>
       <div class='col-sm-1'>
         <button type='button' class='btn btn-default btn-sm' {{action 'delete_category' cat}}>&times;</button>
+      </div>
+      <div class='col-sm-3'><p class='form-control-static'>{{t "Level 1" key='level_1'}}</p></div>
+      <div class='col-sm-8' style='margin-bottom: 5px;'>
+        {{textarea class='form-control' rows='1' value=cat.level_1_phrases placeholder="1-2 word examples"}}
+      </div>
+      <div class='col-sm-3'><p class='form-control-static'>{{t "Level 2" key='level_2'}}</p></div>
+      <div class='col-sm-8' style='margin-bottom: 5px;'>
+        {{textarea class='form-control' rows='1' value=cat.level_2_phrases placeholder="3-4 word examples"}}
+      </div>
+      <div class='col-sm-3'><p class='form-control-static'>{{t "Level 3" key='level_3'}}</p></div>
+      <div class='col-sm-8' style='margin-bottom: 25px;'>
+        {{textarea class='form-control' rows='1' value=cat.level_3_phrases placeholder="full sentence examples"}}
       </div>
     {{/each}}
     <div class='col-sm-12'>
@@ -39,7 +48,11 @@
       {{#each entries as |cat|}}
         <tr>
           <td style='width: 30%;'>{{cat.category}}</td>
-          <td>{{cat.filtered_phrases}}</td>
+          <td>
+            {{#each cat.filtered_phrases as |phrase|}}
+              <span class='category_phrase'>{{phrase}}</span>
+            {{/each}}
+          </td>
         </tr>
       {{/each}}
     </tbody>

@@ -12,21 +12,7 @@
 <button class='btn btn-default'><span class='glyphicon glyphicon-random'></span> {{t "Choose an Activity For Me" key='chose_activity'}}</button>
 
 <h2>{{t "Modeling Examples" key='modeling_examples'}}</h2>
-<ul class="nav nav-pills all_border" style='white-space: initial;'>
-  <li role="presentation" class={{if current_level.level_1 'active'}}><a href="#" {{action 'set_level' 1}}>{{t "Level 1" key='level_1'}}</a></li>
-  <li role="presentation" class={{if current_level.level_2 'active'}}><a href="#" {{action 'set_level' 2}}>{{t "Level 2" key='level_2'}}</a></li>
-  <li role="presentation" class={{if current_level.level_3 'active'}}><a href="#" {{action 'set_level' 3}}>{{t "Level 3" key='level_3'}}</a></li>
-</ul>
-{{#if current_level.modeling_examples}}
-  <em class='text-muted'>{{current_level.description}}</em>
-  <div style='white-space: initial; max-width: 500px; margin-top: 10px;'>
-    {{example-carousel entries=current_level.modeling_examples type='modeling' pin='pin'}}
-  </div>
-{{else}}
-  <div style='padding: 30px 20px;'>
-    {{partial 'none-specified'}}
-  </div>
-{{/if}}
+{{phrase-categories entries=model.phrase_categories filter=modeling_level}}
 
 <h2>{{t "Related Core Words" key='related_core_words'}}</h2>
 <table class='table table-striped table-hover'>
@@ -83,9 +69,6 @@
     {{partial 'none-specified'}}
   </div>
 {{/if}}
-
-<h2>{{t "Phrase Categories" key='phrase_categories'}}</h2>
-{{phrase-categories entries=model.phrase_categories filter=modeling_level}}
 
 <h2>{{t "Attribution and References" key='attribution_and_references'}}</h2>
 <div style='max-width: 600px;'>
@@ -218,41 +201,13 @@
     </div>
 
     <div class="form-group">
-      <label for="modeling_examples" class="col-sm-3 control-label">
+      <label for="phrase_categories" class="col-sm-3 control-label">
         {{t "Modeling Examples" key='modeling_examples'}}
-        <div class='text-muted' style='font-weight: normal;'>{{t "Example phrases that modelers can use to teach or reinforce this word to communicators (remember, always try to model a level higher than the communicator)" key='modeling_examples_explainer'}}</div>
+        <div class='text-muted' style='font-weight: normal;'>{{t "Different types of phrases, from questions to choice-making to observations, can use leverage core words and phrases" key='phrase_categories_explainer'}}</div>
       </label>
       <div class="col-sm-5">
-        <p class='form-control-static'>{{t "Level 1 (1-word communicators)" key='level_1'}}</p>
-        {{prompt-carousel entries=model.level_1_modeling_examples type='modeling'}}
+        {{phrase-categories entries=model.phrase_categories edit=true}}
       </div>
-      {{#if revision.changes.level_1_modeling_examples}}
-        <div class='col-sm-4 revision'>
-          {{example-carousel entries=revision.changes.level_1_modeling_examples type='modeling' revision_attribute='level_1_modeling_examples' update_revision_object='update_revision_object'}}
-        </div>
-      {{/if}}
-      <div class="col-sm-5 col-sm-offset-3">
-        <p class='form-control-static'>{{t "Level 2 (2-3 word communicators)" key='level_2'}}</p>
-      </div>
-      <div class='col-sm-5 col-sm-offset-3'>
-        {{prompt-carousel entries=model.level_2_modeling_examples type='modeling'}}
-      </div>
-      {{#if revision.changes.level_2_modeling_examples}}
-        <div class='col-sm-4 revision'>
-          {{example-carousel entries=revision.changes.level_2_modeling_examples type='modeling' revision_attribute='level_2_modeling_examples' update_revision_object='update_revision_object'}}
-        </div>
-      {{/if}}
-      <div class="col-sm-5 col-sm-offset-3">
-        <p class='form-control-static'>{{t "Level 3 (4+ word communicators)" key='level_3'}}</p>
-      </div>
-      <div class='col-sm-5 col-sm-offset-3'>
-        {{prompt-carousel entries=model.level_3_modeling_examples type='modeling'}}
-      </div>
-      {{#if revision.changes.level_3_modeling_examples}}
-        <div class='col-sm-4 revision'>
-          {{example-carousel entries=revision.changes.level_3_modeling_examples type='modeling' revision_attribute='level_3_modeling_examples' update_revision_object='update_revision_object'}}
-        </div>
-      {{/if}}
     </div>
 
     <div class="form-group">
@@ -306,21 +261,13 @@
     </div>
 
     <div class="form-group">
-      <label for="phrase_categories" class="col-sm-3 control-label">
-        {{t "Phrase Categories" key='phrase_categories'}}
-        <div class='text-muted' style='font-weight: normal;'>{{t "Different types of phrases, from questions to choice-making to observations, can use leverage core words and phrases" key='phrase_categories_explainer'}}</div>
-      </label>
-      <div class="col-sm-5">
-        {{phrase-categories entries=model.phrase_categories edit=true}}
-      </div>
-    </div>
-    <div class="form-group">
       <label for="references" class="col-sm-3 control-label">{{t "References" key='references'}}</label>
       <div class='col-sm-5'>
         Links or justifications for content:<br/>
         {{textarea id='references' class='form-control' value=model.references rows=4 cols=30}}
       </div>
     </div>
+
     <div class='form-group'>
       <div class='col-sm-5 col-sm-offset-3'>
         <button class='btn btn-primary' type='submit' {{action 'save'}} disabled={{status.saving}}>
