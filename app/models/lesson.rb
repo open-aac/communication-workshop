@@ -73,3 +73,36 @@ end
 # - Data Logging and Assessments
 # - IEP Planning
 # - LITERACY
+# Other Topics
+# - Scanning
+# - Eye Gaze
+# - Kiosk Mode
+# - Data Logging
+# - SMP vs. Semantic Compaction
+# - AAC Bill of Rights
+# - SNUG
+# - Iconicity and Symbols or Photos
+
+# Class for Kid Peers
+# - We all talk with more than our mouths
+# - We each do some things differently!
+# - Is talking what makes us smart?
+# - What are your 10 favorite words?
+# - How would you talk after surgery?
+# - Guess what I mean!
+
+# Class for Teen Peers
+# - We talk with lots more than our mouths
+# - Disability isn't bad
+# - 25-phrase communication challenge
+# - Short speech is like a guessing game
+# - AAC takes a lot of time and patience (for them and you)
+# - Have you ever wanted to be a model?
+
+# Class for Family Members
+# - Connection is important for all of us
+# - Communication (connection) takes time and repetition
+# - Expressive comes after receptive language
+# - Talking isn't always an option (even if I CAN talk sometimes)
+# - Everyone can model!
+# - The dangers of dismissiveness/how will you help?
