@@ -6,6 +6,7 @@ AAC users develop communication.
 
 ```
 bundle install
+cp .env.example .env # look at .env and set your own values
 cd app/frontend
 npm install
 bower install
