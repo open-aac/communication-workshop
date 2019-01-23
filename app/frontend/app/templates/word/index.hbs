@@ -357,7 +357,7 @@
           {{example-carousel entries=revision.changes.level_1_modeling_examples type='modeling' revision_attribute='level_1_modeling_examples' update_revision_object='update_revision_object'}}
         </div>
       {{/if}}
-      <div class="col-sm-5 col-sm-offset-3">
+      <div class="col-sm-5 col-sm-offset-3" style='clear: left;'>
         <p class='form-control-static'>{{t "Level 2 (3 or 4-word modeling examples)" key='level_2'}}</p>
       </div>
       <div class='col-sm-5 col-sm-offset-3'>
@@ -646,13 +646,6 @@
               {{t "this word has sufficient baseline content for all resource types" key='sufficient_baseline_content'}}
             </label>
           </div>
-        </div>
-      </div>
-
-      <div class='form-group'>
-        <label for="revision_credit" class="col-sm-3 control-label">{{t "Credit for This Revision" key='credit_for_this_revision'}}</label>
-        <div class="col-sm-5">
-          {{input type='text' id='revision_credit' value=model.revision_credit class='form-control' placeholder="leave blank to ignore"}}
         </div>
       </div>
     {{else}}
