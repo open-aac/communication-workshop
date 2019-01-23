@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180409212747) do
+ActiveRecord::Schema.define(version: 20180703230710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,12 +131,14 @@ ActiveRecord::Schema.define(version: 20180409212747) do
     t.string   "word"
     t.string   "locale"
     t.text     "old_data"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
     t.float    "random_id"
     t.datetime "pending_since"
     t.boolean  "has_content"
     t.text     "data"
+    t.boolean  "has_baseline_content"
+    t.index ["has_baseline_content"], name: "index_word_data_on_has_baseline_content", using: :btree
     t.index ["has_content", "random_id"], name: "index_word_data_on_has_content_and_random_id", using: :btree
     t.index ["random_id"], name: "index_word_data_on_random_id", using: :btree
     t.index ["word", "locale"], name: "index_word_data_on_word_and_locale", unique: true, using: :btree
