@@ -2,8 +2,9 @@ import Ember from 'ember';
 import modal from '../utils/modal';
 import pages from '../utils/pages';
 import i18n from '../utils/i18n';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   load_books: function() {
     var _this = this;
     _this.set('books', {loading: true});

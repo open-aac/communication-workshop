@@ -1,5 +1,9 @@
 import Ember from 'ember';
 import session from '../utils/session';
+import Controller from '@ember/controller';
+import { set as emberSet } from '@ember/object';
+import { later } from '@ember/runloop';
+import { htmlSafe } from '@ember/template';
 
 var results = [
   {
@@ -111,15 +115,16 @@ var results = [
     ]
   }
 ];
-export default Ember.Controller.extend({
+export default Controller.extend({
   init: function() {
     var _this = this;
     session.ajax('/api/v1/search/tallies', {type: 'GET'}).then(function(data) {
       _this.set('data', data);
     });
-    Ember.run.later(function() {
+    later(function() {
       _this.init();
     }, 5000);
+    this._super(...arguments);
   },
   current_results: function() {
     var idx = this.get('current_index') || 0;
@@ -129,12 +134,12 @@ export default Ember.Controller.extend({
     for(var idx in (data[res.key] || {})) {
       max = Math.max(max, data[res.key][idx]);
     }
-    Ember.set(res, 'entries', []);
+    emberSet(res, 'entries', []);
     res.labels.forEach(function(l) {
       var total = (data[res.key] || {})[l.key] || 0;
       var pct = Math.round(total / max * 100);
       if(isNaN(pct)) { pct = 0; }
-      var style = Ember.String.htmlSafe("height: 30px; border: 1px solid " + l.border + "; background: " + l.color + "; width: " + pct + "%; border-radius: 5px; color: #fff; padding-left: 5px; padding-top: 3px; overflow: hidden;" + (pct <= 0 ? "visibility: hidden;" : ""));
+      var style = htmlSafe("height: 30px; border: 1px solid " + l.border + "; background: " + l.color + "; width: " + pct + "%; border-radius: 5px; color: #fff; padding-left: 5px; padding-top: 3px; overflow: hidden;" + (pct <= 0 ? "visibility: hidden;" : ""));
       res.entries.push({
         text: l.text,
         total: total,

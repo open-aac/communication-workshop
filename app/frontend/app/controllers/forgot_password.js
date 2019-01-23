@@ -1,8 +1,9 @@
 import Ember from 'ember';
 import session from '../utils/session';
 import modal from '../utils/modal';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   actions: {
     request_password: function() {
       var _this = this;

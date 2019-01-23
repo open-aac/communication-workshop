@@ -1,7 +1,9 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
+import Component from '@ember/component';
+import { htmlSafe } from '@ember/template';
 
-export default Ember.Component.extend({
+export default Component.extend({
   didInsertElement: function() {
     this.set('image_url', this.get('image.image_url'));
   },
@@ -47,7 +49,7 @@ export default Ember.Component.extend({
     } else {
       res = res + "width: 122px;";
     }
-    return Ember.String.htmlSafe(res);
+    return htmlSafe(res);
   }.property('stretch', 'tall', 'border', 'fullscreen'),
   image_style: function() {
     var res = "width: 100%; object-fit: contain; object-position: center;";
@@ -58,7 +60,7 @@ export default Ember.Component.extend({
     } else {
       res = res + "max-height: 120px;";
     }
-    return Ember.String.htmlSafe(res);
+    return htmlSafe(res);
   }.property('tall', 'fullscreen'),
   actions: {
     change_image: function() {

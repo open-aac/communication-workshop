@@ -1,8 +1,9 @@
 import Ember from 'ember';
 import i18n from '../utils/i18n';
 import session from '../utils/session';
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
   didInsertElement: function() {
     var _this = this;
     var handler = function() {

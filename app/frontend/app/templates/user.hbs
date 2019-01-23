@@ -58,12 +58,12 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="email" class="col-sm-3 control-label">{{t "URL" key='email'}}</label>
+          <label for="url" class="col-sm-3 control-label">{{t "URL" key='url'}}</label>
           <div class="col-sm-6">
             <p class='form-control-static'><em>{{t "This is where people will go when they see your name as a contributor on any pages" key='link_for_contribution'}}</em></p>
           </div>
           <div class="col-sm-3 col-sm-offset-3">
-            {{input type='text' id='email' class='form-control' value=model.url placeholder="http://"}}
+            {{input type='text' id='url' class='form-control' value=model.url placeholder="http://"}}
           </div>
         </div>
         {{#if resetting_password}}
@@ -90,7 +90,7 @@
           </div>
         {{else}}
           <div class="form-group">
-            <label for="email" class="col-sm-3 control-label">{{t "Password" key='password'}}</label>
+            <label for="password" class="col-sm-3 control-label">{{t "Password" key='password'}}</label>
             <div class="col-sm-3">
               <p class='form-control-static'><a href="#" {{action 'reset_password'}}>{{t "change password" key='change_password'}}</a></p>
             </div>
@@ -175,7 +175,7 @@
                       </button>
                       <ul class="dropdown-menu">
                         {{#each keyed_colors as |color|}}
-                          <li><a href="#" {{action 'color' color}}>
+                          <li><a href="#" {{action 'color' button color}}>
                             <span class='color_box' style={{color.style}}></span>
                             {{color.color}}{{#if color.hint}} ({{color.hint}}){{/if}}
                           </a></li>

@@ -2,8 +2,11 @@ import Ember from 'ember';
 import i18n from '../utils/i18n';
 import session from '../utils/session';
 import modal from '../utils/modal';
+import Component from '@ember/component';
+import { htmlSafe } from '@ember/template';
+import { get as emberGet, set as emberSet } from '@ember/object';
 
-export default Ember.Component.extend({
+export default Component.extend({
   didInsertElement: function() {
     var _this = this;
     var handler = function() {
@@ -43,21 +46,21 @@ export default Ember.Component.extend({
   }.property('entries', 'entries.length', 'current_index'),
   entry_class: function() {
     if(this.get('book_type')) {
-      return Ember.String.htmlSafe('glyphicon glyphicon-book');
+      return htmlSafe('glyphicon glyphicon-book');
     } else if(this.get('video_type')) {
-      return Ember.String.htmlSafe('glyphicon glyphicon-play-circle');
+      return htmlSafe('glyphicon glyphicon-play-circle');
     } else if(this.get('prompt_type')) {
-      return Ember.String.htmlSafe('glyphicon glyphicon-question-sign');
+      return htmlSafe('glyphicon glyphicon-question-sign');
     } else if(this.get('type') == 'activity_ideas' || this.get('current_entry.type') == 'activity_ideas') {
-      return Ember.String.htmlSafe('glyphicon glyphicon-tower');
+      return htmlSafe('glyphicon glyphicon-tower');
     } else if(this.get('type') === 'learning_projects' || this.get('current_entry.type') === 'learning_projects') {
-      return Ember.String.htmlSafe('glyphicon glyphicon-briefcase');
+      return htmlSafe('glyphicon glyphicon-briefcase');
     } else if(this.get('type') === 'modeling' || this.get('current_entry.type') === 'modeling') {
-      return Ember.String.htmlSafe('glyphicon glyphicon-hand-up');
+      return htmlSafe('glyphicon glyphicon-hand-up');
     } else if(this.get('type') === 'topic_starters' || this.get('current_entry.type') === 'topic_starters') {
-      return Ember.String.htmlSafe('glyphicon glyphicon-comment');
+      return htmlSafe('glyphicon glyphicon-comment');
     } else if(this.get('type') === 'send_homes' || this.get('current_entry.type') === 'send_homes') {
-      return Ember.String.htmlSafe('glyphicon glyphicon-apple');
+      return htmlSafe('glyphicon glyphicon-apple');
     }
   }.property('current_entry', 'current_entry.type', 'type'),
   current_entry_classes: function() {
@@ -67,7 +70,7 @@ export default Ember.Component.extend({
       if(this.get('current_entry.perform_details.success_level') == idx) {
         klass = 'btn btn-primary face_button';
       }
-      res['level_' + idx + '_class'] = Ember.String.htmlSafe(klass);
+      res['level_' + idx + '_class'] = htmlSafe(klass);
     }
     return res;
   }.property('current_entry.perform_details.success_level'),
@@ -120,8 +123,8 @@ export default Ember.Component.extend({
     },
     save_perform_details: function(activity, details) {
       var _this = this;
-      var activity_id = Ember.get(activity, 'id');
-      details = details || Ember.get(activity, 'perform_details');
+      var activity_id = emberGet(activity, 'id');
+      details = details || emberGet(activity, 'perform_details');
       _this.set('save_status', {saving: true});
       session.ajax('/api/v1/activities/' + activity_id + '/perform', {
         type: 'POST',
@@ -130,8 +133,8 @@ export default Ember.Component.extend({
         }
       }).then(function(res) {
         _this.set('save_status', null);
-        if(res.activity_id == activity_id && Ember.get(activity, 'perform_details')) {
-          Ember.set(activity, 'perform_details', res);
+        if(res.activity_id == activity_id && emberGet(activity, 'perform_details')) {
+          emberSet(activity, 'perform_details', res);
         }
       }, function(err) {
         _this.set('save_status', {error: true});
@@ -140,9 +143,9 @@ export default Ember.Component.extend({
     perform: function(activity) {
       // ajax call, change UI to prompt for more details
       var _this = this;
-      Ember.set(activity, 'performed', true);
+      emberSet(activity, 'performed', true);
       var d = (new Date());
-      Ember.set(activity, 'perform_details', {
+      emberSet(activity, 'perform_details', {
 //         date: (d.getFullYear()) + "-" + ("00" + (d.getMonth() + 1)).slice(-2) + "-" + ("00" + d.getDate()).slice(-2),
 //         time: ("00" + d.getHours()).slice(-2) + ":" + ("00" + d.getMinutes()).slice(-2)
       });
@@ -150,19 +153,19 @@ export default Ember.Component.extend({
       this.send('save_perform_details', activity);
     },
     unperform: function(activity) {
-      Ember.set(activity, 'performed', false);
-      Ember.set(activity, 'perform_details', null);
+      emberSet(activity, 'performed', false);
+      emberSet(activity, 'perform_details', null);
       this.send('save_perform_details', activity, {remove: true});
     },
     close_perform_details: function(activity) {
       this.send('save_perform_details', activity);
-      Ember.set(activity, 'perform_details', null);
+      emberSet(activity, 'perform_details', null);
     },
     set_success_level: function(activity, level) {
-      Ember.set(activity, 'perform_details.success_level', level);
+      emberSet(activity, 'perform_details.success_level', level);
     },
     skip: function(activity) {
-      Ember.set(activity, 'skipped', true);
+      emberSet(activity, 'skipped', true);
       // ajax call, then hit next
       this.send('next');
     },

@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   load_words: function(force) {
     var _this = this;
     if(_this.get('words.length') && force === false) { return; }

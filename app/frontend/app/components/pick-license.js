@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import i18n from '../utils/i18n';
+import Component from '@ember/component';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'span',
   licenseOptions: function() {
     return [

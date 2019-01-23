@@ -1,8 +1,9 @@
 import Ember from 'ember';
 import session from '../utils/session';
 import modal from '../utils/modal';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   bad_password: function() {
     return this.get('password') && this.get('password').length > 0 && this.get('password').length < 6;
   }.property('password'),

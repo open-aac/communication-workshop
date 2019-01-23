@@ -2,20 +2,24 @@ import Ember from 'ember';
 import modal from '../../utils/modal';
 import i18n from '../../utils/i18n';
 import session from '../../utils/session';
+import Controller from '@ember/controller';
+import { htmlSafe } from '@ember/template';
+import { later } from '@ember/runloop';
+import $ from 'jquery'; 
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   keyed_colors: function() {
     return [
-      {"border":"#ccc","fill":"#fff","color":"White","types":["conjunction"],"style":Ember.String.htmlSafe("border-color: #ccc; background: #fff;")},
-      {"border":"#dd0","fill":"#ffa","color":"Yellow","hint":"people","types":["pronoun"],"style":Ember.String.htmlSafe("border-color: #dd0; background: #ffa;")},
-      {"border":"#6d0","fill":"#cfa","color":"Green","hint":"actions","types":["verb"],"style":Ember.String.htmlSafe("border-color: #6d0; background: #cfa;")},
-      {"fill":"#fca","color":"Orange","hint":"nouns","types":["noun","nominative"],"border":"#ff7011","style":Ember.String.htmlSafe("border-color: #ff7011; background: #fca;")},
-      {"fill":"#acf","color":"Blue","hint":"describing words","types":["adjective"],"border":"#1170ff","style":Ember.String.htmlSafe("border-color: #1170ff; background: #acf;")},
-      {"fill":"#caf","color":"Purple","hint":"questions","types":["question"],"border":"#7011ff","style":Ember.String.htmlSafe("border-color: #7011ff; background: #caf;")},
-      {"fill":"#faa","color":"Red","hint":"negations","types":["negation","expletive","interjection"],"border":"#ff1111","style":Ember.String.htmlSafe("border-color: #ff1111; background: #faa;")},
-      {"fill":"#fac","color":"Pink","hint":"social words","types":["preposition"],"border":"#ff1170","style":Ember.String.htmlSafe("border-color: #ff1170; background: #fac;")},
-      {"fill":"#ca8","color":"Brown","hint":"adverbs","types":["adverb"],"border":"#835d38","style":Ember.String.htmlSafe("border-color: #835d38; background: #ca8;")},
-      {"fill":"#ccc","color":"Gray","hint":"determiners","types":["article","determiner"],"border":"#808080","style":Ember.String.htmlSafe("border-color: #808080; background: #ccc;")}
+      {"border":"#ccc","fill":"#fff","color":"White","types":["conjunction"],"style":htmlSafe("border-color: #ccc; background: #fff;")},
+      {"border":"#dd0","fill":"#ffa","color":"Yellow","hint":"people","types":["pronoun"],"style":htmlSafe("border-color: #dd0; background: #ffa;")},
+      {"border":"#6d0","fill":"#cfa","color":"Green","hint":"actions","types":["verb"],"style":htmlSafe("border-color: #6d0; background: #cfa;")},
+      {"fill":"#fca","color":"Orange","hint":"nouns","types":["noun","nominative"],"border":"#ff7011","style":htmlSafe("border-color: #ff7011; background: #fca;")},
+      {"fill":"#acf","color":"Blue","hint":"describing words","types":["adjective"],"border":"#1170ff","style":htmlSafe("border-color: #1170ff; background: #acf;")},
+      {"fill":"#caf","color":"Purple","hint":"questions","types":["question"],"border":"#7011ff","style":htmlSafe("border-color: #7011ff; background: #caf;")},
+      {"fill":"#faa","color":"Red","hint":"negations","types":["negation","expletive","interjection"],"border":"#ff1111","style":htmlSafe("border-color: #ff1111; background: #faa;")},
+      {"fill":"#fac","color":"Pink","hint":"social words","types":["preposition"],"border":"#ff1170","style":htmlSafe("border-color: #ff1170; background: #fac;")},
+      {"fill":"#ca8","color":"Brown","hint":"adverbs","types":["adverb"],"border":"#835d38","style":htmlSafe("border-color: #835d38; background: #ca8;")},
+      {"fill":"#ccc","color":"Gray","hint":"determiners","types":["article","determiner"],"border":"#808080","style":htmlSafe("border-color: #808080; background: #ccc;")}
     ];
   }.property(),
   buttons: function() {
@@ -51,7 +55,7 @@ export default Ember.Controller.extend({
     var background = this.get('model.background_color') || '#fff';
     css = css + "border-color: " + border + ";";
     css = css + "background-color: " + background + ";";
-    return Ember.String.htmlSafe(css);
+    return htmlSafe(css);
   }.property('model.border_color', 'model.background_color'),
   current_level: function() {
     var num = this.get('modeling_level') || 1;
@@ -202,7 +206,7 @@ export default Ember.Controller.extend({
           session.get('user').reload();
           var add_key = Math.random();
           _this.set('added', add_key);
-          Ember.run.later(function() {
+          later(function() {
             if(_this.get('added') == add_key) {
               _this.set('added', null);
             }
@@ -243,12 +247,12 @@ export default Ember.Controller.extend({
         _this.set('editing', false);
         var edited_key = Math.random();
         _this.set('edited', edited_key);
-        Ember.run.later(function() {
+        later(function() {
           if(_this.get('edited') == edited_key) {
             _this.set('edited', null);
           }
         }, 30000);
-        Ember.$(window).scrollTop(0);
+        $(window).scrollTop(0);
       }, function(err) {
         _this.set('status', {error: true});
       });
@@ -275,7 +279,7 @@ export default Ember.Controller.extend({
         this.set('editing', true);
         this.set('model.revision_credit', null);
         this.set('revision', null);
-        Ember.$(window).scrollTop(0);
+        $(window).scrollTop(0);
       } else {
         modal.open('edit-word-explainer');
       }

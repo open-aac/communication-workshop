@@ -2,6 +2,7 @@ import Ember from 'ember';
 import modal from '../utils/modal';
 import i18n from '../utils/i18n';
 import session from '../utils/session';
+import $ from 'jquery';
 
 export default modal.ModalController.extend({
   opening: function() {
@@ -23,7 +24,7 @@ export default modal.ModalController.extend({
       var res = [];
       var _this = this;
       this.get('suggestions').forEach(function(sug) {
-        res.push(Ember.$.extend({}, sug.data, {type: sug.type || _this.get('model.type')}));
+        res.push($.extend({}, sug.data, {type: sug.type || _this.get('model.type')}));
       });
       return res;
     } else {

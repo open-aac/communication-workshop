@@ -1,6 +1,11 @@
 import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { Promise } from 'rsvp';
+import $ from 'jquery';
+import { later } from '@ember/runloop'; 
+import Controller from '@ember/controller';
 
-var modal = Ember.Object.extend({
+var modal = EmberObject.extend({
   setup: function(route) {
     if(this.last_promise) { this.last_promise.reject('closing due to setup'); }
     this.route = route;
@@ -20,7 +25,7 @@ var modal = Ember.Object.extend({
     this.last_template = template;
     this.route.render(template, { into: 'application', outlet: 'modal'});
     var _this = this;
-    return new Ember.RSVP.Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       _this.last_promise = {
         resolve: resolve,
         reject: reject
@@ -35,7 +40,7 @@ var modal = Ember.Object.extend({
     }
   },
   is_closeable: function() {
-    return Ember.$(".modal").attr('data-uncloseable') != 'true';
+    return $(".modal").attr('data-uncloseable') != 'true';
   },
   close: function(success) {
     if(!this.route) { return; }
@@ -58,7 +63,7 @@ var modal = Ember.Object.extend({
       });
     }
     if(this.queued_template) {
-      Ember.run.later(function() {
+      later(function() {
         if(!modal.is_open()) {
           modal.open(modal.queued_template);
           modal.queued_template = null;
@@ -68,7 +73,7 @@ var modal = Ember.Object.extend({
   },
 }).create();
 
-modal.ModalController = Ember.Controller.extend({
+modal.ModalController = Controller.extend({
   actions: {
     opening: function() {
       var template = this.get('templateName') || this.get('renderedName') || this.constructor.toString().split(/:/)[1];

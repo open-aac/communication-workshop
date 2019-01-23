@@ -1,8 +1,10 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
 import session from '../utils/session';
+import Route from '@ember/routing/route';
+import $ from 'jquery';
 
-export default Ember.Route.extend({
+export default Route.extend({
   setupController: function(controller, model) {
     controller.load_user();
     modal.setup(this);
@@ -12,7 +14,7 @@ export default Ember.Route.extend({
       modal.close();
     },
     didTransition: function() {
-      Ember.$(window).scrollTop(0);
+      $(window).scrollTop(0);
     }
   }
 });

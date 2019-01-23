@@ -1,6 +1,8 @@
 import Ember from 'ember';
+import Component from '@ember/component';
+import { htmlSafe } from '@ember/template';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'span',
   color_style: function() {
     var color = this.get('color');
@@ -10,6 +12,6 @@ export default Ember.Component.extend({
 
 
     var res = "display: inline-block; background: " + color + "; width: 30px; height: 30px; border-radius: 3px; border: 1px solid #222; vertical-align: middle;";
-    return Ember.String.htmlSafe(res);
+    return htmlSafe(res);
   }.property('color')
 });

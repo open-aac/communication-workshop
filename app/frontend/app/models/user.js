@@ -1,6 +1,9 @@
 import Ember from 'ember';
 import DS from 'ember-data';
 import session from '../utils/session';
+import { set as emberSet } from '@ember/object';
+import RSVP from 'rsvp';
+import $ from 'jquery';
 
 var User = DS.Model.extend({
   didLoad: function() {
@@ -28,14 +31,14 @@ var User = DS.Model.extend({
     var map = session.get('user.full_word_map') || [];
     (this.get('current_words') || []).forEach(function(word) {
       if(map[word.locale] && map[word.locale][word.word] && map[word.locale][word.word].image && map[word.locale][word.word].image.image_url) {
-        Ember.set(word, 'best_image_url', map[word.locale][word.word].image.image_url);
+        emberSet(word, 'best_image_url', map[word.locale][word.word].image.image_url);
       }
     });
   }.observes('current_words', 'session.user.full_word_map'),
   load_map: function(force) {
     var _this = this;
     if(this.get('full_word_map') && !force) {
-      return Ember.RSVP.resolve(this.get('full_word_map'));
+      return RSVP.resolve(this.get('full_word_map'));
     } else if(this.get('pending_promise')) {
       return this.get('pending_promise');
     }
@@ -45,7 +48,7 @@ var User = DS.Model.extend({
       return res;
     }, function(err) {
       _this.set('pending_promise', null);
-      return Ember.RSVP.reject(err);
+      return RSVP.reject(err);
     });
     _this.set('pending_promise', promise);
     return promise;
@@ -63,7 +66,7 @@ var User = DS.Model.extend({
       var word_map = res.word_map[locale] || {};
       for(var idx in word_map) {
         if(word_map[idx]) {
-          var btn = Ember.$.extend({}, word_map[idx])
+          var btn = $.extend({}, word_map[idx])
           btn.locale = btn.locale || locale;
           btn.sort_label = (btn.label || 'zzzzz').toLowerCase();
           map_list.push(btn);
@@ -76,7 +79,7 @@ var User = DS.Model.extend({
   load_words: function(force) {
     var _this = this;
     if(this.get('word_data') && !force) {
-      return Ember.RSVP.resolve(this.get('word_data'));
+      return RSVP.resolve(this.get('word_data'));
     } else if(this.get('pending_words_promise')) {
       return this.get('pending_words_promise');
     }
@@ -88,7 +91,7 @@ var User = DS.Model.extend({
       return res;
     }, function(err) {
       _this.set('pending_words_promise', null);
-      return Ember.RSVP.reject(err);
+      return RSVP.reject(err);
     });
     _this.set('pending_words_promise', promise);
     return promise;
@@ -111,7 +114,7 @@ var User = DS.Model.extend({
           if(user_name == _this.get('user_name')) {
            _this.set('user_name_check', {exists: false});
           }
-          return Ember.RSVP.resolve();
+          return RSVP.resolve();
         });
       }
     }

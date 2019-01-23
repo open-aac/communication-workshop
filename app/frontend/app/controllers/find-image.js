@@ -1,6 +1,9 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
 import i18n from '../utils/i18n';
+import $ from 'jquery';
+import { reject } from 'rsvp';
+import { set as emberSet } from '@ember/object';
 
 export default modal.ModalController.extend({
   opening: function() {
@@ -21,7 +24,7 @@ export default modal.ModalController.extend({
     return res;
   }.property(),
   open_symbols_search: function(text) {
-    return Ember.$.ajax('https://www.opensymbols.org/api/v1/symbols/search?q=' + encodeURIComponent(text), { type: 'GET'
+    return $.ajax('https://www.opensymbols.org/api/v1/symbols/search?q=' + encodeURIComponent(text), { type: 'GET'
     }).then(function(data) {
       var res = [];
       data.forEach(function(item) {
@@ -41,15 +44,15 @@ export default modal.ModalController.extend({
       if(message && message.error === "not online") {
         error = i18n.t('not_online_image_search', "Cannot search, please connect to the Internet first.");
       }
-      return Ember.RSVP.reject(error);
+      return reject(error);
     });
   },
   flickr_search: function(text) {
     if(!window.flickr_key) {
-      return Ember.RSVP.reject(i18n.t('flickr_not_configured', "Flickr hasn't been properly configured for CoughDrop"));
+      return reject(i18n.t('flickr_not_configured', "Flickr hasn't been properly configured for CoughDrop"));
     }
     // https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=5b397c920edee06dafeb630957e0a99e&text=cat&safe_search=2&media=photos&extras=license%2C+owner_name&format=json&nojsoncallback=1
-    return Ember.$.ajax('https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + window.flickr_key + '&text=' + text + '&safe_search=2&media=photos&license=2%2C3%2C4%2C5%2C6%2C7&extras=license%2C+owner_name&format=json&nojsoncallback=1', { type: 'GET'
+    return $.ajax('https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=' + window.flickr_key + '&text=' + text + '&safe_search=2&media=photos&license=2%2C3%2C4%2C5%2C6%2C7&extras=license%2C+owner_name&format=json&nojsoncallback=1', { type: 'GET'
     }).then(function(data) {
       var res = [];
 
@@ -84,10 +87,10 @@ export default modal.ModalController.extend({
   },
   pixabay_search: function(text, filter) {
     if(!window.pixabay_key) {
-      return Ember.RSVP.reject(i18n.t('pixabay_not_configured', "Pixabay hasn't been properly configured for CoughDrop"));
+      return reject(i18n.t('pixabay_not_configured', "Pixabay hasn't been properly configured for CoughDrop"));
     }
     var type = 'photo';
-    return Ember.$.ajax('https://pixabay.com/api/?key=' + window.pixabay_key + '&q=' + text + '&image_type=' + type + '&response_group=high_resolution&per_page=30&safesearch=true', { type: 'GET'
+    return $.ajax('https://pixabay.com/api/?key=' + window.pixabay_key + '&q=' + text + '&image_type=' + type + '&response_group=high_resolution&per_page=30&safesearch=true', { type: 'GET'
     }).then(function(data) {
       var res = [];
       ((data || {}).hits || []).forEach(function(hit) {
@@ -147,7 +150,7 @@ export default modal.ModalController.extend({
       });
     },
     preview: function(image) {
-      Ember.set(image, 'uneditable', true);
+      emberSet(image, 'uneditable', true);
       this.set('model.image', image);
     },
     list: function() {

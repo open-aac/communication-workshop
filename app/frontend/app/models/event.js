@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import DS from 'ember-data';
+import { htmlSafe } from '@ember/template';
 
 var LearnEvent = DS.Model.extend({
   activity_id: DS.attr('string'),
@@ -12,13 +13,13 @@ var LearnEvent = DS.Model.extend({
   face_class: function() {
     var level = this.get('success_level');
     if(level == 4) {
-      return Ember.String.htmlSafe('face laugh');
+      return htmlSafe('face laugh');
     } else if(level == 3) {
-      return Ember.String.htmlSafe('face happy');
+      return htmlSafe('face happy');
     } else if(level == 2) {
-      return Ember.String.htmlSafe('face neutral');
+      return htmlSafe('face neutral');
     } else if(level == 1) {
-      return Ember.String.htmlSafe('face sad');
+      return htmlSafe('face sad');
     } else {
       return null;
     }

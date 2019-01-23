@@ -1,15 +1,17 @@
 import Ember from 'ember';
 import modal from '../../utils/modal';
 import i18n from '../../utils/i18n';
+import Controller from '@ember/controller';
+import { htmlSafe } from '@ember/template';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   image_style: function() {
     var css = "width: 200px; padding: 10px; height: 200px; border-width: 3px; border-radius: 5px; border-style: solid;";
     var border = this.get('model.border_color') || '#888';
     var background = this.get('model.background_color') || '#fff';
     css = css + "border-color: " + border + ";";
     css = css + "background-color: " + background + ";";
-    return Ember.String.htmlSafe(css);
+    return htmlSafe(css);
   }.property('model.border_color', 'model.background_color'),
   current_level: function() {
     var num = this.get('modeling_level') || 1;

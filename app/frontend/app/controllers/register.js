@@ -1,8 +1,9 @@
 import Ember from 'ember';
 import session from '../utils/session';
 import modal from '../utils/modal';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   user_name_invalid: function() {
     return !!(this.get('model.user_name') || '').match(/[\s\.'"]/);
   }.property('model.user_name'),

@@ -1,11 +1,15 @@
 import Ember from 'ember';
+import EmberObject from '@ember/object';
+import $ from 'jquery';
+import RSVP from 'rsvp';
+import { run, later } from '@ember/runloop'
 
 var cache = null;
-var session = Ember.Object.extend({
+var session = EmberObject.extend({
   tokens: {},
   setup: function(application) {
     application.register('learn_aac:session', session, { instantiate: false, singleton: true });
-    Ember.$.each(['model', 'controller', 'view', 'route'], function(i, component) {
+    $.each(['model', 'controller', 'view', 'route'], function(i, component) {
       application.inject(component, 'session', 'learn_aac:session');
     });
     Ember.session = session;
@@ -51,7 +55,7 @@ var session = Ember.Object.extend({
   },
   authenticate: function(credentials) {
     var _this = this;
-    var res = new Ember.RSVP.Promise(function(resolve, reject) {
+    var res = new RSVP.Promise(function(resolve, reject) {
       var data = {
         grant_type: 'password',
         client_id: 'browser',
@@ -60,8 +64,8 @@ var session = Ember.Object.extend({
         password: credentials.password
       };
 
-      Ember.$.ajax('/token', {method: 'POST', data: data}).then(function(response) {
-        Ember.run(function() {
+      $.ajax('/token', {method: 'POST', data: data}).then(function(response) {
+        run(function() {
           session.store('auth', {
             access_token: response.access_token,
             user_name: response.user_name,
@@ -73,7 +77,7 @@ var session = Ember.Object.extend({
         });
       }, function(data) {
         var xhr = data.fakeXHR || {};
-        Ember.run(function() {
+        run(function() {
           reject(xhr.responseJSON || xhr.responseText);
         });
       });
@@ -90,7 +94,7 @@ var session = Ember.Object.extend({
     if(store_data.as_user_id) {
       url = url + "&as_user_id=" + store_data.as_user_id;
     }
-    return Ember.$.ajax(url, {
+    return $.ajax(url, {
       type: 'GET'
     }).then(function(data) {
       if(data.authenticated !== true) {
@@ -110,7 +114,7 @@ var session = Ember.Object.extend({
       if(data.meta && data.meta.fakeXHR && data.meta.fakeXHR.browserToken) {
         session.set('browserToken', data.meta.fakeXHR.browserToken);
       }
-      return Ember.RSVP.resolve({browserToken: session.get('browserToken')});
+      return RSVP.resolve({browserToken: session.get('browserToken')});
     }, function(data) {
       if(data && data.responseJSON) { data = data.responseJSON; }
       if(!session.get('online')) {
@@ -129,7 +133,7 @@ var session = Ember.Object.extend({
         return;
       }
       session.tokens[key] = false;
-      return Ember.RSVP.resolve({browserToken: session.get('browserToken')});
+      return RSVP.resolve({browserToken: session.get('browserToken')});
     });
   },
   restore: function(force_check_for_token) {
@@ -193,7 +197,7 @@ var session = Ember.Object.extend({
       session.reload('/');
     }
     var _this = this;
-    Ember.run.later(function() {
+    later(function() {
       session.set('isAuthenticated', false);
       session.set('access_token', null);
       session.set('user_name', null);
@@ -220,8 +224,8 @@ document.addEventListener('offline', function() {
   session.set('online', false);
 });
 
-var realAjax = Ember.$.ajax;
-Ember.$.ajax = function(url, opts) {
+var realAjax = $.ajax;
+$.ajax = function(url, opts) {
   return session.ajax(url, opts);
 };
 

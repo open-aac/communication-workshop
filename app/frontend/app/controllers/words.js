@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import pages from '../utils/pages';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   load_words: function() {
     var _this = this;
     _this.set('words', {loading: true});

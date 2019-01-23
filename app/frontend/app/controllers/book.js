@@ -1,8 +1,12 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
 import i18n from '../utils/i18n';
+import Controller from '@ember/controller';
+import { later } from '@ember/runloop';
+import { htmlSafe } from '@ember/template';
+import { set as emberSet } from '@ember/object';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   queryParams: ['title'],
   clear_on_change: function() {
     this.set('current_index', 0);
@@ -12,7 +16,7 @@ export default Ember.Controller.extend({
     if(index === 0) {
       if(this.get('title') && !this.get('model.title')) {
         var _this = this;
-        Ember.run.later(function() {
+        later(function() {
           _this.set('model.title', _this.get('title'));
           _this.set('title', undefined);
         });
@@ -47,7 +51,7 @@ export default Ember.Controller.extend({
     } else {
       res = res + " height: 200px;";
     }
-    return Ember.String.htmlSafe(res);
+    return htmlSafe(res);
   }.property('editing'),
   no_prev: function() {
     return (this.get('current_index') || 0) === 0;
@@ -118,13 +122,13 @@ export default Ember.Controller.extend({
     update_image_1: function(image) {
       var entry = this.get('current_page');
       if(entry) {
-        Ember.set(entry, 'image', image);
+        emberSet(entry, 'image', image);
       }
     },
     update_image_2: function(image) {
       var entry = this.get('current_page');
       if(entry) {
-        Ember.set(entry, 'image2', image);
+        emberSet(entry, 'image2', image);
       }
     }
   }

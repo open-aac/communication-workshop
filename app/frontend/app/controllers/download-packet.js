@@ -3,6 +3,7 @@ import modal from '../utils/modal';
 import i18n from '../utils/i18n';
 import session from '../utils/session';
 import progress_tracker from '../utils/progress_tracker';
+import { htmlSafe } from '@ember/template';
 
 export default modal.ModalController.extend({
   opening: function() {
@@ -42,7 +43,7 @@ export default modal.ModalController.extend({
     return Math.round(100 * (this.get('status.percent') || 0));
   }.property('status.percent'),
   num_style: function() {
-    return new Ember.String.htmlSafe("width: " + this.get('num_percent') + "%;");
+    return htmlSafe("width: " + this.get('num_percent') + "%;");
   }.property('num_percent'),
   pct: function() {
     return Math.round(this.get('status.percent') || 0);

@@ -1,7 +1,10 @@
 import Ember from 'ember';
 import i18n from '../utils/i18n';
+import Component from '@ember/component';
+import { set as emberSet } from '@ember/object';
+import $ from 'jquery';
 
-export default Ember.Component.extend({
+export default Component.extend({
   clear_on_change: function() {
     this.set('current_index', 0);
   }.property('entries', 'type'),
@@ -69,13 +72,13 @@ export default Ember.Component.extend({
     var entry = this.get('current_entry');
     if(this.get('type') === 'book' && entry && entry.url && (!entry.image || !entry.text)) {
       this.find_book(entry.url).then(function(res) {
-        Ember.set(entry, 'book_type', res.book_type);
-        Ember.set(entry, 'supplement', res.contents);
+        emberSet(entry, 'book_type', res.book_type);
+        emberSet(entry, 'supplement', res.contents);
         if(!entry.text) {
-          Ember.set(entry, 'text', res.title);
+          emberSet(entry, 'text', res.title);
         }
         if(!entry.image) {
-          Ember.set(entry, 'image', {
+          emberSet(entry, 'image', {
             image_url: res.image_url,
             thumbnail_url: res.image_url,
             license: 'private',
@@ -92,7 +95,7 @@ export default Ember.Component.extend({
         // TODO: API lookup for video title
         var thumbnail = "https://img.youtube.com/vi/" + match[1] + "/hqdefault.jpg";
         if(!entry.image) {
-          Ember.set(entry, 'image', {
+          emberSet(entry, 'image', {
             image_url: thumbnail,
             thumbnail_url: thumbnail,
             license: 'private',
@@ -105,7 +108,7 @@ export default Ember.Component.extend({
     }
   }.observes('type', 'current_entry.url'),
   find_book: function(url) {
-    return Ember.$.ajax('/api/v1/search/books?url=' + encodeURIComponent(url), { type: 'GET' });
+    return $.ajax('/api/v1/search/books?url=' + encodeURIComponent(url), { type: 'GET' });
   },
   actions: {
     add: function() {
@@ -123,7 +126,7 @@ export default Ember.Component.extend({
     update_current_image: function(image) {
       var entry = this.get('current_entry');
       if(entry) {
-        Ember.set(entry, 'image', image);
+        emberSet(entry, 'image', image);
       }
     },
     delete_current: function() {

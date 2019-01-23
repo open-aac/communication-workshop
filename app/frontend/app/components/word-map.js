@@ -1,13 +1,15 @@
 import Ember from 'ember';
 import i18n from '../utils/i18n';
+import Component from '@ember/component';
+import { htmlSafe } from '@ember/template';
 
-export default Ember.Component.extend({
+export default Component.extend({
   box_style: function() {
     var res = 'border: 2px solid #ddd; padding: 10px; border-radius: 3px;';
     if(!this.get('showing_all')) {
       res = res + 'max-height: 300px; overflow: auto';
     }
-    return Ember.String.htmlSafe(res);
+    return htmlSafe(res);
   }.property('showing_all'),
   allow_show_all: function() {
     return this.get('buttons.length') > 10 && !this.get('showing_all');

@@ -1,6 +1,9 @@
 import Ember from 'ember';
+import Component from '@ember/component';
+import { htmlSafe } from '@ember/template';
+import $ from 'jquery'; 
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'span',
   didInsertElement: function() {
     this.redraw();
@@ -30,16 +33,16 @@ export default Ember.Component.extend({
       var height = (((window.screen && window.screen.height) || window.innerHeight) * 0.8) / rows;
       width = Math.min(width, height);
       height = width;
-      return Ember.String.htmlSafe('width: ' + width + 'px; height: ' + height + 'px;');
+      return htmlSafe('width: ' + width + 'px; height: ' + height + 'px;');
     } else if(this.get('small')) {
-      return Ember.String.htmlSafe('width: 120px; height: 120px;');
+      return htmlSafe('width: 120px; height: 120px;');
     } else {
-      return Ember.String.htmlSafe( 'width: 200px; height: 200px;');
+      return htmlSafe( 'width: 200px; height: 200px;');
     }
   }.property('small', 'fullscreen'),
   redraw: function() {
     var button = this.get('button');
-    var $canvas = Ember.$(this.element).find("canvas");
+    var $canvas = $(this.element).find("canvas");
     var _this = this;
     if($canvas[0] && button) {
       $canvas.attr('width', 1000);

@@ -1,4 +1,8 @@
 import Ember from 'ember';
+import { htmlSafe } from '@ember/template';
+import EmberObject from '@ember/object';
+import { assign } from '@ember/polyfills';
+import { get as emberGet } from '@ember/object';
 
 Ember.templateHelpers = Ember.templateHelpers || {};
 
@@ -22,18 +26,18 @@ Ember.templateHelpers.list = function(list, type) {
 Ember.templateHelpers.t = function(str, options) {
   // TODO: options values are NOT bound, so this doesn't work for our purposes
   // prolly needs to be rewritten as a custom view or something
-  return new Ember.String.htmlSafe(i18n.t(options.key, str, options));
+  return new htmlSafe(i18n.t(options.key, str, options));
 };
 
 Ember.templateHelpers.is_equal = function(lhs, rhs) {
   return lhs == rhs;
 };
 
-var i18n = Ember.Object.extend({
+var i18n = EmberObject.extend({
   t: function(key, str, options) {
     var terms = str.match(/%{(\w+)}/g);
     var value;
-    options = Ember.assign({}, options);
+    options = assign({}, options);
     if(options && !options.hash) { options.hash = options; }
     for(var idx = 0; terms && idx < terms.length; idx++) {
       var word = terms[idx].match(/%{(\w+)}/)[1];
@@ -47,7 +51,7 @@ var i18n = Ember.Object.extend({
         if(options.hashTypes) {
           // TODO: pretty sure this isn't used anymore
           if(options.hashTypes[word] == 'ID') {
-            value = Ember.get(options.hashContexts[word], options.hash[word].toString());
+            value = emberGet(options.hashContexts[word], options.hash[word].toString());
             value = value || options.hash[word];
           }
         }

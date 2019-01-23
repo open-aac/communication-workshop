@@ -1,7 +1,9 @@
 import Ember from 'ember';
 import i18n from '../utils/i18n';
+import Component from '@ember/component';
+import { set as emberSet } from '@ember/object';
 
-export default Ember.Component.extend({
+export default Component.extend({
   willInsertElement: function() {
     this.update_filtered_list();
   },
@@ -40,7 +42,7 @@ export default Ember.Component.extend({
           }
         }
       });
-      Ember.set(entry, 'filtered_phrases', result.join(', '));
+      emberSet(entry, 'filtered_phrases', result.join(', '));
     });
   }.observes('entries', 'current_level.level'),
   current_level: function() {
@@ -63,7 +65,7 @@ export default Ember.Component.extend({
       this.get('entries').pushObject({});
     },
     set_category: function(entry, text) {
-      Ember.set(entry, 'category', text);
+      emberSet(entry, 'category', text);
     },
     set_level: function(level) {
       if(level === 'all' && !this.get('filter_all')) {

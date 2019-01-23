@@ -1,8 +1,9 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
 import pages from '../utils/pages';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   load_categories: function() {
     var _this = this;
     _this.set('categories', {loading: true});

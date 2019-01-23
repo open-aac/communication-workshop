@@ -1,9 +1,12 @@
 import Ember from 'ember';
 import session from './session';
+import EmberObject from '@ember/object';
+import { Promise } from 'rsvp';
+import $ from 'jquery';
 
-var pages = Ember.Object.extend({
+var pages = EmberObject.extend({
   all: function(type, initial_opts, partial_callback) {
-    return new Ember.RSVP.Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       var all_results = [];
       var result_type = initial_opts.result_type;
       delete initial_opts['result_type'];
@@ -28,7 +31,7 @@ var pages = Ember.Object.extend({
             reject(err);
           });
         } else {
-          var args = Ember.$.extend({}, opts);
+          var args = $.extend({}, opts);
           session.data_store.query(type, opts).then(function(list) {
             var meta = list.meta;
             all_results = all_results.concat(list.map(function(r) { return r; }));

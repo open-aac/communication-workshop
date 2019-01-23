@@ -1,7 +1,9 @@
 import Ember from 'ember';
 import modal from '../utils/modal';
+import Component from '@ember/component';
+import $ from 'jquery';
 
-export default Ember.Component.extend({
+export default Component.extend({
   didInsertElement: function() {
     this.stretch();
     if(!this.get('already_opened')) {
@@ -21,30 +23,30 @@ export default Ember.Component.extend({
   },
   stretch: function() {
     if(this.get('stretch_ratio')) {
-      var height = Ember.$(window).height() - 50;
-      var width = Ember.$(window).width();
+      var height = $(window).height() - 50;
+      var width = $(window).width();
       var modal_width = (width * 0.9);
       if(modal_width > height * this.get('stretch_ratio') * 0.9) {
         modal_width = height * this.get('stretch_ratio') * 0.9;
       }
-      Ember.$(this.get('element')).find(".modal-dialog").css('width', modal_width);
+      $(this.get('element')).find(".modal-dialog").css('width', modal_width);
     } else if(this.get('full_stretch')) {
-      var height = Ember.$(window).height() - 50;
-      var width = Ember.$(window).width();
+      var height = $(window).height() - 50;
+      var width = $(window).width();
       var modal_width = (width * 0.97);
-      Ember.$(this.get('element')).find(".modal-dialog").css('width', modal_width);
+      $(this.get('element')).find(".modal-dialog").css('width', modal_width);
     } else if(this.get('desired_width')) {
-      var width = Ember.$(window).width();
+      var width = $(window).width();
       var modal_width = (width * 0.9);
       if(this.get('desired_width') < modal_width) {
         modal_width = this.get('desired_width');
       }
-      Ember.$(this.get('element')).find(".modal-dialog").css('width', modal_width);
+      $(this.get('element')).find(".modal-dialog").css('width', modal_width);
     } else {
-      Ember.$(this.get('element')).find(".modal-dialog").css('width', '');
+      $(this.get('element')).find(".modal-dialog").css('width', '');
     }
-    var height = Ember.$(window).height() - 50;
-    Ember.$(this.get('element')).find(".modal-content").css('maxHeight', height).css('overflow', 'auto');
+    var height = $(window).height() - 50;
+    $(this.get('element')).find(".modal-content").css('maxHeight', height).css('overflow', 'auto');
   }.observes('stretch_ratio', 'desired_width'),
   willDestroy: function() {
     if(!this.get('already_closed')) {
@@ -60,7 +62,7 @@ export default Ember.Component.extend({
   },
   actions: {
     close: function(event) {
-      if(!Ember.$(event.target).hasClass('modal')) {
+      if(!$(event.target).hasClass('modal')) {
         return;
       } else {
         event.preventDefault();
