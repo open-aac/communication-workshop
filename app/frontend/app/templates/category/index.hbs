@@ -94,7 +94,7 @@
 {{#unless editing}}
   <div style='margin-top: 50px;'>
     {{#if model.permissions.edit}}
-      <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Word Settings" key='edit_word_settings'}}</button>
+      <button class='btn btn-default' {{action 'edit'}}>{{t "Edit Category Settings" key='edit_category_settings'}}</button>
       {{#if model.revisions}}
         <div style='margin-top: 20px;'>
           {{t "Pending revisions submitted by:" key='pending_revisions_submitted_by'}}
@@ -106,7 +106,7 @@
         </div>
       {{/if}}
     {{else if session.isAuthenticated}}
-      <button class='btn btn-default' {{action 'edit'}}>{{t "Suggest Word Revisions" key='suggest_word_changes'}}</button>
+      <button class='btn btn-default' {{action 'edit'}}>{{t "Suggest Category Revisions" key='suggest_category_changes'}}</button>
       {{#if model.revisions}}
         <div style='margin-top: 20px;'>
           {{t "Pending revisions submitted by:" key='pending_revisions_submitted_by'}}
@@ -120,8 +120,14 @@
     {{/if}}
   </div>
 {{else}}
-  <h2 style='margin-top: 100px;'>{{t "Edit Word Settings" key='edit_word_settings'}}</h2>
+  <h2 style='margin-top: 100px;'>{{t "Edit Category Settings" key='edit_category_settings'}}</h2>
   <form style='margin-top: 50px;' class='form-horizontal'>
+    <div class="form-group">
+      <label for="long_name" class="col-sm-3 control-label">{{t "Name" key='name'}}</label>
+      <div class="col-sm-5">
+        {{input type='text' id='long_name' value=model.long_name class='form-control'}}
+      </div>
+    </div>
     <div class="form-group">
       <label for="image_url" class="col-sm-3 control-label">{{t "Image" key='image_url'}}</label>
       <div class="col-sm-5">

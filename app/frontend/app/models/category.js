@@ -12,6 +12,7 @@ var Category = DS.Model.extend({
       }
     });
   },
+  long_name: DS.attr('string'),
   category: DS.attr('string'),
   locale: DS.attr('string'),
   image: DS.attr('raw'),
@@ -38,6 +39,9 @@ var Category = DS.Model.extend({
   location_based_words: DS.attr('string'),
   other_words: DS.attr('string'),
   references: DS.attr('string'),
+  best_name: function() {
+    return this.get('long_name') || this.get('category') || this.get('id');
+  }.property('id', 'long_name', 'category'),
   best_image_url: function() {
     var map = session.get('user.full_word_map') || [];
     var locale = this.get('locale');

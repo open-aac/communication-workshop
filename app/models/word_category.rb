@@ -80,7 +80,7 @@ class WordCategory < ApplicationRecord
   
   WORD_TYPES = ['verbs', 'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_base_words', 'location_based_words', 'other_words']
   
-  STRING_PARAMS = ['description', 'verbs',
+  STRING_PARAMS = ['long_name', 'description', 'verbs',
         'adjectives', 'adverbs', 'pronouns', 'determiners', 'time_based_words', 'location_based_words',
         'other_words', 'references']
   OBJ_PARAMS = ['image', 'age_range', 'level_1_modeling_examples', 'level_2_modeling_examples', 
