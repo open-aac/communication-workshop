@@ -309,7 +309,6 @@ DEPENDENCIES
   aws-ses
   boy_band
   byebug
-  coffee-rails (~> 4.2)
   dotenv
   go_secure
   guard
