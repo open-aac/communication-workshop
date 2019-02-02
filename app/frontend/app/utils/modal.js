@@ -76,7 +76,8 @@ var modal = EmberObject.extend({
 modal.ModalController = Controller.extend({
   actions: {
     opening: function() {
-      var template = this.get('templateName') || this.get('renderedName') || this.constructor.toString().split(/:/)[1];
+      var template = modal.last_template;
+      if(!template) { console.error("can't find template name"); }
       var settings = modal.settings_for[template] || {};
       var controller = this;
       modal.last_controller = controller;
