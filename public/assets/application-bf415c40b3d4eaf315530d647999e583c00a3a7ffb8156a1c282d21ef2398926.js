@@ -5133,7 +5133,9 @@ var t=Ember.Object.extend({setup:function(e){this.last_promise&&this.last_promis
 this.settings_for[e]=t,this.last_template=e,this.route.render(e,{into:"application",outlet:"modal"})
 var n=this
 return new Ember.RSVP.Promise(function(e,t){n.last_promise={resolve:e,reject:t}})},is_open:function(e){return e?this.last_template==e:!!this.last_template},is_closeable:function(){return"true"!=Ember.$(".modal").attr("data-uncloseable")},close:function(e){this.route&&(this.last_promise&&(e||void 0===e?this.last_promise.resolve(e):this.last_promise.reject("force close"),this.last_promise=null),this.last_template=null,this.route.disconnectOutlet&&(this.last_controller&&this.last_controller.closing&&this.last_controller.closing(),this.route.disconnectOutlet({outlet:"modal",parentView:"application"})),this.queued_template&&Ember.run.later(function(){t.is_open()||(t.open(t.queued_template),t.queued_template=null)},2e3))}}).create()
-t.ModalController=Ember.Controller.extend({actions:{opening:function(){var e=this.get("templateName")||this.get("renderedName")||this.constructor.toString().split(/:/)[1],n=t.settings_for[e]||{}
+t.ModalController=Ember.Controller.extend({actions:{opening:function(){var e=t.last_template
+e||console.error("can't find template name")
+var n=t.settings_for[e]||{}
 t.last_controller=this,this.set("model",n),this.opening&&this.opening()},closing:function(){this.closing&&this.closing()},close:function(){t.close()}}}),e.default=t}),define("frontend/utils/pages",["exports","frontend/utils/session"],function(e,t){Object.defineProperty(e,"__esModule",{value:!0})
 var n=Ember.Object.extend({all:function(e,n,s){return new Ember.RSVP.Promise(function(l,a){var r=[],o=n.result_type
 delete n.result_type;(function e(n,i){if(n.match(/\/api\//))t.default.ajax(n,i).then(function(t){o?r=r.concat(t[o]):r.push(t),s&&s(r),t.meta&&t.meta.next_url?e(t.meta.next_url,{result_type:o}):l(r)},function(e){a(e)})
@@ -5165,8 +5167,8 @@ n.clear(),e&&n.reload("/")
 Ember.run.later(function(){n.set("isAuthenticated",!1),n.set("access_token",null),n.set("user_name",null),n.set("name",null),n.set("as_user_id",null)})}}).create({online:navigator.onLine})
 window.session=n,window.addEventListener("online",function(){n.set("online",!0)}),window.addEventListener("offline",function(){n.set("online",!1)}),document.addEventListener("online",function(){n.set("online",!0)}),document.addEventListener("offline",function(){n.set("online",!1)})
 var s=Ember.$.ajax
-Ember.$.ajax=function(e,t){return n.ajax(e,t)},e.default=n}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+0a98130b"},exportApplicationGlobal:!1}}
-return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+0a98130b"})
+Ember.$.ajax=function(e,t){return n.ajax(e,t)},e.default=n}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+39b7f59c"},exportApplicationGlobal:!1}}
+return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+39b7f59c"})
 ;
 
 
