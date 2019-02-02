@@ -327,6 +327,7 @@ module PacketMaker
         url = req.headers['Location']
       end
     end
+    
     image_local_path = OBF::Utils.save_image({'url' => url}, nil, opts[:background] || "\#ffffff")
     res = false
     if image_local_path && File.exist?(image_local_path)
