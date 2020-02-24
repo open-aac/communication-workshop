@@ -44,8 +44,8 @@ class User < ApplicationRecord
     res = self.find_by_path(login)
     res ||= self.find_by_path(login.downcase)
     if !res && login.match(/@/)
-      us = User.find_by(:hashed_email => self.email_hash(login))
-      res = us[0] if us.length == 1
+      user = User.find_by(:hashed_email => self.email_hash(login))
+      res = user if user
     end
     res
   end
