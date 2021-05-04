@@ -81,7 +81,7 @@ export default Controller.extend({
     },
     cancel: function() {
       if(this.get('model.pending')) {
-        this.transitionToRoute('books');
+        this.transitionToRoute('books', 'en');
       } else {
         this.get('model').rollbackAttributes();
         this.set('editing', false);

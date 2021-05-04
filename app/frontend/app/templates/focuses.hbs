@@ -1,0 +1,34 @@
+<h1>{{t "Focus Word Sets" key='focus_word_sets'}}</h1>
+<p>{{t "Focus Word Sets rock!" key='focus_explainer'}}</p>
+<ul class="nav nav-pills">
+  <li role="presentation" class="active"><a href="#">{{t "Browse" key='browse'}}</a></li>
+  <li role="presentation"><a href="#">{{t "Search"}}</a></li>
+  <li role="presentation"><a href="#">Messages</a></li>
+</ul>
+browse | newest | most popular | alphabetical | search
+{{#if browse}}
+  <div class='list-group'>
+    <a class='list-group-item'>{{t "Shared Reading Books" key='shared_reading_books'}}</a>
+    <a class='list-group-item'>{{t "Context-Specific Activities" key='context_specific_activities'}}</a>
+    <a class='list-group-item'>{{t "Other Focus Word Sets" key='other_focus_word_sets'}}</a>
+  </div>
+{{else if list}}
+  <h4>{{ list.title }}</h4>
+  {{#if list.loading}}
+  {{else if list.error}}
+  {{else if list.results}}
+    <div class='list-group'>
+      {{#each list.results as |item|}}
+      {{/each}}      
+    </div>
+  {{else}}
+    <p>{{t "No Data Available" key='no_data_available'}}</p>
+  {{/if}}
+{{/if}}
+
+{{#if session.isAuthenticated}}
+  <span style='display: inline-block; width: 300px;'>
+    {{input type='text' class='form-control input-lg' placeholder='New Focus Title' value=new_focus_title enter='new_focus'}}
+  </span>
+  <button class='btn btn-lg btn-default' {{action 'new_focus'}}>{{t "Create New Focus Word Set" key='new_focus_word_set'}}</button>
+{{/if}}

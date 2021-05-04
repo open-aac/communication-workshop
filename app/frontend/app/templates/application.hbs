@@ -29,7 +29,9 @@
             <li>{{#link-to 'register'}}{{t "Sign Up" key='sign_up'}}{{/link-to}}</li>
           {{/if}}
           <li class='visible-xs'>{{#link-to 'index'}}{{t "Dashboard" key='dashboard'}}{{/link-to}}</li>
-          <li class='visible-xs'>{{#link-to 'books'}}{{t "Books" key='books'}}{{/link-to}}</li>
+          <li class='visible-xs'>{{#link-to 'books' 'en'}}{{t "Books" key='books'}}{{/link-to}}</li>
+          <li class='visible-xs'>{{#link-to 'words' 'en'}}{{t "Words" key='words'}}{{/link-to}}</li>
+          <li class='visible-xs'>{{#link-to 'focus' 'en'}}{{t "Focus" key='focus'}}{{/link-to}}</li>
           {{#if session.isAuthenticated}}
             <li><a href="#" {{action 'logout'}}>{{t "Logout" key='logout'}}</a></li>
           {{/if}}
@@ -58,8 +60,9 @@
     <div class='col-sm-3 col-md-2 hidden-xs' id='sidebar'>
       <ul class='nav nav-pills nav-stacked'>
         <li>{{#link-to 'index'}}{{t "Dashboard" key='dashboard'}}{{/link-to}}</li>
-        <li>{{#link-to 'books'}}{{t "Books" key='books'}}{{/link-to}}</li>
+        <li>{{#link-to 'books' 'en'}}{{t "Books" key='books'}}{{/link-to}}</li>
         <li>{{#link-to 'words' 'en'}}{{t "Words" key='words'}}{{/link-to}}</li>
+        <li>{{#link-to 'focus' 'en'}}{{t "Focus" key='focus'}}{{/link-to}}</li>
       </ul>
       <div style='position: absolute; bottom: 5px; left: 0; width: 100%; padding: 5px; color: #999; font-size: 12px;' class='text-muted'>{{t "The Communication Workshop is open-licensed and material is free to be reused or re-shared with attribution." key='open_licensed_content'}}</div>
 

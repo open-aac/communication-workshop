@@ -21,8 +21,10 @@ Router.map(function() {
   });
   this.route('tallies', {path: '/scratch/tallies'});
   this.route('training', {path: '/scratch/training'});
-  this.route('books', {path: '/books'});
+  this.route('books', {path: '/books/list/:locale'});
   this.route('book', {path: '/books/:id'});
+  this.route('focuses', {path: '/focus/:locale'});
+  this.route('focus', {path: '/focus/:id/:locale'});
   this.route('word', {path: '/words/:word/:locale'}, function() {
     this.route('quiz', {path: 'quizzes/:quiz_id'});
     this.route('story', {path: 'stories/:story_id'});

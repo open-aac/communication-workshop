@@ -66,6 +66,8 @@ end
 # - Prompting hierarchy (apraxia, count to ten, warnings against fad strategies)
 # - Using data to adapt strategy
 
+# - SHARED READING
+
 # Additional modules
 # - Message and Voice Banking
 # - Alternative access
@@ -94,6 +96,7 @@ end
 # Class for Teen Peers
 # - We talk with lots more than our mouths
 # - Disability isn't bad
+# - What disabilities make you "dumb"?
 # - 25-phrase communication challenge
 # - Short speech is like a guessing game
 # - AAC takes a lot of time and patience (for them and you)
