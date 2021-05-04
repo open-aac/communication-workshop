@@ -1,5 +1,3 @@
-require 'aws/ses'
-
 module General
   extend ActiveSupport::Concern
   
@@ -12,7 +10,6 @@ module General
       begin
         method = self.send(method_name, *args)
         method.respond_to?(:deliver_now) ? method.deliver_now : method.deliver
-      rescue AWS::SES::ResponseError => e
       end
     end
   end

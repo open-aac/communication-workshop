@@ -51,11 +51,21 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.4)
-    aws-ses (0.6.0)
-      builder
-      mail (> 2.2.5)
-      mime-types
-      xml-simple
+    aws-eventstream (1.1.1)
+    aws-partitions (1.451.0)
+    aws-sdk-core (3.114.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.239.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1.0)
+    aws-sdk-rails (2.1.0)
+      aws-sdk-ses (~> 1)
+      railties (>= 3)
+    aws-sdk-ses (1.38.0)
+      aws-sdk-core (~> 3, >= 3.112.0)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.2.3)
+      aws-eventstream (~> 1, >= 1.0.2)
     bindex (0.5.0)
     boy_band (0.1.1)
     builder (3.2.3)
@@ -121,6 +131,7 @@ GEM
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
+    jmespath (1.4.0)
     json (2.1.0)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -299,14 +310,14 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
-    xml-simple (1.1.5)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   accessible-books
-  aws-ses
+  aws-sdk-rails
+  aws-sdk-ses (~> 1)
   boy_band
   byebug
   dotenv
@@ -341,7 +352,7 @@ DEPENDENCIES
   web-console (>= 3.3.0)
 
 RUBY VERSION
-   ruby 2.5.3p105
+   ruby 2.6.6p146
 
 BUNDLED WITH
-   1.17.2
+   1.17.3
