@@ -22,11 +22,14 @@ Rails.application.routes.draw do
   get '/users/:user_name' => ember_handler
   get '/users/links/:user_id' => 'session#user_redirect'
   get '/words/:locale' => ember_handler
+  get '/focus/:locale' => ember_handler
+  get '/focus/:id/:locale' => ember_handler
   get '/categories/:locale' => ember_handler
   get '/forgot_password' => ember_handler
   get '/users/:user_name/password_reset/:code' => ember_handler
   get '/books/launch' => 'render#book'
   get '/books' => ember_handler
+  get '/books/list/:locale' => ember_handler
 
   protected_resque = Rack::Auth::Basic.new(Resque::Server.new) do |username, password|
     u = User.find_by(:user_name => username)
@@ -72,6 +75,7 @@ Rails.application.routes.draw do
     resources :books, {constraints: {id: book_id_regex}} do
       post '/print' => 'books#print'
     end
+    resources :focus, {constraints: {id: book_id_regex}}
     resources :lessons
     get '/events' => 'users#events'
     resources :users do
@@ -82,6 +86,7 @@ Rails.application.routes.draw do
       post '/password_reset' => 'users#reset_password'
     end
     get '/search/books' => 'search#books'
+    get '/search/focus' => 'search#focuses'
     post '/search/tallies' => 'search#tallies'
     get '/search/tallies' => 'search#tallies'
     get "progress/:id" => "progress#progress"

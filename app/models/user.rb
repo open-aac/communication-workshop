@@ -22,6 +22,10 @@ class User < ApplicationRecord
   def admin?
     !!self.settings['admin']
   end
+
+  def identifier
+    "#{self.settings['name'] || self.settings['user_name']}::#{self.global_id}"  
+  end
   
   def destroy_data
     UserData.where(user_id: self.id).destroy_all

@@ -7,6 +7,5 @@ export default Route.extend({
   },
   setupController: function(controller, model) {
     controller.set('locale', model.locale);
-    controller.load_books();
   }
 });

@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180703230710) do
+ActiveRecord::Schema.define(version: 20210506180150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "btree_gin"
 
   create_table "books", force: :cascade do |t|
     t.string   "ref_id"
@@ -21,12 +22,30 @@ ActiveRecord::Schema.define(version: 20180703230710) do
     t.float    "random_id"
     t.integer  "user_id"
     t.text     "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.boolean  "approved"
+    t.string   "search_string"
+    t.index "to_tsvector('simple'::regconfig, COALESCE((search_string)::text, ''::text))", name: "books_search_string", using: :gin
     t.index ["approved"], name: "index_books_on_approved", using: :btree
     t.index ["ref_id"], name: "index_books_on_ref_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_books_on_user_id", using: :btree
+  end
+
+  create_table "focus", force: :cascade do |t|
+    t.string   "title"
+    t.string   "category"
+    t.string   "locale"
+    t.string   "search_string", limit: 10000
+    t.text     "data"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "user_id"
+    t.boolean  "approved"
+    t.string   "ref_id"
+    t.index "to_tsvector('simple'::regconfig, COALESCE((search_string)::text, ''::text))", name: "focus_search_string", using: :gin
+    t.index ["locale", "category", "title"], name: "index_focus_on_locale_and_category_and_title", using: :btree
+    t.index ["ref_id"], name: "index_focus_on_ref_id", unique: true, using: :btree
   end
 
   create_table "lessons", force: :cascade do |t|

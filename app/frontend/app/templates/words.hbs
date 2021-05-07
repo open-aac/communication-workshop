@@ -6,19 +6,21 @@
   <div style='max-width: 400px;'>
     <div class='list-group pills'>
       {{#each words as |word|}}
-        {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
-          {{#if word.best_image_url}}
-            <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
-          {{/if}}
-          {{word.word}}
-          {{#if word.pending_revisions}}
-            <span class='glyphicon glyphicon-comment' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
-          {{else}}
-            {{#unless word.has_baseline_content}}
-              <span class='glyphicon glyphicon-exclamation-sign' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
-            {{/unless}}
-          {{/if}}
-        {{/link-to}}
+        {{#unless word.unavailable}}
+          {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
+            {{#if word.best_image_url}}
+              <img src={{word.best_image_url}} class='fit_image' style='width: 46px; height: 46px; margin: -8px 0;' />
+            {{/if}}
+            {{word.word}}
+            {{#if word.pending_revisions}}
+              <span class='glyphicon glyphicon-comment' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
+            {{else}}
+              {{#unless word.has_baseline_content}}
+                <span class='glyphicon glyphicon-exclamation-sign' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
+              {{/unless}}
+            {{/if}}
+          {{/link-to}}
+        {{/unless}}
       {{/each}}
     </div>
   </div>

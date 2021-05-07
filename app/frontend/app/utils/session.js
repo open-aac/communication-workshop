@@ -169,6 +169,9 @@ var session = EmberObject.extend({
       session.set('user', {error: true});
     });
   },
+  is_admin: function() {
+    return this.get('user.admin');
+  },
   override: function(options) {
     var data = session.restore();
     data.access_token = options.access_token;

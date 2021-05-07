@@ -3,7 +3,6 @@ import modal from '../utils/modal';
 import session from '../utils/session';
 import Route from '@ember/routing/route';
 import $ from 'jquery';
-
 export default Route.extend({
   setupController: function(controller, model) {
     controller.load_user();

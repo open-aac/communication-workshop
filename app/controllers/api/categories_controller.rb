@@ -1,5 +1,3 @@
-require 'json_api/category'
-
 class Api::CategoriesController < ApplicationController
   def index
     categories = WordCategory.where(:has_content => true)

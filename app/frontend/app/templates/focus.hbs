@@ -1,0 +1,160 @@
+<h1>
+  {{#if model.title}}{{model.title}}{{else}}{{t "New Focus Set" key='new_focus_set'}}{{/if}}
+</h1>
+{{#if model.author}}
+  <div style='margin-top: -10px; color: #888;'>{{t "by" key='by'}} {{model.author}}</div>
+{{/if}}
+{{#unless model.approved}}
+  <p class='text-muted' style='font-style: italic;'>{{t "This focus set is waiting for approval" key='waiting_for_approval'}}</p>
+{{/unless}}
+
+<div style='margin-top: 30px;'>
+  {{#if editing}}
+    <div style='float: left; width: 50%; margin-bottom: 5px;'>
+      {{input type='text' value=model.title class='form-control' placeholder="Book/Activity/Subject Title"}}
+    </div>
+    <div style='float: left; width: calc(50% - 10px); margin-left: 10px; margin-bottom: 5px;'>
+      {{input type='text' value=model.author class='form-control' placeholder="Author, if any"}}
+    </div>
+    <div style='width: 100%; margin-bottom: 5px;'>
+      {{bound-select select_class="form-control" select_id="category" content=category_types selection=model.category action=(action (mut model.category)) }}
+    </div>
+    <div style='width: 100%; margin-bottom: 5px;'>
+      {{textarea value=model.words rows=3 class='form-control' placeholder='List of focus words, or text of published work'}}
+    </div>
+    <div style='width: 100%; margin-bottom: 5px;'>
+      {{textarea value=model.helper_words rows=2 class='form-control' placeholder='Related core words (words not in the material, but which may be useful when accessing the material.'}}
+    </div>
+    <div style='float: left; width: 100px; height: 100px;'>
+      {{#if model.image_url}}
+        <img src={{model.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 90px; height: 100px;'/>
+      {{else}}
+        <img src='/images/glass.svg' class='fit_image' style='width: 90px; height: 100px;'/>
+      {{/if}}
+    </div>
+    <div style='float: left; width: calc(100% - 100px); margin-bottom: 5px;'>
+      {{input type='text' value=model.source_url class='form-control' placeholder="Source URL (Amazon Link, product page, research, etc.)"}}
+    </div>
+    <div style='float: left; width: calc(100% - 100px); margin-bottom: 5px;'>
+      {{input type='text' value=model.image_url class='form-control' placeholder="Image Preview URL (if any)"}}
+    </div>
+    <div style='clear: left;'></div>
+  {{else}}
+    <div style='margin-top: 0px; margin-bottom: 30px; font-size: 16px; color: #888; white-space: pre-line;'>{{model.all_words_capitalized}}</div>
+    <h4>{{t "Found Words" key='found_words'}}</h4>
+    {{#if found_words}}
+      <table class='table-hover table table-striped'>
+        <tbody>
+          {{#each found_words as |word|}}
+            {{#unless word.collapsed}}
+              <tr>
+                <td style='vertical-align: middle; white-space: nowrap; font-size: 16px; padding-right: 20px; width: 20%;'>{{word.word}}</td>
+                <td>
+                  {{button-preview button=word small=true}}
+                </td>
+                <td style='width: 50px;'>
+                  <button class='btn btn-default' {{action 'toggle' word}}><span class='glyphicon glyphicon-remove'></span><span class='sr-only'>{{t "hide button" key='hide_button'}}</span></button>
+                </td>
+              </tr>
+            {{/unless}}
+          {{/each}}
+        </tbody>
+      </table>
+      {{#if any_collapsed}}
+        <p>
+          <b>{{t "Additional words:" key='additional_words'}}</b>
+          {{#each found_words as |word|}}
+            {{#if word.collapsed}}
+              <a href='#' {{action 'toggle' word}} style={{word.collapsed_style}}>{{word.word}}</a>
+            {{/if}}
+          {{/each}}
+        </p>
+      {{/if}}
+    {{else}}
+      <p>{{t "None available" key='none_available'}}</p>
+    {{/if}}
+    <h4>{{t "Missing Words" key='missing_words'}}</h4>
+    {{#if missing_words}}
+      {{#each missing_words as |word|}}
+        {{word}}
+      {{/each}}
+    {{else}}
+      <p>{{t "None available" key='none_available'}}</p>
+    {{/if}}
+  {{/if}}
+  <div style='clear: left;'></div>
+  {{#if editing}}
+    <p>
+      {{t "When submitting published works, please include the book's author. You may type up the entire text, and we will extract the list of individual words used and share that as allowed by fair use. Please note that submitted material will, where applicable, be released under a Creative Commons (CC-By) license by \"CoughDrop and additional authors\", which allows for commercial or non-commercial use with attribution." key='license_reminder'}}
+      <a href='https://creativecommons.org/licenses/by/4.0/' target='_blank'>{{t "review CC-By license details here" key='review_cc_by_license'}}</a>
+    </p>
+  {{/if}}
+  {{#if model.pending}}
+    <p>{{t "When you submit a new focus set, it won't be publicly available until it has been reviewed. Thanks for being patient while our volunteers get to it!" key='submission_pending_review'}}</p>
+  {{/if}}
+  <div style='margin-top: 20px;'>
+    {{#if editing}}
+      <button class='btn btn-primary btn-lg' {{action 'save'}}>
+        {{#if status.saving}}
+          {{t "Saving Focus Set..." key='saving_focus'}}
+        {{else if status.error}}
+          {{t "Error Saving Focus Set" key='error_saving_focus'}}
+        {{else}}
+          {{t "Save Focus Set" key='save_focus'}}
+        {{/if}}
+      </button>
+      <button class='btn btn-default btn-lg' {{action 'cancel'}}>
+        {{t "Cancel" key='cancel'}}
+      </button>
+    {{else if editable}}
+      <button class='btn btn-default btn-lg' {{action 'edit'}}>{{t "Edit Focus Set" key='edit_focus'}}</button>
+      {{#if session.user.is_admin}}
+        {{#unless model.approved}}
+          <button class='btn btn-default btn-lg' disabled={{approval.pending}} {{action 'approve'}}>
+            {{#if approval.pending}}
+              {{t "Approving..." key='approving'}}
+            {{else if approval.error}}
+              {{t "Error Approving" key='error_approving'}}
+            {{else}}
+              {{t "Approve Focus Set" key='approve_focus_set'}}
+            {{/if}}
+          </button>
+        {{/unless}}
+      {{/if}}
+    {{/if}}
+  </div>
+</div>
+{{#unless editing}}
+  <div style='margin-top: 30px;'>
+    <h2>{{t "Attributions" key='attributions'}}</h2>
+    <ul class='list-unstyled'>
+      {{#if model.author}}
+        <li>
+          {{t "Text written by" key='text_written_by'}}
+          {{model.author}}
+        </li>
+      {{/if}}
+      {{#if model.approved_users}}
+        {{#each model.approved_users as |user|}}
+          {{#if user.id}}
+            <li><a href='/users/links/{{user.id}}' target='_blank'>{{t "contribution by" key='contribution_by'}} {{user.name}}</a></li>
+          {{else}}
+            <li>{{t "contribution by" key='contribution_by'}} {{user.name}}</li>
+          {{/if}}
+        {{/each}}
+      {{/if}}
+      {{#each found_words as |word|}}
+        {{#unless word.collapsed}}
+          {{#if word.image}}
+            <li>
+              <img src={{word.image.image_url}} style='height: 30px; width: 50px;' class='fit_image' />
+              {{word.image.license}}
+              {{t "by" key='by'}}
+              {{word.image.author_name}}
+            </li>
+          {{/if}}
+        {{/unless}}
+      {{/each}}
+    </ul>
+  </div>
+{{/unless}}

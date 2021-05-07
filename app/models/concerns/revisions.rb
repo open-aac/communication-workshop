@@ -52,7 +52,7 @@ module Revisions
         pre = self.global_id || (self.data['pre_id'] ||= "p_#{rand(999)}")
         self.data['revisions'] ||= []
         uid = user_params['user_identifier']
-        user_ref = uid.is_a?(User) ? "#{uid.settings['name'] || uid.settings['user_name']}::#{uid.global_id}" : uid.to_s
+        user_ref = uid.is_a?(User) ? uid.identifier : uid.to_s
         self.data['revisions'] << {
           'user_identifier' => user_ref, 
           'changes' => changes,

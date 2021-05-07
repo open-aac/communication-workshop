@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import pages from '../utils/pages';
 import Controller from '@ember/controller';
+import session from '../utils/session';
+import { set as emberSet } from '@ember/object';
 
 export default Controller.extend({
   load_words: function() {
@@ -26,6 +28,13 @@ export default Controller.extend({
       _this.set('words', {error: true});
     });
   },
+  update_availability: function() {
+    if(!session.get('is_admin')) {
+      (this.get('list.results') || []).forEach(function(item) {
+        item.set('unavailable', !item.get('has_baseline_content'));
+      });
+    }
+  }.observes('list.results.@each.has_baseline_content', 'session.is_admin'),
   actions: {
   }
 });

@@ -59,6 +59,8 @@ module GlobalId
         find_by(:category => category.downcase, :locale => locale.downcase)
       elsif self == Book && path.to_s.match(/^\d+-/)
         find_by(:ref_id => path.downcase)
+      elsif self == Focus && path.to_s.match(/^\d+-/)
+        find_by(:ref_id => path.downcase)
       elsif self == User && !path.to_s.match(/^\d/)
         find_by(:hashed_identifier => User.user_name_hash(path))
       else

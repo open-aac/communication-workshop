@@ -36,6 +36,19 @@ class Api::SearchController < ApplicationController
       render json: json
     end
   end
+
+  def find_books
+    core = Book.search_by_text.with_pg_search_rank(params['q'])
+    tarheel = AccessibleBooks.search(params['q'])
+    # 'book_url' => "https://tarheelreader.org#{book['link']}",
+    # 'image_url' => tarheel_prefix + book['cover']['url'],
+    # 'title' => book['title'],
+    # 'author' => book['author'],
+    # 'pages' => book['pages'].to_i,
+    # 'id' => book['slug'],
+    # 'image_attribution' => "https://tarheelreader.org/photo-credits/?id=#{book['ID']}"
+    render json: []
+  end
   
   def tallies
     tallies = JSON.parse(Setting.get('vote-tallies')) rescue nil

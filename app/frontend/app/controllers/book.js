@@ -7,7 +7,7 @@ import { htmlSafe } from '@ember/template';
 import { set as emberSet } from '@ember/object';
 
 export default Controller.extend({
-  queryParams: ['title'],
+  queryParams: ['title', 'locale'],
   clear_on_change: function() {
     this.set('current_index', 0);
   }.property('model.pages', 'model.id'),
@@ -81,7 +81,7 @@ export default Controller.extend({
     },
     cancel: function() {
       if(this.get('model.pending')) {
-        this.transitionToRoute('books', 'en');
+        this.transitionToRoute('books', this.get('model.locale') || 'en');
       } else {
         this.get('model').rollbackAttributes();
         this.set('editing', false);

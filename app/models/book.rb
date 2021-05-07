@@ -5,6 +5,9 @@ class Book < ApplicationRecord
   include Permissions
   include Async
 
+  include PgSearch::Model
+  pg_search_scope :search_by_text, :against => :search_string
+
   secure_serialize :data
   before_save :generate_defaults
   after_save :add_to_core_words
@@ -43,6 +46,11 @@ class Book < ApplicationRecord
     self.random_id ||= (rand(9999999999) + Time.now.to_i)
     self.locale ||= 'en'
     self.data['related_words'] = related_page_words
+    full_text = (self.data['title'] || '') + "\n" + (self.data['author'] || '') + "\n"
+    (self.data['pages'] || []).each do |page|
+      full_text += (page['text'] || '') + " " + (page['related_words'] || '') + "\n"
+    end
+    self.search_string = full_text
 
     true
   end

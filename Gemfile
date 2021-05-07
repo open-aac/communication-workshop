@@ -13,7 +13,8 @@ gem 'resque'
 gem 'prawn'
 gem 'aws-sdk-rails'
 gem 'aws-sdk-ses', '~> 1'
-gem 'accessible-books'
+gem 'accessible_books'
+gem 'pg_search'
 
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'

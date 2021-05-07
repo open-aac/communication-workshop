@@ -1,29 +1,46 @@
 <h1>{{t "Focus Word Sets" key='focus_word_sets'}}</h1>
-<p>{{t "Focus Word Sets rock!" key='focus_explainer'}}</p>
-<ul class="nav nav-pills">
-  <li role="presentation" class="active"><a href="#">{{t "Browse" key='browse'}}</a></li>
-  <li role="presentation"><a href="#">{{t "Search"}}</a></li>
-  <li role="presentation"><a href="#">Messages</a></li>
-</ul>
-browse | newest | most popular | alphabetical | search
-{{#if browse}}
-  <div class='list-group'>
-    <a class='list-group-item'>{{t "Shared Reading Books" key='shared_reading_books'}}</a>
-    <a class='list-group-item'>{{t "Context-Specific Activities" key='context_specific_activities'}}</a>
-    <a class='list-group-item'>{{t "Other Focus Word Sets" key='other_focus_word_sets'}}</a>
+<p>{{t "Focus Word Sets are collections of words that can be used to generate core word sets. They could be created from the complete text of a shared-reading book, the list of words you'd use in a context-specific activity, or other types of word collections. Once the focus set is created and approved, others can use it to generate word word lists, or to set focus lists in AAC apps that support them!" key='focus_explainer'}}</p>
+<div style='width: 300px; margin-bottom: 20px;'>
+  <div class='input-group'>
+    {{input value=search type='text' class='form-control' placeholder="Search" enter='search'}}
+    <span class="input-group-btn">
+      <button class="btn btn-primary" type="button" {{action 'search'}}>{{t "Search" key='search'}}</button>
+    </span>  
   </div>
-{{else if list}}
+</div>
+{{#if list}}
+  {{#if list.category}}
+    <button class='btn btn-default' {{action 'clear'}} style='float: left; margin-right: 5px; margin-top: -7px; margin-bottom: 10px;'><span class='glyphicon glyphicon-arrow-left'></span> <span class='sr-only'>{{t "Back" key='back'}}</span></button>
+  {{/if}}
   <h4>{{ list.title }}</h4>
+  {{#if list.search}}
+    <button class='btn btn-default' {{action 'clear'}} style='margin-bottom: 10px;'>{{t "Clear Search" key='clear_search'}}</button>
+  {{/if}}
+  <div style='clear: left;'></div>
   {{#if list.loading}}
+    <p>{{t "Loading Results..." key='loading_results'}}</p>
   {{else if list.error}}
+    <p>{{t "Error Loading Results..." key='error_loading_results'}}</p>
   {{else if list.results}}
     <div class='list-group'>
       {{#each list.results as |item|}}
+        {{#link-to 'focus' item.id item.locale class='list-group-item'}}
+          <span style='font-size: 16px;'>
+            <b>{{item.title}}</b>{{#if item.author}} {{t "by" key='by'}} {{item.author}}{{/if}}{{#unless item.approved}} <span class='glyphicon glyphicon-exclamation-sign'></span>{{/unless}}
+          </span>
+          <div style='width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #888;'>{{item.all_words}}</div>
+        {{/link-to}}
       {{/each}}      
     </div>
   {{else}}
     <p>{{t "No Data Available" key='no_data_available'}}</p>
   {{/if}}
+{{else}}
+  <div class='list-group'>
+    <a href='#' class='list-group-item list-group-item-info' {{action 'set_category' 'books'}} style='padding: 20px; border-color: #888; font-size: 16px;'><span class='glyphicon glyphicon-book'></span> {{t "Shared Reading Books" key='shared_reading_books'}}</a>
+    <a href='#' class='list-group-item list-group-item-info' {{action 'set_category' 'activities'}} style='padding: 20px; border-color: #888; font-size: 16px;'><span class='glyphicon glyphicon-picture'></span> {{t "Context-Specific Activities" key='context_specific_activities'}}</a>
+    <a href='#' class='list-group-item list-group-item-info' {{action 'set_category' 'other'}} style='padding: 20px; border-color: #888; font-size: 16px;'><span class='glyphicon glyphicon-folder-open'></span> {{t "Other Focus Word Sets" key='other_focus_word_sets'}}</a>
+  </div>
 {{/if}}
 
 {{#if session.isAuthenticated}}
