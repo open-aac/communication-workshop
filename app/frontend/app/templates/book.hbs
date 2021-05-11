@@ -3,7 +3,13 @@
   {{t "Author:" key='author'}} {{#if model.author}}{{model.author}}{{else}}{{t "Unknown" key='unknown'}}{{/if}}<br/>
   {{t "Pages:" key='pages'}} {{model.pages.length}}<br/>
   {{#if editable}}
-    {{t "Visibility:" key='visibility'}}{{#if model.public}}{{t "Public" key='public'}}{{else}}{{t "Private" key='private'}}{{/if}}<br/>
+    {{t "Visibility:" key='visibility'}} {{#if model.public}}{{t "Public" key='public'}}{{else}}{{t "Private" key='private'}}{{/if}}
+    {{#if model.public}}
+      {{#unless model.approved}}
+        {{t "(unapproved)" key='unapproved'}}
+      {{/unless}}
+    {{/if}}
+    <br/>
   {{/if}}
   <br/>
 

@@ -29,10 +29,10 @@ export default Controller.extend({
     // -->
     var source = this.get('model.source_url');
     if(source && !this.get('image_url')) {
-      var regex = RegExp("http://www.amazon.com/([\\w-]+/)?(dp|gp/product|exec/obidos/asin)/(\\w+/)?([A-Z0-9]{10})");
+      var regex = RegExp("https?://www.amazon.com/([\\w-]+/)?(dp|gp/product|exec/obidos/asin)/(\\w+/)?([A-Z0-9]{10})");
       var match = source.match(regex);
       if(match && match[4]) {
-        this.set('model.image_url', "http://images.amazon.com/images/P/" + match[4] + ".01._SCLZZZZZZZ_.jpg")
+        this.set('model.image_url', "https://images-na.ssl-images-amazon.com/images/P/" + match[4] + ".01._SCLZZZZZZZ_.jpg")
       }
     }
   }.observes('model.source_url', 'model.image_url'),

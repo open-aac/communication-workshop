@@ -137,7 +137,7 @@
       </button>
     {{else if editable}}
       <button class='btn btn-default btn-lg' {{action 'edit'}}>{{t "Edit Focus Set" key='edit_focus'}}</button>
-      {{#if session.user.is_admin}}
+      {{#if session.user.admin}}
         {{#unless model.approved}}
           <button class='btn btn-default btn-lg' disabled={{approval.pending}} {{action 'approve'}}>
             {{#if approval.pending}}
