@@ -145,6 +145,12 @@ export default Controller.extend({
       }
       words = words + str;
       this.set('model.words', words);
+      setTimeout(function() {
+        var elem = document.getElementById('#focus_words');
+        if(elem) {
+          elem.scrollTop = elem.scrollHeight;
+        }
+      }, 100);
     },
     speech_error: function() {
       this.set('speech.ready', false);

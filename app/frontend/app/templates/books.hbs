@@ -21,6 +21,12 @@
     <div class='list-group'>
     {{#each books as |book|}}
       {{#link-to 'book' book.id class='list-group-item'}}
+        {{#if book.image.image_url}}
+          <img src={{book.image.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 40px; height: 40px; float: left; margin-right: 5px;'/>
+        {{else}}
+          <img src='/images/book.svg' class='fit_image' style='width: 40px; height: 40px;  float: left; margin-right: 5px;'/>
+        {{/if}}
+
         <strong>{{book.title}}</strong>
         {{#if book.author}}
           <span class='text-muted'>{{t "by" key='by'}} {{book.author}}</span>

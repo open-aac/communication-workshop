@@ -1,3 +1,8 @@
+{{#if model.image_url}}
+  <img src={{model.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 90px; height: 100px; float: left; margin-top: 10px; margin-right: 10px;'/>
+{{else}}
+  <img src='/images/glass.svg' class='fit_image' style='width: 90px; height: 100px;  float: left; margin-top: 10px; margin-right: 10px;'/>
+{{/if}}
 <h1>
   {{#if model.title}}{{model.title}}{{else}}{{t "New Focus Set" key='new_focus_set'}}{{/if}}
 </h1>

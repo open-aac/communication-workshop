@@ -25,10 +25,15 @@
     <div class='list-group'>
       {{#each list.results as |item|}}
         {{#link-to 'focus' item.id item.locale class='list-group-item'}}
+          {{#if item.image_url}}
+            <img src={{model.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 40px; height: 40px; float: left; margin-right: 5px;'/>
+          {{else}}
+            <img src='/images/glass.svg' class='fit_image' style='width: 40px; height: 40px;  float: left; margin-right: 5px;'/>
+          {{/if}}
           <span style='font-size: 16px;'>
             <b>{{item.title}}</b>{{#if item.author}} {{t "by" key='by'}} {{item.author}}{{/if}}{{#unless item.approved}} <span class='glyphicon glyphicon-exclamation-sign'></span>{{/unless}}
           </span>
-          <div style='width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #888;'>{{item.all_words}}</div>
+          <div style='width: calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #888;'>{{item.all_words}}</div>
         {{/link-to}}
       {{/each}}      
     </div>
