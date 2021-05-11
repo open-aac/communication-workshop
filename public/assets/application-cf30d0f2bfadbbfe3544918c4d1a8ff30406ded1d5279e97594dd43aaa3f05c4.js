@@ -5201,8 +5201,8 @@ s.clear(),e&&s.reload("/")
 Ember.run.later(function(){s.set("isAuthenticated",!1),s.set("access_token",null),s.set("user_name",null),s.set("name",null),s.set("as_user_id",null)})}}).create({online:navigator.onLine})
 window.session=s,window.addEventListener("online",function(){s.set("online",!0)}),window.addEventListener("offline",function(){s.set("online",!1)}),document.addEventListener("online",function(){s.set("online",!0)}),document.addEventListener("offline",function(){s.set("online",!1)})
 var n=Ember.$.ajax
-Ember.$.ajax=function(e,t){return s.ajax(e,t)},e.default=s}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+3a49ea4b"},exportApplicationGlobal:!1}}
-return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+3a49ea4b"})
+Ember.$.ajax=function(e,t){return s.ajax(e,t)},e.default=s}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+a2540ef2"},exportApplicationGlobal:!1}}
+return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+a2540ef2"})
 ;
 
 
