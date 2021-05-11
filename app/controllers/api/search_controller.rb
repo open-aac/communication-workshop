@@ -63,8 +63,8 @@ class Api::SearchController < ApplicationController
         score: focus.pg_search_rank,
         title: focus.title || "",
         type: 'core_focus',
-        image_url: f.data['image_url'],
-        words: f.data['all_words']
+        image_url: focus.data['image_url'],
+        words: focus.data['all_words']
       }
     end
     list = list.sort_by{|b| b[:score] }.reverse[0, 25]
