@@ -68,7 +68,7 @@ export default Controller.extend({
     }
     var res = [];
     found.forEach(function(word) {
-      res.push(Object.assign({}, word, {label: word.word, image_url: word.image.image_url}));
+      res.push(Object.assign({}, word, {label: word.word, image_url: (word.image || {}).image_url}));
     });
     this.set('found_words', res);
     var missing = [];
