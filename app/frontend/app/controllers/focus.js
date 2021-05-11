@@ -12,6 +12,15 @@ export default Controller.extend({
   editable: function() {
     return this.get('model.pending') || this.get('editing') || this.get('model.permissions.edit');
   }.property('model.pending', 'editing', 'model.permissions.edit'),
+  set_speech: function() {
+    if(window.webkitSpeechRecognition) {
+      var speech = new window.webkitSpeechRecognition();
+      if(speech) {
+        speech.continuous = true;
+        this.set('speech', {engine: speech});
+      }
+    }
+  },
   set_image_url: function() {
     // <!-- http://images.amazon.com/images/P/0142402753.01._SCLZZZZZZZ_.jpg 
     // var url = "http://www.amazon.com/Kindle-Wireless-Reading-Display-Generation/dp/B0015T963C";
@@ -125,6 +134,23 @@ export default Controller.extend({
         style = style + "background: " + (emberGet(word, 'background_color') || '#fff') + ";";
         emberSet(word, 'collapsed_style', htmlSafe(style));
       }
-    }
+    },
+    record: function() {
+      this.set('speech.ready', true);
+    },
+    speech_content: function(str) {
+      var words = this.get('model.words') || "";
+      if(words.length > 0) {
+        words = words + "\n";
+      }
+      words = words + str;
+      this.set('model.words', words);
+    },
+    speech_error: function() {
+      this.set('speech.ready', false);
+    },
+    speech_stop: function() {
+      this.set('speech.ready', false);
+    },
   }
 });

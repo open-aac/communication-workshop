@@ -79,6 +79,10 @@
         {{/if}}
       {{else}}
         {{#if editing}}
+          <label>
+            {{input type='checkbox' checked=current_page.public}}
+            {{t "allow others to find and use this book (after review)" key='allow_public'}}
+          </label>
           {{#if model.permissions.link}}
             <div style='width: 100%;'>
               <label>

@@ -10,6 +10,7 @@ module JsonApi::Book
     json['id'] = book.ref_id
     json['locale'] = book.locale || 'en'
     json['pending'] = !book.id
+    json['approved'] = !!book.approved
     if book.data
       json['title'] = book.data['title']
       json['author'] = book.data['author']

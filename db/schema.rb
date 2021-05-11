@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210506180150) do
+ActiveRecord::Schema.define(version: 20210510170434) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,8 +26,10 @@ ActiveRecord::Schema.define(version: 20210506180150) do
     t.datetime "updated_at",    null: false
     t.boolean  "approved"
     t.string   "search_string"
+    t.boolean  "public"
     t.index "to_tsvector('simple'::regconfig, COALESCE((search_string)::text, ''::text))", name: "books_search_string", using: :gin
     t.index ["approved"], name: "index_books_on_approved", using: :btree
+    t.index ["public", "user_id", "approved"], name: "index_books_on_public_and_user_id_and_approved", using: :btree
     t.index ["ref_id"], name: "index_books_on_ref_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_books_on_user_id", using: :btree
   end

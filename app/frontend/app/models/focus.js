@@ -20,5 +20,22 @@ var Focus = DS.Model.extend({
     return (this.get('all_words') || '').replace(/\bi\b/g, 'I');
   }.property('all_words')
 });
+// Brown Bear
+// Cordurouy
+// Guess How Much I Love You
+// Dear Zoo
+// But not the hippopotamus
+// Are you my monster
+// Go dog go
+// Blue hat, Green hat
+// The Gruffalo
+//  There Was an Old Lady Who Swallowed a Fly
+// Wheels on The Bus
+// Goodnight Moon
+// The Very Hungry Caterpillar
+// Are You My Mother
+// Add categories/topics to focus sets
+// http://www.aacintervention.com/home/180009852/180009852/Images/repeated%20line%20books.pdf
+
 
 export default Focus;

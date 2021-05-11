@@ -25,6 +25,7 @@ export default Route.extend({
       model.set('title', title);
     }
     controller.set('model', model);
+    controller.set_speech();
     if(model.get('pending')) { controller.set('editing', true); }
   }
 });

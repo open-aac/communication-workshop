@@ -4,6 +4,7 @@
   {{t "Error Loading Words" key='error_loading_words'}}
 {{else}}
   <div style='max-width: 400px;'>
+    <p>{{words.length}} {{t "Total Words Found" key='total_words_found'}}</p>
     <div class='list-group pills'>
       {{#each words as |word|}}
         {{#unless word.unavailable}}

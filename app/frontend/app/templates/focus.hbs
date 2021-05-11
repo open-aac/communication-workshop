@@ -5,40 +5,69 @@
   <div style='margin-top: -10px; color: #888;'>{{t "by" key='by'}} {{model.author}}</div>
 {{/if}}
 {{#unless model.approved}}
-  <p class='text-muted' style='font-style: italic;'>{{t "This focus set is waiting for approval" key='waiting_for_approval'}}</p>
+  {{#unless model.pending}}
+    <p class='text-muted' style='font-style: italic;'>{{t "This focus set is waiting for approval" key='waiting_for_approval'}}</p>
+  {{/unless}}
 {{/unless}}
 
-<div style='margin-top: 30px;'>
+<div class='form-horizontal' style='margin-top: 30px;'>
   {{#if editing}}
-    <div style='float: left; width: 50%; margin-bottom: 5px;'>
-      {{input type='text' value=model.title class='form-control' placeholder="Book/Activity/Subject Title"}}
+    <div class='form-group'>
+      <label class='col-sm-2' for='focus_title'>{{t "Title & Author" key='title_and_author'}}</label>
+      <div class='col-sm-5'>
+        {{input type='text' id='focus_title' value=model.title class='form-control' placeholder="Book/Activity/Subject Title"}}
+      </div>
+      <div class='col-sm-5'>
+        {{input type='text' value=model.author class='form-control' placeholder="Author, if any"}}
+      </div>
     </div>
-    <div style='float: left; width: calc(50% - 10px); margin-left: 10px; margin-bottom: 5px;'>
-      {{input type='text' value=model.author class='form-control' placeholder="Author, if any"}}
+    <div class='form-group'>
+      <label class='col-sm-2' for='category'>{{t "Category" key='category'}}</label>
+      <div class='col-sm-5'>
+        {{bound-select select_class="form-control" select_id="category" content=category_types selection=model.category action=(action (mut model.category)) }}
+      </div>
     </div>
-    <div style='width: 100%; margin-bottom: 5px;'>
-      {{bound-select select_class="form-control" select_id="category" content=category_types selection=model.category action=(action (mut model.category)) }}
+    <div class='form-group'>
+      <label class='col-sm-2' for='focus_words'>{{t "Word List" key='word_list'}}</label>
+      <div class='col-sm-8'>
+        {{textarea value=model.words id='focus_words' rows=3 class='form-control' placeholder='List of focus words, or text of published work'}}
+      </div>
+      <div class='col-sm-2'>
+        {{#if speech.ready}}
+          {{speech-listener content=(action 'speech_content') error=(action 'speech_error') stop=(action 'speech_stop') speech=speech}}
+        {{else if speech.engine}}
+          <button type="button" class="btn btn-default" {{action 'record'}}>
+            <span class='glyphicon glyphicon-comment'></span>
+            {{t "Speech" key='speech'}}<br/>
+            {{t "Recognition" key='recognition'}}
+          </button>
+        {{/if}}
+      </div>
     </div>
-    <div style='width: 100%; margin-bottom: 5px;'>
-      {{textarea value=model.words rows=3 class='form-control' placeholder='List of focus words, or text of published work'}}
+    <div class='form-group'>
+      <label class='col-sm-2' for='helper_words'>{{t "Helper Words" key='helper_words'}}</label>
+      <div class='col-sm-8'>
+        {{textarea value=model.helper_words id='helper_words' rows=2 class='form-control' placeholder='Related core words (words not in the material, but which may be useful when accessing the material.'}}
+      </div>
     </div>
-    <div style='width: 100%; margin-bottom: 5px;'>
-      {{textarea value=model.helper_words rows=2 class='form-control' placeholder='Related core words (words not in the material, but which may be useful when accessing the material.'}}
+    <div class='form-group'>
+      <label class='col-sm-2' for='focus_link'>{{t "Link & Image" key='link_and_image'}}</label>
+      <div class='col-sm-10'>
+        <div style='float: left; width: 100px; height: 100px;'>
+          {{#if model.image_url}}
+            <img src={{model.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 90px; height: 100px;'/>
+          {{else}}
+            <img src='/images/glass.svg' class='fit_image' style='width: 90px; height: 100px;'/>
+          {{/if}}
+        </div>
+        <div style='float: left; width: calc(100% - 100px); margin-bottom: 5px;'>
+          {{input type='text' id='focus_link' value=model.source_url class='form-control' placeholder="Source URL (Amazon Link, product page, research, etc.)"}}
+        </div>
+        <div style='float: left; width: calc(100% - 100px); margin-bottom: 5px;'>
+          {{input type='text' value=model.image_url class='form-control' placeholder="Image Preview URL (if any)"}}
+        </div>
+      </div>
     </div>
-    <div style='float: left; width: 100px; height: 100px;'>
-      {{#if model.image_url}}
-        <img src={{model.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 90px; height: 100px;'/>
-      {{else}}
-        <img src='/images/glass.svg' class='fit_image' style='width: 90px; height: 100px;'/>
-      {{/if}}
-    </div>
-    <div style='float: left; width: calc(100% - 100px); margin-bottom: 5px;'>
-      {{input type='text' value=model.source_url class='form-control' placeholder="Source URL (Amazon Link, product page, research, etc.)"}}
-    </div>
-    <div style='float: left; width: calc(100% - 100px); margin-bottom: 5px;'>
-      {{input type='text' value=model.image_url class='form-control' placeholder="Image Preview URL (if any)"}}
-    </div>
-    <div style='clear: left;'></div>
   {{else}}
     <div style='margin-top: 0px; margin-bottom: 30px; font-size: 16px; color: #888; white-space: pre-line;'>{{model.all_words_capitalized}}</div>
     <h4>{{t "Found Words" key='found_words'}}</h4>

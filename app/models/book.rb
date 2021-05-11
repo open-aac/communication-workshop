@@ -47,11 +47,11 @@ class Book < ApplicationRecord
     self.locale ||= 'en'
     self.data['related_words'] = related_page_words
     full_text = (self.data['title'] || '') + "\n" + (self.data['author'] || '') + "\n"
+    full_text += (self.data['target_core_words'] || []).join(', ') + "\n"
     (self.data['pages'] || []).each do |page|
       full_text += (page['text'] || '') + " " + (page['related_words'] || '') + "\n"
     end
     self.search_string = full_text
-
     true
   end
   
@@ -87,6 +87,7 @@ class Book < ApplicationRecord
     OBJ_PARAMS.each do |obj_param|
       self.data[obj_param] = params[obj_param]
     end
+    self.public = !!params['public']
     self.user_id ||= user_params['user'].id if user_params['user']
     if !params['new_core_words'].blank?
       words = params['new_core_words'].split(/,/).map(&:strip)

@@ -2,11 +2,15 @@ class Api::BooksController < ApplicationController
   def index
     # start with books that include current target words, if any
     # otherwise sort by stars, then title
-    books = Book
+    books = Book.where(['user_id = ? OR public = ?', @api_user ? @api_user.id : -1, true])
     if !@api_user || !@api_user.admin?
       books = books.where(approved: true)
     end
-    books = books.order('random_id')
+    if params['q']
+      books = books.search_by_text(params['q']).order('search_string')
+    else
+      books = books.order('random_id')
+    end
     render json: JsonApi::Book.paginate(params, books)
   end
   

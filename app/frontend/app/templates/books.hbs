@@ -1,10 +1,23 @@
 <h1>{{t "Books" key='books'}}</h1>
+<div style='width: 300px; margin-bottom: 20px;'>
+  <div class='input-group'>
+    {{input value=search type='text' class='form-control' placeholder="Search" enter='search'}}
+    <span class="input-group-btn">
+      <button class="btn btn-primary" type="button" {{action 'search'}}>{{t "Search" key='search'}}</button>
+    </span>  
+  </div>
+</div>
+{{#if search_string}}
+  <button class='btn btn-default' {{action 'clear'}} style='margin-bottom: 10px;'>{{t "Clear Search" key='clear_search'}}</button>
+{{/if}}
+
 {{#if books.loading}}
-  {{t "Loading Books..." key='loading_books'}}
+  <p>{{t "Loading Books..." key='loading_books'}}</p>
 {{else if books.error}}
-  {{t "Error Loading Books" key='error_loading_books'}}
+  <p>{{t "Error Loading Books" key='error_loading_books'}}</p>
 {{else if books}}
   <div style='width: 600px;'>
+    <p style='margin-left: 20px;'>{{books.length}} {{t "Results" key='n_results'}}</p>
     <div class='list-group'>
     {{#each books as |book|}}
       {{#link-to 'book' book.id class='list-group-item'}}
@@ -12,6 +25,9 @@
         {{#if book.author}}
           <span class='text-muted'>{{t "by" key='by'}} {{book.author}}</span>
         {{/if}}
+        {{#unless book.approved}}
+          <span class='glyphicon glyphicon-exclamation-sign' style='padding-left: 10px; font-size: 20px; vertical-align: middle;'></span>
+        {{/unless}}
         <div class='text-muted' style='margin-left: 20px;'>
           {{book.total_pages}} {{t "pages" key='pages'}}
           {{#if book.related_words}}

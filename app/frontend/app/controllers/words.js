@@ -30,11 +30,11 @@ export default Controller.extend({
   },
   update_availability: function() {
     if(!session.get('is_admin')) {
-      (this.get('list.results') || []).forEach(function(item) {
+      (this.get('words') || []).forEach(function(item) {
         item.set('unavailable', !item.get('has_baseline_content'));
       });
     }
-  }.observes('list.results.@each.has_baseline_content', 'session.is_admin'),
+  }.observes('words.@each.has_baseline_content', 'session.is_admin'),
   actions: {
   }
 });

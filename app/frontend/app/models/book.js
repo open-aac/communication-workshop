@@ -8,7 +8,9 @@ var Book = DS.Model.extend({
       this.set('pages', []);
     }
   },
+  approved: DS.attr('boolean'),
   pending: DS.attr('boolean'),
+  public: DS.attr('boolean'),
   permissions: DS.attr('raw'),
   pages: DS.attr('raw'),
   image: DS.attr('raw'),
