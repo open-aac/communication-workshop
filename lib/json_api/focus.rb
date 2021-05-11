@@ -10,6 +10,7 @@ module JsonApi::Focus
     json['id'] = focus.ref_id
     json['locale'] = focus.locale || 'en'
     json['pending'] = !focus.id
+    json['approved'] = !!focus.approved
     json['title'] = focus.title
     json['category'] = focus.category
     if focus.data
