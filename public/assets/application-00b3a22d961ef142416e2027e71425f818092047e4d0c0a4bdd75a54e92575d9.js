@@ -5036,7 +5036,7 @@ l.forEach(function(e){s[e]||i.push(e)}),this.set("missing_words",i)}}.observes("
 e.set("status",{saving:!0}),e.get("model.category")&&"none"!=e.get("model.category")||e.set("model.category","other"),e.get("model").save().then(function(){e.set("status",null),e.set("editing",!1)},function(){e.set("status",{error:!0})})},cancel:function(){this.get("model.pending")?this.transitionToRoute("focus",this.get("model.locale")||"en"):(this.get("model").rollbackAttributes(),this.set("editing",!1))},approve:function(){var e=this
 e.set("model.approved",!0),e.set("approval",{pending:!0}),e.get("model").save().then(function(){e.set("approval",null)},function(){e.set("approval",{error:!0})})},toggle:function(e){if(Ember.set(e,"collapsed",!Ember.get(e,"collapsed")),Ember.get(e,"collapsed")){var t="color: #000; display: inline-block; padding: 5px 10px; margin-right: 5px; border-radius: 5px;"
 t=(t=t+"border: 2px solid "+(Ember.get(e,"border_color")||"#888")+";")+"background: "+(Ember.get(e,"background_color")||"#fff")+";",Ember.set(e,"collapsed_style",Ember.String.htmlSafe(t))}},record:function(){this.set("speech.ready",!0)},speech_content:function(e){var t=this.get("model.words")||""
-t.length>0&&(t+="\n"),t+=e,this.set("model.words",t),setTimeout(function(){var e=document.getElementById("#focus_words")
+t.length>0&&(t+="\n"),t+=e,this.set("model.words",t),setTimeout(function(){var e=document.getElementById("focus_words")
 e&&(e.scrollTop=e.scrollHeight)},100)},speech_error:function(){this.set("speech.ready",!1)},speech_stop:function(){this.set("speech.ready",!1)}}})})
 define("frontend/controllers/focuses",["exports","frontend/utils/session","frontend/utils/modal","frontend/utils/i18n","frontend/utils/pages"],function(e,t,s,n,l){Object.defineProperty(e,"__esModule",{value:!0}),e.default=Ember.Controller.extend({load_category:function(){var e=this
 if(e.get("browse.category")){var t=e.get("browse.category"),s={title:t,category:!0}
@@ -5202,8 +5202,8 @@ s.clear(),e&&s.reload("/")
 Ember.run.later(function(){s.set("isAuthenticated",!1),s.set("access_token",null),s.set("user_name",null),s.set("name",null),s.set("as_user_id",null)})}}).create({online:navigator.onLine})
 window.session=s,window.addEventListener("online",function(){s.set("online",!0)}),window.addEventListener("offline",function(){s.set("online",!1)}),document.addEventListener("online",function(){s.set("online",!0)}),document.addEventListener("offline",function(){s.set("online",!1)})
 var n=Ember.$.ajax
-Ember.$.ajax=function(e,t){return s.ajax(e,t)},e.default=s}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+c9bcf2f7"},exportApplicationGlobal:!1}}
-return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+c9bcf2f7"})
+Ember.$.ajax=function(e,t){return s.ajax(e,t)},e.default=s}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+bb0f5e7f"},exportApplicationGlobal:!1}}
+return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+bb0f5e7f"})
 ;
 
 
