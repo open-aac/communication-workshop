@@ -24,16 +24,16 @@
   {{else if list.results}}
     <div class='list-group'>
       {{#each list.results as |item|}}
-        {{#link-to 'focus' item.id item.locale class='list-group-item'}}
+        {{#link-to 'focus' item.id item.locale class='list-group-item tall-item'}}
           {{#if item.image_url}}
-            <img src={{item.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 40px; height: 40px; float: left; margin-right: 5px;'/>
+            <img src={{item.image_url}} class='preview' onerror="this.src='/images/glass.svg';"/>
           {{else}}
-            <img src='/images/glass.svg' class='fit_image' style='width: 40px; height: 40px;  float: left; margin-right: 5px;'/>
+            <img src='/images/glass.svg' class='preview'/>
           {{/if}}
-          <span style='font-size: 16px;'>
+          <div class='title'>
             <b>{{item.title}}</b>{{#if item.author}} {{t "by" key='by'}} {{item.author}}{{/if}}{{#unless item.approved}} <span class='glyphicon glyphicon-exclamation-sign'></span>{{/unless}}
-          </span>
-          <div style='width: calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #888;'>{{item.all_words}}</div>
+          </div>
+          <div style='white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #888;'>{{item.all_words}}</div>
         {{/link-to}}
       {{/each}}      
     </div>

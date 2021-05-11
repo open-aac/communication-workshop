@@ -20,20 +20,22 @@
     <p style='margin-left: 20px;'>{{books.length}} {{t "Results" key='n_results'}}</p>
     <div class='list-group'>
     {{#each books as |book|}}
-      {{#link-to 'book' book.id class='list-group-item'}}
+      {{#link-to 'book' book.id class='list-group-item tall-item'}}
         {{#if book.image.image_url}}
-          <img src={{book.image.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 40px; height: 40px; float: left; margin-right: 5px;'/>
+          <img src={{book.image.image_url}} class='preview' onerror="this.src='/images/glass.svg';"/>
         {{else}}
-          <img src='/images/book.svg' class='fit_image' style='width: 40px; height: 40px;  float: left; margin-right: 5px;'/>
+          <img src='/images/book.svg' class='preview'/>
         {{/if}}
 
-        <strong>{{book.title}}</strong>
-        {{#if book.author}}
-          <span class='text-muted'>{{t "by" key='by'}} {{book.author}}</span>
-        {{/if}}
-        {{#unless book.approved}}
-          <span class='glyphicon glyphicon-exclamation-sign' style='padding-left: 10px; font-size: 20px; vertical-align: middle;'></span>
-        {{/unless}}
+        <div class='title'>
+          <strong>{{book.title}}</strong>
+          {{#if book.author}}
+            <span class='text-muted'>{{t "by" key='by'}} {{book.author}}</span>
+          {{/if}}
+          {{#unless book.approved}}
+            <span class='glyphicon glyphicon-exclamation-sign' style='padding-left: 10px;'></span>
+          {{/unless}}
+        </div>
         <div class='text-muted' style='margin-left: 20px;'>
           {{book.total_pages}} {{t "pages" key='pages'}}
           {{#if book.related_words}}
