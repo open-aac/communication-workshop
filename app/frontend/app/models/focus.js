@@ -6,6 +6,7 @@ var Focus = DS.Model.extend({
   },
   locale: DS.attr('string'),
   pending: DS.attr('boolean'),
+  approved: DS.attr('boolean'),
   permissions: DS.attr('raw'),
   title: DS.attr('string'),
   author: DS.attr('string'),
