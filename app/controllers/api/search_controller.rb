@@ -1,4 +1,5 @@
 require 'typhoeus'
+require 'accessible-books'
 class Api::SearchController < ApplicationController
   
   def books
@@ -35,6 +36,46 @@ class Api::SearchController < ApplicationController
       }
       render json: json
     end
+  end
+
+  def focuses
+    list = []
+    Book.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank.limit(25).each do |book|
+      list << {
+        score: book.pg_search_rank / 2,
+        title: book.data['title'] || "",
+        type: 'core_book',
+        image_url: (book.data['image'] || {})['image_url'],
+        words: Focus.extract_words(book.data['pages'].map{|p| (p['text'] || '') + " " + p['related_words']}.join("\n"))
+      }
+    end
+    AccessibleBooks.search(params['q'])[0, 3].each_with_index do |book, idx|
+      list << {
+        score: 0.01 - (idx / 1000.to_f),
+        title: book['title'] || "",
+        image_url: book['image_url'],
+        type: 'tarheel_book',
+        url: book['book_url'],
+      }
+    end
+    Focus.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank.limit(25).each do |focus|
+      list << {
+        score: focus.pg_search_rank,
+        title: focus.title || "",
+        type: 'core_focus',
+        image_url: f.data['image_url'],
+        words: f.data['all_words']
+      }
+    end
+    list = list.sort_by{|b| b[:score] }.reverse[0, 25]
+    list.each do |focus|
+      if focus[:type] == 'tarheel_book' && focus[:url]
+        full_book = AccessibleBooks.find_json(focus[:url])
+        focus[:words] = full_book ? full_book['pages'][1..-1].map{|p| p['text'] || '' }.join("\n") : focus[:title]
+      end
+      focus[:words] = Focus.extract_words(focus[:words])
+    end
+    render json: list
   end
 
   def find_books

@@ -18,10 +18,14 @@ class Focus < ApplicationRecord
   def generate_defaults
     self.data ||= {}
     str = (self.data['words'] || '') + "\n" + (self.data['helper_words'] || '')
-    self.data['all_words'] = str.downcase.split(/\s+/).uniq.join(' ')
+    self.data['all_words'] = Foccus.extract_words(str)
     self.search_string = (self.title || '') + "\n" + (self.data['author'] || '') + "\n" + str
     self.category ||= 'other'
     true
+  end
+
+  def self.extract_words(str)
+    str.downcase.split(/\s+/).map{|s| s.sub(/^[^\w]+/, '').sub(/[^\w]+$/, '') }.uniq.join(' ')
   end
 
   def self.find_or_initialize_by_path(str)
