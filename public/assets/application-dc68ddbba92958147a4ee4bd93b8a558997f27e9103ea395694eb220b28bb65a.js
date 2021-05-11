@@ -5124,7 +5124,7 @@ e.default=n}),define("frontend/models/event",["exports","ember-data"],function(e
 var s=t.default.Model.extend({activity_id:t.default.attr("string"),text:t.default.attr("string"),tracked:t.default.attr("date"),success_level:t.default.attr("number"),notes:t.default.attr("string"),user_id:t.default.attr("string"),user_name:t.default.attr("string"),face_class:function(){var e=this.get("success_level")
 return 4==e?Ember.String.htmlSafe("face laugh"):3==e?Ember.String.htmlSafe("face happy"):2==e?Ember.String.htmlSafe("face neutral"):1==e?Ember.String.htmlSafe("face sad"):null}.property("success_level")})
 e.default=s}),define("frontend/models/focus",["exports","ember-data"],function(e,t){Object.defineProperty(e,"__esModule",{value:!0})
-var s=t.default.Model.extend({didLoad:function(){},locale:t.default.attr("string"),pending:t.default.attr("boolean"),permissions:t.default.attr("raw"),title:t.default.attr("string"),author:t.default.attr("string"),category:t.default.attr("string"),words:t.default.attr("string"),all_words:t.default.attr("string"),image_url:t.default.attr("string"),source_url:t.default.attr("string"),helper_words:t.default.attr("string"),approved_users:t.default.attr("raw"),all_words_capitalized:function(){return(this.get("all_words")||"").replace(/\bi\b/g,"I")}.property("all_words")})
+var s=t.default.Model.extend({didLoad:function(){},locale:t.default.attr("string"),pending:t.default.attr("boolean"),approved:t.default.attr("boolean"),permissions:t.default.attr("raw"),title:t.default.attr("string"),author:t.default.attr("string"),category:t.default.attr("string"),words:t.default.attr("string"),all_words:t.default.attr("string"),image_url:t.default.attr("string"),source_url:t.default.attr("string"),helper_words:t.default.attr("string"),approved_users:t.default.attr("raw"),all_words_capitalized:function(){return(this.get("all_words")||"").replace(/\bi\b/g,"I")}.property("all_words")})
 e.default=s}),define("frontend/models/image",["exports","ember-data"],function(e,t){Object.defineProperty(e,"__esModule",{value:!0})
 var s=t.default.Model.extend({didLoad:function(){},user_id:t.default.attr("string"),url:t.default.attr("string")})
 e.default=s}),define("frontend/models/user",["exports","ember-data","frontend/utils/session"],function(e,t,s){Object.defineProperty(e,"__esModule",{value:!0})
@@ -5202,8 +5202,8 @@ s.clear(),e&&s.reload("/")
 Ember.run.later(function(){s.set("isAuthenticated",!1),s.set("access_token",null),s.set("user_name",null),s.set("name",null),s.set("as_user_id",null)})}}).create({online:navigator.onLine})
 window.session=s,window.addEventListener("online",function(){s.set("online",!0)}),window.addEventListener("offline",function(){s.set("online",!1)}),document.addEventListener("online",function(){s.set("online",!0)}),document.addEventListener("offline",function(){s.set("online",!1)})
 var n=Ember.$.ajax
-Ember.$.ajax=function(e,t){return s.ajax(e,t)},e.default=s}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+dc06f436"},exportApplicationGlobal:!1}}
-return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+dc06f436"})
+Ember.$.ajax=function(e,t){return s.ajax(e,t)},e.default=s}),define("frontend/config/environment",[],function(){var e={default:{modulePrefix:"frontend",environment:"production",rootURL:"/",locationType:"auto",EmberENV:{FEATURES:{},EXTEND_PROTOTYPES:{Date:!1}},APP:{name:"frontend",version:"0.0.0+1372d648"},exportApplicationGlobal:!1}}
+return Object.defineProperty(e,"__esModule",{value:!0}),e}),runningTests||require("frontend/app").default.create({name:"frontend",version:"0.0.0+1372d648"})
 ;
 
 
