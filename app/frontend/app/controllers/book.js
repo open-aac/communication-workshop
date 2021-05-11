@@ -79,6 +79,16 @@ export default Controller.extend({
         _this.set('status', {error: true});
       });
     },
+    approve: function() {
+      var _this = this;
+      _this.set('approval', {pending: true});
+      _this.set('model.approved', true);
+      _this.get('model').save().then(function() {
+        _this.set('approval', null);
+      }, function() {
+        _this.set('approval', {error: true});
+      });
+    },
     cancel: function() {
       if(this.get('model.pending')) {
         this.transitionToRoute('books', this.get('model.locale') || 'en');

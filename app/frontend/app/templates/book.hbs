@@ -1,7 +1,11 @@
 <h1>{{#if model.title}}{{model.title}}{{else}}{{t "New Book" key='new_book'}}{{/if}}</h1>
 {{#unless editing}}
-  Author: {{#if model.author}}{{model.author}}{{else}}{{t "Unknown" key='unknown'}}{{/if}}<br/>
-  Pages: {{model.pages.length}}<br/><br/>
+  {{t "Author:" key='author'}} {{#if model.author}}{{model.author}}{{else}}{{t "Unknown" key='unknown'}}{{/if}}<br/>
+  {{t "Pages:" key='pages'}} {{model.pages.length}}<br/>
+  {{#if editable}}
+    {{t "Visibility:" key='visibility'}}{{#if model.public}}{{t "Public" key='public'}}{{else}}{{t "Private" key='private'}}{{/if}}<br/>
+  {{/if}}
+  <br/>
 
   <a href="#" {{action 'launch'}} class='btn btn-default btn-lg'><span class='glyphicon glyphicon-play-circle'></span> {{t "Launch Reader" key='launch_reader'}}</a>
   <a href="#" class='btn btn-default btn-lg' {{action 'print'}}><span class='glyphicon glyphicon-print'></span> {{t "Printed Book" key='printed_book'}}</a>
@@ -135,6 +139,21 @@
       </button>
     {{else if editable}}
       <button class='btn btn-default btn-lg' {{action 'edit'}}>{{t "Edit Book" key='edit_book'}}</button>
+      {{#if model.permissions.link}}
+        {{#if model.public}}
+          {{#unless model.approved}}
+            <button class='btn btn-default btn-lg' disabled={{approval.pending}} {{action 'approve'}}>
+              {{#if approval.pending}}
+                {{t "Approving Book..." key='approving_book'}}
+              {{else if approval.error}}
+                {{t "Approval Failed" key='approval_failed'}}
+              {{else}}
+                {{t "Approve Book" key='edit_book'}}
+              {{/if}}
+            </button>
+          {{/unless}}
+        {{/if}}
+      {{/if}}
     {{/if}}
   </div>
 </div>

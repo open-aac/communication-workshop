@@ -94,6 +94,11 @@ class Book < ApplicationRecord
       self.data['target_core_words'] = ((self.data['target_core_words'] || []) + words).uniq
       self.data['new_core_words'] = words
     end
+    if params['approved']
+      if user_params['user'] && self.allows?(user_params['user'], 'link')
+        self.approved = true
+      end
+    end
   end
   
   def full_text
