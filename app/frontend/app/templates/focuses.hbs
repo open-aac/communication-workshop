@@ -26,7 +26,7 @@
       {{#each list.results as |item|}}
         {{#link-to 'focus' item.id item.locale class='list-group-item'}}
           {{#if item.image_url}}
-            <img src={{model.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 40px; height: 40px; float: left; margin-right: 5px;'/>
+            <img src={{item.image_url}} class='fit_image' onerror="this.src='/images/glass.svg';" style='width: 40px; height: 40px; float: left; margin-right: 5px;'/>
           {{else}}
             <img src='/images/glass.svg' class='fit_image' style='width: 40px; height: 40px;  float: left; margin-right: 5px;'/>
           {{/if}}
