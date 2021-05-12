@@ -40,35 +40,48 @@ class Api::SearchController < ApplicationController
 
   def focuses
     list = []
-    Book.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank.limit(25).each do |book|
-      list << {
-        score: book.pg_search_rank / 2,
-        title: (book.data['title'] || ""),
-        author: book.data['author'],
-        type: 'core_book',
-        image_url: (book.data['image'] || {})['image_url'],
-        words: Focus.extract_words(book.data['pages'].map{|p| (p['text'] || '') + " " + (p['related_words'] || '')}.join("\n"))
-      }
+    if params['type'] != 'tarheel_book' && params['type'] != 'core_focus'
+      books = Book.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank
+      books = books.order('popularity DESC, search_string') if params['sort'] == 'popularity'
+      books.limit(25).each do |book|
+        list << {
+          id: "book::#{book.ref_id}",
+          score: book.pg_search_rank / 2,
+          title: (book.data['title'] || ""),
+          author: book.data['author'],
+          type: 'core_book',
+          image_url: (book.data['image'] || {})['image_url'],
+          words: Focus.extract_words(book.data['pages'].map{|p| (p['text'] || '') + " " + (p['related_words'] || '')}.join("\n"))
+        }
+      end
     end
-    AccessibleBooks.search(params['q'])[0, 3].each_with_index do |book, idx|
-      list << {
-        score: 0.01 - (idx / 1000.to_f),
-        title: book['title'] || "",
-        author: book['author'],
-        image_url: book['image_url'],
-        type: 'tarheel_book',
-        url: book['book_url'],
-      }
+    if params['type'] != 'core_book' && params['type'] != 'core_focus'
+      AccessibleBooks.search(params['q'], params['locale'] || 'en', params['category'] || '')[0, params['type'] == 'tarheel_book' ? 10 : 3].each_with_index do |book, idx|
+        list << {
+          id: "tarheel_#{book['book_url']}",
+          score: 0.01 - (idx / 1000.to_f),
+          title: book['title'] || "",
+          author: book['author'],
+          image_url: book['image_url'],
+          type: 'tarheel_book',
+          url: book['book_url'],
+        }
+      end
     end
-    Focus.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank.limit(25).each do |focus|
-      list << {
-        score: focus.pg_search_rank,
-        title: focus.title || "",
-        author: focus.data['author'],
-        type: 'core_focus',
-        image_url: focus.data['image_url'],
-        words: focus.data['all_words']
-      }
+    if params['type'] != 'core_book' && params['type'] != 'tarheel_book'
+      focuses = Focus.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank
+      focuses = focuses.order('popularity DESC, search_string') if params['sort'] == 'popularity'
+      focuses.limit(25).each do |focus|
+        list << {
+          id: "focus::#{focus.ref_id}",
+          score: focus.pg_search_rank,
+          title: focus.title || "",
+          author: focus.data['author'],
+          type: 'core_focus',
+          image_url: focus.data['image_url'],
+          words: focus.data['all_words']
+        }
+      end
     end
     list = list.sort_by{|b| b[:score] }.reverse[0, 25]
     list.each do |focus|

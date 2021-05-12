@@ -21,6 +21,19 @@ class Focus < ApplicationRecord
     self.data['all_words'] = Foccus.extract_words(str)
     self.search_string = (self.title || '') + "\n" + (self.data['author'] || '') + "\n" + str
     self.category ||= 'other'
+    score = 0
+    if self.data['views'] && self.data['views'] > 50
+      score += 2
+    elsif self.data['views'] && self.data['views'] > 10
+      score += 1
+    end
+    if self.data['launches'] && self.data['launches'] > 10
+      score += 1
+    end
+    if self.data['usages'] && self.data['usages'] > 10
+      score += 1
+    end
+    self.popularity = score
     true
   end
 

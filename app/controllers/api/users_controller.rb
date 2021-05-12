@@ -40,6 +40,31 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def external_usage
+    if !ENV['COUGHDROP_CLIENT_ID'] || !ENV['COUGHDROP_CLIENT_SECRET']
+      api_error(400, {error: 'coughdrop integration not defined'})
+    elsif ENV['COUGHDROP_CLIENT_ID'] == params['integration_id'] && ENV['COUGHDROP_CLIENT_SECRET'] == params['integration_secret']
+      if params['focus_id']
+        if params['focus_id'].match(/^focus::/)
+          focus = Focus.find_by_path(params['focus_id'].sub(/^focus::/, ''))
+          if focus
+            focus.data['usages'] = (focus.data['usages'] || 0) + 1
+            focus.save
+          end
+        elsif params['focus_id'].match(/^book::/)
+          book = Book.find_by_path(params['focus_id'].sub(/^book::/, ''))
+          if book
+            book.data['usages'] = (book.data['usages'] || 0) + 1
+            book.save
+          end
+        end
+      end
+      render json: {accepted: true}
+    else
+      api_error(400, {error: 'invalid credentials'})
+    end
+  end
+
   def external_activities
     user_id = params['user_id']
     updates = params['updates']

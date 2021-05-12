@@ -51,6 +51,19 @@ class Book < ApplicationRecord
     (self.data['pages'] || []).each do |page|
       full_text += (page['text'] || '') + " " + (page['related_words'] || '') + "\n"
     end
+    score = 0
+    if self.data['views'] && self.data['views'] > 50
+      score += 2
+    elsif self.data['views'] && self.data['views'] > 10
+      score += 1
+    end
+    if self.data['launches'] && self.data['launches'] > 10
+      score += 1
+    end
+    if self.data['usages'] && self.data['usages'] > 10
+      score += 1
+    end
+    self.popularity = score
     self.search_string = full_text
     true
   end

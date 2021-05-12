@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   get '/users/links/:user_id' => 'session#user_redirect'
   get '/words/:locale' => ember_handler
   get '/focus/:locale' => ember_handler
-  get '/focus/:id/:locale' => ember_handler
+  get '/focus/:focus_id/:locale' => ember_handler
   get '/categories/:locale' => ember_handler
   get '/forgot_password' => ember_handler
   get '/users/:user_name/password_reset/:code' => ember_handler
@@ -59,6 +59,7 @@ Rails.application.routes.draw do
 
   scope 'api/v1', module: 'api' do
     post '/external' => 'users#external_activities'
+    post '/external/focus' => 'users#external_usage'
     get '/images/pixabay/:id' => 'search#pixabay_redirect'
     get '/words/suggestions' => 'words#suggestions'
     get '/words/:id/defaults' => 'words#defaults'

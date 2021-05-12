@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210510170434) do
+ActiveRecord::Schema.define(version: 20210512195857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20210510170434) do
     t.boolean  "approved"
     t.string   "search_string"
     t.boolean  "public"
+    t.float    "popularity"
     t.index "to_tsvector('simple'::regconfig, COALESCE((search_string)::text, ''::text))", name: "books_search_string", using: :gin
     t.index ["approved"], name: "index_books_on_approved", using: :btree
     t.index ["public", "user_id", "approved"], name: "index_books_on_public_and_user_id_and_approved", using: :btree
@@ -45,6 +46,7 @@ ActiveRecord::Schema.define(version: 20210510170434) do
     t.integer  "user_id"
     t.boolean  "approved"
     t.string   "ref_id"
+    t.float    "popularity"
     t.index "to_tsvector('simple'::regconfig, COALESCE((search_string)::text, ''::text))", name: "focus_search_string", using: :gin
     t.index ["locale", "category", "title"], name: "index_focus_on_locale_and_category_and_title", using: :btree
     t.index ["ref_id"], name: "index_focus_on_ref_id", unique: true, using: :btree
