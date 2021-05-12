@@ -42,12 +42,16 @@ class Api::SearchController < ApplicationController
     list = []
     if params['type'] != 'tarheel_book' && params['type'] != 'core_focus'
       books = Book.where(locale: params['locale'] || 'en')
-      books = books.search_by_text(params['q']).with_pg_search_rank if !params['q'].blank?
+      ranked = false
+      if !params['q'].blank?
+        ranked = true
+        books = books.search_by_text(params['q']).with_pg_search_rank 
+      end
       books = books.order('popularity DESC, search_string') if params['sort'] == 'popularity'
       books.limit(25).each do |book|
         list << {
           id: "book::#{book.ref_id}",
-          score: book.pg_search_rank / 2,
+          score: ranked ? book.pg_search_rank / 2 : 0.5,
           title: (book.data['title'] || ""),
           author: book.data['author'],
           type: 'core_book',
@@ -71,7 +75,11 @@ class Api::SearchController < ApplicationController
     end
     if params['type'] != 'core_book' && params['type'] != 'tarheel_book'
       focuses = Focus.where(locale: params['locale'] || 'en')
-      focuses = focuses.search_by_text(params['q']).with_pg_search_rank if !params['q'].blank?
+      ranked = false
+      if !params['q'].blank?
+        focuses = focuses.search_by_text(params['q']).with_pg_search_rank 
+        ranked = true
+      end
       if !params['category'].blank?
         focuses = focuses.where(category: params['category'])
       end
@@ -79,7 +87,7 @@ class Api::SearchController < ApplicationController
       focuses.limit(25).each do |focus|
         list << {
           id: "focus::#{focus.ref_id}",
-          score: focus.pg_search_rank,
+          score: ranked ? focus.pg_search_rank : 1,
           title: focus.title || "",
           author: focus.data['author'],
           type: 'core_focus',
