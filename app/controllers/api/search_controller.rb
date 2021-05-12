@@ -41,13 +41,13 @@ class Api::SearchController < ApplicationController
   def focuses
     list = []
     if params['type'] != 'tarheel_book' && params['type'] != 'core_focus'
-      books = Book.where(locale: params['locale'] || 'en')
+      books = Book.where(approved: true, locale: params['locale'] || 'en')
       ranked = false
       if !params['q'].blank?
         ranked = true
         books = books.search_by_text(params['q']).with_pg_search_rank 
       end
-      books = books.order('popularity DESC, search_string') if params['sort'] == 'popularity'
+      books = books.order('popularity DESC, id DESC') if params['sort'] == 'popularity'
       books.limit(25).each do |book|
         list << {
           id: "book::#{book.ref_id}",
@@ -74,7 +74,7 @@ class Api::SearchController < ApplicationController
       end
     end
     if params['type'] != 'core_book' && params['type'] != 'tarheel_book'
-      focuses = Focus.where(locale: params['locale'] || 'en')
+      focuses = Focus.where(approved: true, locale: params['locale'] || 'en')
       ranked = false
       if !params['q'].blank?
         focuses = focuses.search_by_text(params['q']).with_pg_search_rank 
@@ -83,7 +83,7 @@ class Api::SearchController < ApplicationController
       if !params['category'].blank?
         focuses = focuses.where(category: params['category'])
       end
-      focuses = focuses.order('popularity DESC, search_string') if params['sort'] == 'popularity'
+      focuses = focuses.order('popularity DESC, id DESC') if params['sort'] == 'popularity'
       focuses.limit(25).each do |focus|
         list << {
           id: "focus::#{focus.ref_id}",
@@ -96,7 +96,11 @@ class Api::SearchController < ApplicationController
         }
       end
     end
-    list = list.sort_by{|b| b[:score] }.reverse[0, 25]
+    if params['sort'] == 'popularity'
+      list = list.sort_by{|b| b[:title] }[0, 25]
+    else
+      list = list.sort_by{|b| b[:score] }.reverse[0, 25]
+    end
     list.each do |focus|
       if focus[:type] == 'tarheel_book' && focus[:url]
         full_book = AccessibleBooks.find_json(focus[:url])
