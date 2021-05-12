@@ -43,16 +43,18 @@ class Api::SearchController < ApplicationController
     Book.where(locale: params['locale'] || 'en').search_by_text(params['q']).with_pg_search_rank.limit(25).each do |book|
       list << {
         score: book.pg_search_rank / 2,
-        title: book.data['title'] || "",
+        title: (book.data['title'] || ""),
+        author: book.data['author'],
         type: 'core_book',
         image_url: (book.data['image'] || {})['image_url'],
-        words: Focus.extract_words(book.data['pages'].map{|p| (p['text'] || '') + " " + p['related_words']}.join("\n"))
+        words: Focus.extract_words(book.data['pages'].map{|p| (p['text'] || '') + " " + (p['related_words'] || '')}.join("\n"))
       }
     end
     AccessibleBooks.search(params['q'])[0, 3].each_with_index do |book, idx|
       list << {
         score: 0.01 - (idx / 1000.to_f),
         title: book['title'] || "",
+        author: book['author'],
         image_url: book['image_url'],
         type: 'tarheel_book',
         url: book['book_url'],
@@ -62,6 +64,7 @@ class Api::SearchController < ApplicationController
       list << {
         score: focus.pg_search_rank,
         title: focus.title || "",
+        author: focus.data['author'],
         type: 'core_focus',
         image_url: focus.data['image_url'],
         words: focus.data['all_words']
