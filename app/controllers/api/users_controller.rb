@@ -61,7 +61,7 @@ class Api::UsersController < ApplicationController
       end
       render json: {accepted: true}
     else
-      api_error(400, {error: 'invalid credentials'})
+      api_error(400, {error: 'invalid credentials', integration_id: params['integration_id']})
     end
   end
 
