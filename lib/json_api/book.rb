@@ -17,8 +17,8 @@ module JsonApi::Book
       json['author'] = book.data['author']
       json['related_words'] = book.data['related_words'] || book.related_page_words
       json['total_pages'] = book.data['pages'].length
+      json['image'] = book.data['image']
     end
-    json['image'] = book.data['image']
     
     if args.has_key?(:permissions) && book.data
       json['permissions'] = book.permissions_for(args[:permissions])
