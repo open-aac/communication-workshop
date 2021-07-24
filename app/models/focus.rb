@@ -18,7 +18,7 @@ class Focus < ApplicationRecord
   def generate_defaults
     self.data ||= {}
     str = (self.data['words'] || '') + "\n" + (self.data['helper_words'] || '')
-    self.data['all_words'] = Foccus.extract_words(str)
+    self.data['all_words'] = Focus.extract_words(str)
     self.search_string = (self.title || '') + "\n" + (self.data['author'] || '') + "\n" + str
     self.category ||= 'other'
     score = 0
