@@ -8,7 +8,7 @@
       <p style='font-size: 20px;'>
         <a href="#" {{action 'filter' 'all'}}>{{word_counts.total}} {{t "Total" key='pending'}}</a> | 
         <a href="#" {{action 'filter' 'pending'}}>{{word_counts.pending}} {{t "Pending" key='pending'}}</a> | 
-        <a href="#" {{action 'filter' 'unapproved'}}>{{word_counts.pending}} {{t "Unapproved" key='unapproved'}}</a>
+        <a href="#" {{action 'filter' 'unapproved'}}>{{word_counts.unapproved}} {{t "Unapproved" key='unapproved'}}</a>
       </p>
     {{else}}
       <p style='font-size: 20px;'>{{word_counts.total}} {{t "Total Words Found" key='total_words_found'}}</p>
