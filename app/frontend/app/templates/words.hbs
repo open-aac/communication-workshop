@@ -4,7 +4,7 @@
   {{t "Error Loading Words" key='error_loading_words'}}
 {{else}}
   <div style='max-width: 400px; padding-top: 20px;'>
-    {{#if session.is_admin}}
+    {{#if session.user.admin}}
       <p style='font-size: 20px;'>
         <a href="#" {{action 'filter' 'all'}}>{{word_counts.total}} {{t "Total" key='pending'}}</a> | 
         <a href="#" {{action 'filter' 'pending'}}>{{word_counts.pending}} {{t "Pending" key='pending'}}</a> | 
