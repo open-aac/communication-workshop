@@ -52,13 +52,13 @@ export default Controller.extend({
     }
     if(!(this.get('words') || []).forEach) { return res; }
     (this.get('words') || []).forEach(function(w) {
-      if(session.is_admin() || item.get('has_baseline_content')) {
+      if(session.is_admin() || w.get('has_baseline_content')) {
         res.total++;
       }
-      if(!item.get('has_baseline_content')) {
+      if(!w.get('has_baseline_content')) {
         res.unapproved++;
       }
-      if(item.get('pending_revisions')) {
+      if(w.get('pending_revisions')) {
         res.pending++;
       }
     });
