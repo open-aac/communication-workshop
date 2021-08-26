@@ -7,6 +7,7 @@ import { set as emberSet } from '@ember/object';
 export default Controller.extend({
   load_words: function() {
     var _this = this;
+    _this.set('filter', null);
     _this.set('words', {loading: true});
     var append = function(results) {
       var list = _this.get('words');
@@ -28,14 +29,50 @@ export default Controller.extend({
       _this.set('words', {error: true});
     });
   },
+  filtered_words: function() {
+    var res = [];
+    var filter = this.get('filter');
+    (this.get('words') || []).forEach(function(w) {
+      if(filter == 'all') {
+        res.push(w);
+      } else if(filter == 'pending' && w.get('pending_revisions')) {
+        res.push(w);
+      } else if(filter == 'unapproved' && !w.get('has_baseline_content')) {
+        res.push(w);
+      }
+    });
+    return res;
+  }.property('words', 'filter'),
+  word_counts: function() {
+    var res = {
+      total: 0,
+      pending: 0,
+      unapproved: 0
+    }
+    (this.get('words') || []).forEach(function(w) {
+      if(session.is_admin() || item.get('has_baseline_content')) {
+        res.total++;
+      }
+      if(!item.get('has_baseline_content')) {
+        res.unapproved++;
+      }
+      if(item.get('pending_revisions')) {
+        res.pending++;
+      }
+    });
+    return res;
+  }.property('words', 'words.@each.has_baseline_content', 'session.is_admin'),  
   update_availability: function() {
-    if(!session.get('is_admin')) {
+    if(!session.is_admin()) {
       (this.get('words') || []).forEach(function(item) {
         item.set('unavailable', !item.get('has_baseline_content'));
       });
     }
-  }.observes('words.@each.has_baseline_content', 'session.is_admin'),
+  }.observes('words', 'words.@each.has_baseline_content', 'session.is_admin'),
   actions: {
+    filter: function(f) {
+      this.set('filter', f);
+    }
   }
 });
 

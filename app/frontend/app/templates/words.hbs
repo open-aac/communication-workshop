@@ -3,10 +3,18 @@
 {{else if words.error}}
   {{t "Error Loading Words" key='error_loading_words'}}
 {{else}}
-  <div style='max-width: 400px;'>
-    <p>{{words.length}} {{t "Total Words Found" key='total_words_found'}}</p>
+  <div style='max-width: 400px; padding-top: 20px;'>
+    {{#if session.is_admin}}
+      <p style='font-size: 20px;'>
+        <a href="#" {{action 'filter' 'all'}}>{{word_counts.total}} {{t "Total" key='pending'}}</a> | 
+        <a href="#" {{action 'filter' 'pending'}}>{{word_counts.pending}} {{t "Pending" key='pending'}}</a> | 
+        <a href="#" {{action 'filter' 'unapproved'}}>{{word_counts.pending}} {{t "Unapproved" key='unapproved'}}</a>
+      </p>
+    {{else}}
+      <p style='font-size: 20px;'>{{word_counts.total}} {{t "Total Words Found" key='total_words_found'}}</p>
+    {{/if}}
     <div class='list-group pills'>
-      {{#each words as |word|}}
+      {{#each filtered_words as |word|}}
         {{#unless word.unavailable}}
           {{#link-to 'word.index' word.word word.locale class='list-group-item'}}
             {{#if word.best_image_url}}
