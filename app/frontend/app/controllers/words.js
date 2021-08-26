@@ -43,7 +43,7 @@ export default Controller.extend({
       }
     });
     return res;
-  }.property('words', 'filter'),
+  }.property('words', 'words.length', 'filter'),
   word_counts: function() {
     var res = {
       total: 0,
