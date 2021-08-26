@@ -22,7 +22,9 @@
             {{/if}}
             {{word.word}}
             {{#if word.pending_revisions}}
-              <span class='glyphicon glyphicon-comment' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
+              {{#if session.user.admin}}
+                <span class='glyphicon glyphicon-comment' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
+              {{/if}}
             {{else}}
               {{#unless word.has_baseline_content}}
                 <span class='glyphicon glyphicon-exclamation-sign' style='padding-left: 10px; font-size: 30px; vertical-align: middle;'></span>
