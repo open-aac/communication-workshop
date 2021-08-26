@@ -34,7 +34,7 @@ export default Controller.extend({
     var filter = this.get('filter');
     if(!(this.get('words') || []).forEach) { return res; }
     (this.get('words') || []).forEach(function(w) {
-      if(filter == 'all') {
+      if(filter == 'all' && !filter) {
         res.push(w);
       } else if(filter == 'pending' && w.get('pending_revisions')) {
         res.push(w);
