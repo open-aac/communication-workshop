@@ -32,6 +32,7 @@ export default Controller.extend({
   filtered_words: function() {
     var res = [];
     var filter = this.get('filter');
+    if(!(this.get('words') || []).forEach) { return res; }
     (this.get('words') || []).forEach(function(w) {
       if(filter == 'all') {
         res.push(w);
@@ -49,6 +50,7 @@ export default Controller.extend({
       pending: 0,
       unapproved: 0
     }
+    if(!(this.get('words') || []).forEach) { return res; }
     (this.get('words') || []).forEach(function(w) {
       if(session.is_admin() || item.get('has_baseline_content')) {
         res.total++;
@@ -63,6 +65,7 @@ export default Controller.extend({
     return res;
   }.property('words', 'words.@each.has_baseline_content', 'session.is_admin'),  
   update_availability: function() {
+    if(!(this.get('words') || []).forEach) { return; }
     if(!session.is_admin()) {
       (this.get('words') || []).forEach(function(item) {
         item.set('unavailable', !item.get('has_baseline_content'));
